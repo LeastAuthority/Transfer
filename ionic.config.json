@@ -1,0 +1,7 @@
+{
+  "name": "myFileTransferTabs",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
