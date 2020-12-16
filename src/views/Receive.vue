@@ -9,18 +9,23 @@
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
                     <ion-col size="8">
-                        <ion-input style="border: 1px solid #424242; border-radius: 5px;" type="text"
-                                   placeholder="Enter code here"></ion-input>
+                        <ion-input style="border: 1px solid #424242; border-radius: 5px;"
+                                   type="text"
+                                   placeholder="Enter code here"
+                                   v-model="code"
+                        ></ion-input>
                     </ion-col>
                     <ion-col size="1">
                         <ion-button color="light">
-                            <ion-icon :icon="clipboardOutline"></ion-icon>
+                            <ion-icon :icon="clipboardOutline"
+                                      @click="paste"></ion-icon>
                         </ion-button>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-justify-content-center">
                     <ion-col class="ion-text-center">
-                        <ion-button color="light">
+                        <ion-button color="light"
+                                    @click="navigate(code)">
                             <ion-text class="ion-text-capitalize">Next</ion-text>
                         </ion-button>
                     </ion-col>
@@ -45,10 +50,17 @@
         IonInput,
     } from '@ionic/vue';
     import {clipboardOutline} from 'ionicons/icons'
-    import MyHeader from '@/components/MyHeader.vue';
+
+    import router from '@/router/index.ts'
+    import MyHeader from '@/components/MyHeader.vue'
 
     export default {
         name: 'Receive',
+        data() {
+            return {
+                code: '',
+            }
+        },
         components: {
             IonToolbar,
             IonTitle,
@@ -63,9 +75,18 @@
             IonInput,
             MyHeader,
         },
+        methods: {
+            navigate(code: string) {
+                router.push(`/receive/${code}`);
+            },
+            paste() {
+                console.log('paste clicked.')
+            },
+        },
         setup() {
             return {
-                clipboardOutline
+                clipboardOutline,
+                router,
             }
         }
     }

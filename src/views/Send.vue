@@ -22,7 +22,6 @@
                             <ion-icon :icon="add"></ion-icon>
                             <ion-label class="ion-text-lowercase">select</ion-label>
                         </ion-button>
-                        <input id="fileInput" type="file" class="ion-hide"/>
                     </ion-col>
                 </ion-row>
             </ion-grid>

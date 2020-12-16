@@ -16,12 +16,20 @@ const routes: Array<RouteRecordRaw> = [
         redirect: '/send'
       },
       {
+        path: 'sending/:code',
+        component: () => import('@/views/Sending.vue')
+      },
+      {
         path: 'send',
         component: () => import('@/views/Send.vue')
       },
       {
         path: 'receive',
         component: () => import('@/views/Receive.vue')
+      },
+      {
+        path: 'receive/:code',
+        component: () => import('@/views/ReceiveConfirm.vue')
       },
     ]
   }
