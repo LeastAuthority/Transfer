@@ -16,10 +16,6 @@ const routes: Array<RouteRecordRaw> = [
         redirect: '/send'
       },
       {
-        path: 'sending/:code',
-        component: () => import('@/views/Sending.vue')
-      },
-      {
         path: 'send',
         component: () => import('@/views/Send.vue')
       },

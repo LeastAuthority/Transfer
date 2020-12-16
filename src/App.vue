@@ -1,7 +1,6 @@
 <template>
     <ion-app>
         <ion-menu side="end" content-id="content"></ion-menu>
-        <input id="fileInput" type="file" class="ion-hide"/>
         <ion-router-outlet id="content"/>
     </ion-app>
 </template>

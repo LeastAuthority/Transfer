@@ -34,7 +34,7 @@
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-button color="danger" @click="router.push('/receive')">
+                    <ion-button color="danger" @click="setOpen(false)">
                         <ion-icon :icon="close"></ion-icon>
                         <ion-text class="ion-padding-start">cancel</ion-text>
                     </ion-button>
@@ -63,7 +63,8 @@
     import MyHeader from '@/components/MyHeader.vue';
 
     export default {
-        name: "Sending.vue",
+        name: "SendModal.vue",
+        props: ['setOpen'],
         computed: {
             // TODO:
             code() {
@@ -85,7 +86,8 @@
         },
         methods: {
             fileSelected() {
-                const input = document.querySelector('#fileInput') as HTMLElement;
+                // const input = document.querySelector('#fileInput') as HTMLElement;
+                console.log('fileSelected called');
             }
         },
         setup() {

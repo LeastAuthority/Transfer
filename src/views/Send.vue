@@ -26,8 +26,27 @@
                 </ion-row>
             </ion-grid>
         </ion-content>
+        <ion-modal
+                :is-open="isOpenRef"
+                css-class="modal"
+                @onDidDismiss="setOpen(false)"
+        >
+            <SendModal :setOpen="setOpen"></SendModal>
+        </ion-modal>
+        <input id="fileInput"
+               type="file"
+               class="ion-hide"
+               @change="loadFile"
+        />
     </ion-page>
 </template>
+
+<style lang="css">
+    .modal {
+        --min-width: 100vw;
+        --min-height: 100vh;
+    }
+</style>
 
 <script lang="ts">
     import {
@@ -42,9 +61,27 @@
         IonGrid,
         IonRow,
         IonCol,
+        IonModal,
+        modalController,
     } from '@ionic/vue';
+    import {ref} from 'vue';
     import {add} from 'ionicons/icons';
+
     import MyHeader from '@/components/MyHeader.vue';
+    import SendModal from '@/views/SendModal.vue';
+
+    const isOpenRef = ref(false);
+    // let _modal: any;
+    // modalController
+    //     .create({
+    //         component: SendModal,
+    //         cssClass: 'modal',
+    //         // TODO: content, file stats?
+    //         // componentProps: {
+    //         //     title: 'New Title'
+    //         // },
+    //     })
+    //     .then(m => _modal = m);
 
     export default {
         name: 'Send',
@@ -60,25 +97,43 @@
             IonGrid,
             IonRow,
             IonCol,
+            IonModal,
             MyHeader,
+            SendModal,
         },
         methods: {
+            // async openModal() {
+            //     return _modal.present();
+            // },
             select(event: Event) {
                 console.log('selecting!');
                 console.log(this);
 
                 // TODO: do this vue idiomatically
                 // const target = event.target as HTMLElement;
-                const input = document.querySelector('#fileInput') as HTMLElement;
+                const input = document.querySelector('#fileInput'); //  as HTMLElement;
                 console.log(input);
-                input.click();
+                (input as HTMLElement).click();
 
-            }
+            },
+            loadFile(event: Event) {
+                this.setOpen(true);
+                console.log('loadFile called');
+                console.log(event);
+            },
+            setOpen(state: boolean) {
+                console.log('set open')
+                isOpenRef.value = state;
+            },
         },
         setup() {
+            // const data = { content: 'New Content' };
             return {
-                add
-            }
+                add,
+                isOpenRef,
+                // setOpen,
+                // data
+            };
         }
     }
 </script>
