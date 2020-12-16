@@ -1,28 +1,72 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title class="ion-text-uppercase">Receive a file</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Receive</ion-title>
-        </ion-toolbar>
-      </ion-header>
-      
-      <ExploreContainer name="Receive" />
-    </ion-content>
-  </ion-page>
+    <ion-page>
+        <my-header></my-header>
+        <ion-content :fullscreen="true">
+            <ion-toolbar>
+                <ion-title size="large" class="ion-text-uppercase">Receive a file</ion-title>
+            </ion-toolbar>
+
+            <ion-grid>
+                <ion-row class="ion-justify-content-center">
+                    <ion-col size="8">
+                        <ion-input style="border: 1px solid #424242; border-radius: 5px;" type="text"
+                                   placeholder="Enter code here"></ion-input>
+                    </ion-col>
+                    <ion-col size="1">
+                        <ion-button color="light">
+                            <ion-icon :icon="clipboardOutline"></ion-icon>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-justify-content-center">
+                    <ion-col class="ion-text-center">
+                        <ion-button color="light">
+                            <ion-text class="ion-text-capitalize">Next</ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-content>
+    </ion-page>
 </template>
 
 <script lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+    import {
+        IonPage,
+        IonToolbar,
+        IonTitle,
+        IonContent,
+        IonGrid,
+        IonRow,
+        IonCol,
+        IonButton,
+        IonText,
+        IonIcon,
+        IonInput,
+    } from '@ionic/vue';
+    import {clipboardOutline} from 'ionicons/icons'
+    import MyHeader from '@/components/MyHeader.vue';
 
-export default  {
-  name: 'Receive',
-  components: { ExploreContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage }
-}
+    export default {
+        name: 'Receive',
+        components: {
+            IonToolbar,
+            IonTitle,
+            IonContent,
+            IonPage,
+            IonGrid,
+            IonRow,
+            IonCol,
+            IonButton,
+            IonText,
+            IonIcon,
+            IonInput,
+            MyHeader,
+        },
+        setup() {
+            return {
+                clipboardOutline
+            }
+        }
+    }
 </script>

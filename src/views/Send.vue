@@ -1,16 +1,11 @@
 <template>
     <ion-page>
-        <ion-header>
-            <ion-toolbar>
-                <ion-title class="ion-text-uppercase">Send a file</ion-title>
-            </ion-toolbar>
-        </ion-header>
+        <my-header></my-header>
         <ion-content :fullscreen="true">
-            <ion-header collapse="condense">
-                <ion-toolbar>
-                    <ion-title size="large">Send</ion-title>
-                </ion-toolbar>
-            </ion-header>
+            <ion-toolbar>
+                <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
+            </ion-toolbar>
+
             <ion-grid>
                 <ion-row>
                     <ion-col>
@@ -38,7 +33,6 @@
 <script lang="ts">
     import {
         IonPage,
-        IonHeader,
         IonToolbar,
         IonTitle,
         IonContent,
@@ -48,14 +42,14 @@
         IonIcon,
         IonGrid,
         IonRow,
-        IonCol
+        IonCol,
     } from '@ionic/vue';
-    import {add, enterOutline, exit} from 'ionicons/icons';
+    import {add} from 'ionicons/icons';
+    import MyHeader from '@/components/MyHeader.vue';
 
     export default {
         name: 'Send',
         components: {
-            IonHeader,
             IonToolbar,
             IonTitle,
             IonContent,
@@ -66,15 +60,16 @@
             IonIcon,
             IonGrid,
             IonRow,
-            IonCol
+            IonCol,
+            MyHeader,
         },
         methods: {
             select(event: Event) {
                 console.log('selecting!');
                 console.log(this);
 
-                // TODO: figure out how to get a proper ref
-                const target = event.target as HTMLElement;
+                // TODO: do this vue idiomatically
+                // const target = event.target as HTMLElement;
                 const input = document.querySelector('#fileInput') as HTMLElement;
                 console.log(input);
                 input.click();
