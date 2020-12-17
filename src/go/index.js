@@ -545,11 +545,10 @@
 		}
 
 		_makeFuncWrapper(id) {
-			const go = this;
-			return function (...args) {
+			return (...args) => {
 				const event = { id: id, this: this, args };
-				go._pendingEvent = event;
-				go._resume();
+				this._pendingEvent = event;
+				this._resume();
 				return event.result;
 			};
 		}
@@ -589,9 +588,7 @@
 
 export default window.Go;
 export function sendTextMsg(message, promise) {
-	console.log('in sendTextMsg');
 	const code = window.sendText(message, promise);
-	console.log(JSON.stringify(code));
 	return code;
 }
 export function receiveTextMsg(message, promise) {

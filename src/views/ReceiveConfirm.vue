@@ -28,6 +28,9 @@
                         <ion-icon :icon="cloudDownloadOutline"></ion-icon>
                         <ion-text class="ion-padding-start">Download</ion-text>
                     </ion-button>
+                    <ion-text>
+                        <a id="downloadAnchor" download :href="fileDataURI">(actually download)</a>
+                    </ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -61,8 +64,19 @@
     import MyHeader from '@/components/MyHeader.vue';
     import {receiveTextMsg} from "../go";
 
+    // let downloadAnchor: HTMLAnchorElement;
+    let downloadAnchor;
+
     export default {
         name: "ReceiveConfirm",
+        data() {
+            return {
+                fileDataURI: '',
+            }
+        },
+        mounted() {
+            downloadAnchor = document.querySelector('#downloadAnchor');
+        },
         components: {
             IonPage,
             IonContent,
@@ -82,9 +96,14 @@
                 console.log('downloading...')
                 new Promise((resolve, reject) => {
                     receiveTextMsg(this.$route.params.code, {resolve, reject})
-                }).then(output => {
-                    alert(output);
-                    console.log(output);
+                }).then(dataURI => {
+                    console.log(dataURI);
+                    this.fileDataURI = dataURI;
+                    window.setTimeout(() => {
+                        downloadAnchor.click();
+                    }, 1000)
+                }).catch(err => {
+                    console.error(err);
                 })
             },
         },
