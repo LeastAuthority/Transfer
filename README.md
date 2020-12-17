@@ -7,8 +7,6 @@ File transfer app that uses the magic wormhole protocol and ionic/vue UI framewo
 ![Send](screenshots/send.png)
 ![receive](screenshots/receive.png)
 
-_currently sends **only the filename** to the receiver_
-
 ## Getting it running:
 ```
 npm install
