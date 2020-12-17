@@ -1,0 +1,3 @@
+[submodule "wormhole-william"]
+	path = wormhole-william
+	url = git@github.com:leastauthority/wormhole-william

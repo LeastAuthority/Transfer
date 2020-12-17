@@ -71,7 +71,7 @@
     import {clipboardOutline, close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
-    // import Go from './go';
+    import {sendTextMsg} from '@/go';
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
@@ -79,14 +79,16 @@
     export default defineComponent({
         name: "SendModal.vue",
         props: ['setOpen', 'file'],
-        computed: {
-            // TODO:
-            code() {
-                return '7-guitarist-revenge';
+        data() {
+            return {
+                code: '',
             }
         },
         beforeMount() {
             // get wormhole code
+            const code = sendTextMsg(this.file.name);
+            console.log('beforeMount code');
+            console.log(JSON.stringify(code));
             // this.file
         },
         setup() {
