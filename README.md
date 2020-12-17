@@ -1,6 +1,6 @@
 # MyFileTransfer
 
-File transfer app that uses the magic wormhole protocol.
+File transfer app that uses the magic wormhole protocol and ionic/vue UI framework.
 
 ![Send](screenshots/send.png)
 ![receive](screenshots/receive.png)
