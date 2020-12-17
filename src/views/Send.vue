@@ -18,7 +18,9 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="light" size="large" @click="select">
+                        <ion-button color="light"
+                                    size="large"
+                                    @click="select">
                             <ion-icon :icon="add"></ion-icon>
                             <ion-label class="ion-text-lowercase">select</ion-label>
                         </ion-button>
@@ -102,14 +104,6 @@
             select(event: Event) {
                 fileInput.click();
             },
-            // loadFile(event: Event) {
-            //     if (fileInput!.files!.length > 0) {
-            //         // NB: only consider first file for now.
-            //         loadedFile = fileInput!.files![0];
-            //     }
-            //
-            //     this.setOpen(true);
-            // },
             setOpen(state: boolean) {
                 isOpenRef.value = state;
             },
@@ -121,12 +115,9 @@
             }
         },
         setup() {
-            // const data = { content: 'New Content' };
             return {
                 add,
                 isOpenRef,
-                // setOpen,
-                // data
             };
         }
     }

@@ -16,7 +16,8 @@
                         ></ion-input>
                     </ion-col>
                     <ion-col size="1">
-                        <ion-button color="light">
+                        <ion-button color="light"
+                                    disabled>
                             <ion-icon :icon="clipboardOutline"
                                       @click="paste"></ion-icon>
                         </ion-button>

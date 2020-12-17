@@ -588,12 +588,12 @@
 })();
 
 export default window.Go;
-export function sendTextMsg(message) {
+export function sendTextMsg(message, promise) {
 	console.log('in sendTextMsg');
-	const code = window.sendText(message);
+	const code = window.sendText(message, promise);
 	console.log(JSON.stringify(code));
 	return code;
 }
-export function receiveTextMsg(message) {
-	return window.recvText(message);
+export function receiveTextMsg(message, promise) {
+	return window.recvText(message, promise);
 }

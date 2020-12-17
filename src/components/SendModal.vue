@@ -27,7 +27,8 @@
                     <ion-input v-model="code"></ion-input>
                 </ion-col>
                 <ion-col size="1">
-                    <ion-button color="light">
+                    <ion-button color="light"
+                                disabled>
                         <ion-icon :icon="clipboardOutline"></ion-icon>
                     </ion-button>
                 </ion-col>
@@ -86,10 +87,12 @@
         },
         beforeMount() {
             // get wormhole code
-            const code = sendTextMsg(this.file.name);
-            console.log('beforeMount code');
-            console.log(JSON.stringify(code));
-            // this.file
+            new Promise((resolve, reject) => {
+                const code = sendTextMsg(this.file.name, {resolve, reject});
+                console.log(JSON.stringify(code));
+            }).then((code) => {
+                this.code = code;
+            })
         },
         setup() {
             return {

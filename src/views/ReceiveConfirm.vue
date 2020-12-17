@@ -24,7 +24,7 @@
             </ion-row>
             <ion-row>
                 <ion-col>
-                    <ion-button color="light">
+                    <ion-button color="light" @click="download">
                         <ion-icon :icon="cloudDownloadOutline"></ion-icon>
                         <ion-text class="ion-padding-start">Download</ion-text>
                     </ion-button>
@@ -59,6 +59,7 @@
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
+    import {receiveTextMsg} from "../go";
 
     export default {
         name: "ReceiveConfirm",
@@ -74,6 +75,18 @@
             IonTitle,
             IonIcon,
             MyHeader,
+        },
+        methods: {
+            // TODO: move this to Receive.vue
+            download() {
+                console.log('downloading...')
+                new Promise((resolve, reject) => {
+                    receiveTextMsg(this.$route.params.code, {resolve, reject})
+                }).then(output => {
+                    alert(output);
+                    console.log(output);
+                })
+            },
         },
         setup() {
             return {
