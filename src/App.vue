@@ -18,9 +18,6 @@
     declare function sendText(message: string): string;
     declare function receiveText(code: string): void;
 
-    // console.log(sendText)
-    // console.log(receiveText)
-
     export default defineComponent({
         name: 'App',
         components: {

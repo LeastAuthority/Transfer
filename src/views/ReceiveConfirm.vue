@@ -64,7 +64,6 @@
     import MyHeader from '@/components/MyHeader.vue';
     import {receiveTextMsg} from "../go";
 
-    // let downloadAnchor: HTMLAnchorElement;
     let downloadAnchor;
 
     export default {
@@ -96,9 +95,9 @@
                 console.log('downloading...')
                 new Promise((resolve, reject) => {
                     receiveTextMsg(this.$route.params.code, {resolve, reject})
-                }).then(dataURI => {
-                    console.log(dataURI);
-                    this.fileDataURI = dataURI;
+                }).then(blobURL => {
+                    console.log(blobURL);
+                    this.fileDataURI = blobURL;
                     window.setTimeout(() => {
                         downloadAnchor.click();
                     }, 1000)

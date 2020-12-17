@@ -88,12 +88,8 @@
         beforeMount() {
             // get wormhole code
             new Promise((resolve, reject) => {
-                const reader = new FileReader()
-                reader.onload = () => {
-                    console.log(reader.result);
-                    this.code = sendTextMsg(reader.result, {resolve, reject});
-                }
-                reader.readAsDataURL(this.file);
+                const blobURL = URL.createObjectURL(this.file);
+                this.code = sendTextMsg(blobURL, {resolve, reject});
             }).then((code) => {
                 this.code = code;
             })
