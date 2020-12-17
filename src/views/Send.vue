@@ -31,12 +31,15 @@
                 css-class="modal"
                 @onDidDismiss="setOpen(false)"
         >
-            <SendModal :setOpen="setOpen"></SendModal>
+            <SendModal
+                    :setOpen="setOpen"
+                    :file="loadedFile()"
+            ></SendModal>
         </ion-modal>
         <input id="fileInput"
                type="file"
                class="ion-hide"
-               @change="loadFile"
+               @change="setOpen(true)"
         />
     </ion-page>
 </template>
@@ -62,26 +65,16 @@
         IonRow,
         IonCol,
         IonModal,
-        modalController,
     } from '@ionic/vue';
     import {ref} from 'vue';
     import {add} from 'ionicons/icons';
 
     import MyHeader from '@/components/MyHeader.vue';
-    import SendModal from '@/views/SendModal.vue';
+    import SendModal from '@/components/SendModal.vue';
 
     const isOpenRef = ref(false);
-    // let _modal: any;
-    // modalController
-    //     .create({
-    //         component: SendModal,
-    //         cssClass: 'modal',
-    //         // TODO: content, file stats?
-    //         // componentProps: {
-    //         //     title: 'New Title'
-    //         // },
-    //     })
-    //     .then(m => _modal = m);
+    // let loadedFile: File;
+    let fileInput: HTMLInputElement;
 
     export default {
         name: 'Send',
@@ -101,30 +94,31 @@
             MyHeader,
             SendModal,
         },
+        mounted() {
+            // TODO: do this more vue idiomatically
+            fileInput = document.querySelector('#fileInput') as HTMLInputElement;
+        },
         methods: {
-            // async openModal() {
-            //     return _modal.present();
-            // },
             select(event: Event) {
-                console.log('selecting!');
-                console.log(this);
-
-                // TODO: do this vue idiomatically
-                // const target = event.target as HTMLElement;
-                const input = document.querySelector('#fileInput'); //  as HTMLElement;
-                console.log(input);
-                (input as HTMLElement).click();
-
+                fileInput.click();
             },
-            loadFile(event: Event) {
-                this.setOpen(true);
-                console.log('loadFile called');
-                console.log(event);
-            },
+            // loadFile(event: Event) {
+            //     if (fileInput!.files!.length > 0) {
+            //         // NB: only consider first file for now.
+            //         loadedFile = fileInput!.files![0];
+            //     }
+            //
+            //     this.setOpen(true);
+            // },
             setOpen(state: boolean) {
-                console.log('set open')
                 isOpenRef.value = state;
             },
+            loadedFile(): File | null {
+                if (fileInput!.files!.length > 0) {
+                    return fileInput!.files![0];
+                }
+                return null
+            }
         },
         setup() {
             // const data = { content: 'New Content' };
