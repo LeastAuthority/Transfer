@@ -14,16 +14,16 @@
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text class="filename">Filename.ext</ion-text>
+                    <ion-text class="filename">{{ file.name }}</ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text class="size">(900 MB)</ion-text>
+                    <ion-text class="size">({{ fileSize }})</ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col size="8">
+                <ion-col size="8" class="ion-text-right">
                     <ion-input v-model="code"></ion-input>
                 </ion-col>
                 <ion-col size="1">
@@ -57,25 +57,31 @@
 
 <script>
     import {
-        IonPage,
+        IonButton,
+        IonCol,
         IonContent,
         IonGrid,
-        IonRow,
-        IonCol,
-        IonText,
-        IonButton,
-        IonToolbar,
-        IonTitle,
         IonIcon,
         IonInput,
+        IonPage,
+        IonRow,
+        IonText,
+        IonTitle,
+        IonToolbar,
     } from '@ionic/vue';
     import {clipboardOutline, close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
     import {sendTextMsg} from '@/go';
+    import {sizeToClosestUnit} from '@/util';
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
+
+    // TODO: move
+    function encodeFileInfo(info) {
+        return window.btoa(JSON.stringify(info));
+    }
 
     export default defineComponent({
         name: "SendModal.vue",
@@ -85,13 +91,32 @@
                 code: '',
             }
         },
-        beforeMount() {
-            // get wormhole code
-            new Promise((resolve, reject) => {
-                const blobURL = URL.createObjectURL(this.file);
-                this.code = sendTextMsg(blobURL, {resolve, reject});
-            }).then((code) => {
-                this.code = code;
+        computed: {
+            fileSize() {
+                return sizeToClosestUnit(this.file.size);
+            }
+        },
+        async beforeMount() {
+            const fileCode = await new Promise((resolve, reject) => {
+                // TODO: use URL.revokeObjectURL where appropriate (see: https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL#Usage_notes)
+                // const fileBlobEncoded = URL.createObjectURL(this.file);
+                // sendTextMsg(fileBlobEncoded, {resolve, reject});
+                const reader = new FileReader();
+                reader.readAsDataURL(this.file)
+                reader.onloadend = () => {
+                    console.log(reader.result);
+                    sendTextMsg(reader.result, {resolve, reject});
+                }
+            })
+
+            this.code = await new Promise((resolve, reject) => {
+                const {name, size} = this.file;
+                const fileStats = encodeFileInfo({
+                    name,
+                    size,
+                    fileCode,
+                });
+                sendTextMsg(fileStats, {resolve, reject});
             })
         },
         setup() {

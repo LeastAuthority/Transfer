@@ -5,5 +5,10 @@ declare class Go {
 }
 export = Go;
 
-export function sendTextMsg(message: string): string;
-export function receiveTextMsg(code: string): string;
+export interface PromiseObject {
+    resolve(value?: (PromiseLike<T> | T)): void;
+    reject(reason?: any): void;
+}
+
+export function sendTextMsg(message: string, p: PromiseObject): void;
+export function receiveTextMsg(code: string, p: PromiseObject): void;

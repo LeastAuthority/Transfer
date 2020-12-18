@@ -35,13 +35,13 @@
         >
             <SendModal
                     :setOpen="setOpen"
-                    :file="loadedFile()"
+                    :file="file"
             ></SendModal>
         </ion-modal>
         <input id="fileInput"
                type="file"
                class="ion-hide"
-               @change="setOpen(true)"
+               @change="fileChanged"
         />
     </ion-page>
 </template>
@@ -68,7 +68,7 @@
         IonCol,
         IonModal,
     } from '@ionic/vue';
-    import {ref} from 'vue';
+    import {ref, defineComponent} from 'vue';
     import {add} from 'ionicons/icons';
 
     import MyHeader from '@/components/MyHeader.vue';
@@ -78,8 +78,17 @@
     // let loadedFile: File;
     let fileInput: HTMLInputElement;
 
-    export default {
+    interface SendData {
+        file: File | null;
+    }
+
+    export default defineComponent({
         name: 'Send',
+        data(): SendData {
+            return {
+                file: null,
+            };
+        },
         components: {
             IonToolbar,
             IonTitle,
@@ -101,17 +110,17 @@
             fileInput = document.querySelector('#fileInput') as HTMLInputElement;
         },
         methods: {
-            select(event: Event) {
+            select() {
                 fileInput.click();
             },
             setOpen(state: boolean) {
                 isOpenRef.value = state;
             },
-            loadedFile(): File | null {
+            fileChanged() {
                 if (fileInput!.files!.length > 0) {
-                    return fileInput!.files![0];
+                    this.file = fileInput!.files![0];
+                    this.setOpen(true);
                 }
-                return null
             }
         },
         setup() {
@@ -120,5 +129,5 @@
                 isOpenRef,
             };
         }
-    }
+    });
 </script>

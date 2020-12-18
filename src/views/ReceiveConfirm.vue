@@ -14,23 +14,24 @@
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text class="filename">Filename.ext</ion-text>
+                    <ion-text class="filename">{{ file.name }}</ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text class="size">(900 MB)</ion-text>
+                    <ion-text class="size">{{ fileSize }}</ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col>
-                    <ion-button color="light" @click="download">
-                        <ion-icon :icon="cloudDownloadOutline"></ion-icon>
-                        <ion-text class="ion-padding-start">Download</ion-text>
-                    </ion-button>
-                    <ion-text>
-                        <a id="downloadAnchor" download :href="fileDataURI">(actually download)</a>
-                    </ion-text>
+                    <a id="downloadAnchor"
+                       :download="file.name"
+                       :href="file.dataURI">
+                        <ion-button color="light">
+                            <ion-icon :icon="cloudDownloadOutline"></ion-icon>
+                            <ion-text class="ion-padding-start">Download</ion-text>
+                        </ion-button>
+                    </a>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -63,18 +64,43 @@
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
     import {receiveTextMsg} from "../go";
+    import {sizeToClosestUnit} from "../util";
 
     let downloadAnchor;
+
+    // TODO: move
+    function decodeFileInfo(infoStr) {
+        return JSON.parse(window.atob(infoStr))
+    }
 
     export default {
         name: "ReceiveConfirm",
         data() {
             return {
-                fileDataURI: '',
+                file: {
+                    name: '',
+                    size: 0,
+                    code: '',
+                    dataURI: '',
+                },
             }
         },
-        mounted() {
+        computed: {
+            fileSize() {
+                return sizeToClosestUnit(this.file.size);
+            }
+        },
+        async mounted() {
             downloadAnchor = document.querySelector('#downloadAnchor');
+
+            const fileInfoStr = await new Promise((resolve, reject) => {
+                receiveTextMsg(this.$route.params.code, {resolve, reject})
+            });
+            const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
+            this.file = {name, size, code};
+
+            // TODO: should actually download after confirmation!
+            await this.download();
         },
         components: {
             IonPage,
@@ -91,19 +117,24 @@
         },
         methods: {
             // TODO: move this to Receive.vue
-            download() {
+            async download() {
                 console.log('downloading...')
-                new Promise((resolve, reject) => {
-                    receiveTextMsg(this.$route.params.code, {resolve, reject})
-                }).then(blobURL => {
-                    console.log(blobURL);
-                    this.fileDataURI = blobURL;
-                    window.setTimeout(() => {
-                        downloadAnchor.click();
-                    }, 1000)
-                }).catch(err => {
-                    console.error(err);
+                // try {
+                const fileDataURI = await new Promise((resolve, reject) => {
+                    receiveTextMsg(this.file.code, {resolve, reject})
                 })
+
+                console.log(fileDataURI);
+                this.file.dataURI = fileDataURI;
+                // const [_, data] = fileDataURI.split(',');
+                // this.file.dataURI = `/download/${data}`
+
+                // downloadAnchor.click();
+
+                // } catch (err) {
+                //     // TODO: error toast!
+                //     throw err;
+                // }
             },
         },
         setup() {
@@ -120,6 +151,7 @@
     .size {
         font-size: small;
     }
+
     .filename {
         font-weight: bold;
     }

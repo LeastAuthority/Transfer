@@ -587,9 +587,9 @@
 })();
 
 export default window.Go;
-export function sendTextMsg(...args) {
-	return window.sendText(...args);
+export function sendTextMsg(message, promiseObj) {
+	return window.sendText(message, promiseObj);
 }
-export function receiveTextMsg(...args) {
-	return window.recvText(...args);
+export function receiveTextMsg(code, promiseObj) {
+	return window.recvText(code, promiseObj);
 }
