@@ -587,10 +587,9 @@
 })();
 
 export default window.Go;
-export function sendTextMsg(message, promise) {
-	const code = window.sendText(message, promise);
-	return code;
+export function sendTextMsg(...args) {
+	return window.sendText(...args);
 }
-export function receiveTextMsg(message, promise) {
-	return window.recvText(message, promise);
+export function receiveTextMsg(...args) {
+	return window.recvText(...args);
 }
