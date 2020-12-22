@@ -72,7 +72,7 @@
     import {clipboardOutline, close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
-    import {sendTextMsg} from '@/go';
+    import Client from '@/go/wormhole/client.ts';
     import {sizeToClosestUnit} from '@/util';
 
     import router from '@/router/index.ts'
@@ -85,10 +85,11 @@
 
     export default defineComponent({
         name: "SendModal.vue",
-        props: ['setOpen', 'file'],
+        props: ['setOpen', 'file', 'wormholeClient'],
         data() {
             return {
                 code: '',
+                client: new Client(),
             }
         },
         computed: {
@@ -98,26 +99,26 @@
         },
         async beforeMount() {
             const fileCode = await new Promise((resolve, reject) => {
-                // TODO: use URL.revokeObjectURL where appropriate (see: https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL#Usage_notes)
-                // const fileBlobEncoded = URL.createObjectURL(this.file);
-                // sendTextMsg(fileBlobEncoded, {resolve, reject});
-                const reader = new FileReader();
-                reader.readAsDataURL(this.file)
-                reader.onloadend = () => {
-                    console.log(reader.result);
-                    sendTextMsg(reader.result, {resolve, reject});
+                try {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(this.file)
+                    reader.onloadend = async () => {
+                        console.log(reader.result);
+                        const resultStr = reader.result.toString();
+                        const _fileCode = await this.client.sendText(resultStr);
+                        resolve(_fileCode);
+                    }
+                } catch (err) {
+                    reject(err)
                 }
-            })
+            });
 
-            this.code = await new Promise((resolve, reject) => {
-                const {name, size} = this.file;
-                const fileStats = encodeFileInfo({
-                    name,
-                    size,
-                    fileCode,
-                });
-                sendTextMsg(fileStats, {resolve, reject});
-            })
+            const fileStats = encodeFileInfo({
+                name: this.file.name,
+                size: this.file.size,
+                fileCode,
+            });
+            this.code = await this.client.sendText(fileStats)
         },
         setup() {
             return {

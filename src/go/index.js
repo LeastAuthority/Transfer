@@ -587,9 +587,20 @@
 })();
 
 export default window.Go;
-export function sendTextMsg(message, promiseObj) {
-	return window.sendText(message, promiseObj);
-}
-export function receiveTextMsg(code, promiseObj) {
-	return window.recvText(code, promiseObj);
-}
+export const client = {
+	newClient(...args) {
+		return window.newWormholeClient(...args);
+	},
+	sendText(...args) {
+		return window.client_sendText(...args);
+	},
+	recvText(...args) {
+		return window.client_recvText(...args);
+	},
+	free(...args) {
+		return window.client_free(...args);
+	}
+// export function ObjectSet(...args) {
+// 	return window.ObjectSet(...args);
+// }
+};

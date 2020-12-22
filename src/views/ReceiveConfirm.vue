@@ -19,7 +19,7 @@
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text class="size">{{ fileSize }}</ion-text>
+                    <ion-text class="size">({{ fileSize }})</ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -63,8 +63,8 @@
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
-    import {receiveTextMsg} from "../go";
-    import {sizeToClosestUnit} from "../util";
+    import Client from '@/go/wormhole/client.ts';
+    import {sizeToClosestUnit} from "@/util";
 
     let downloadAnchor;
 
@@ -77,6 +77,7 @@
         name: "ReceiveConfirm",
         data() {
             return {
+                client: new Client(),
                 file: {
                     name: '',
                     size: 0,
@@ -93,9 +94,7 @@
         async mounted() {
             downloadAnchor = document.querySelector('#downloadAnchor');
 
-            const fileInfoStr = await new Promise((resolve, reject) => {
-                receiveTextMsg(this.$route.params.code, {resolve, reject})
-            });
+            const fileInfoStr = await this.client.recvText(this.$route.params.code);
             const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
             this.file = {name, size, code};
 
@@ -120,9 +119,8 @@
             async download() {
                 console.log('downloading...')
                 // try {
-                const fileDataURI = await new Promise((resolve, reject) => {
-                    receiveTextMsg(this.file.code, {resolve, reject})
-                })
+                const fileDataURI = await this.client.recvText(this.file.code)
+
 
                 console.log(fileDataURI);
                 this.file.dataURI = fileDataURI;

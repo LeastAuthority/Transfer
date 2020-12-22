@@ -15,15 +15,6 @@
         go.run(result.instance);
     });
 
-    declare function sendText(message: string): string;
-    declare function receiveText(code: string): void;
-
-    // navigator.serviceWorker.register('/worker.js', {scope: '/'})
-    //     .then(function (registration) {
-    //         // console.log('service worker registered');
-    //         // console.log(registration);
-    //     }).catch(err => console.log(err));
-
     export default defineComponent({
         name: 'App',
         components: {
