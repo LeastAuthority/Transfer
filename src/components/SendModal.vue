@@ -85,7 +85,7 @@
 
     export default defineComponent({
         name: "SendModal.vue",
-        props: ['setOpen', 'file', 'wormholeClient'],
+        props: ['setOpen', 'file'],
         data() {
             return {
                 code: '',
@@ -103,10 +103,8 @@
                     const reader = new FileReader();
                     reader.readAsDataURL(this.file)
                     reader.onloadend = async () => {
-                        console.log(reader.result);
                         const resultStr = reader.result.toString();
-                        const _fileCode = await this.client.sendText(resultStr);
-                        resolve(_fileCode);
+                        resolve(await this.client.sendText(resultStr));
                     }
                 } catch (err) {
                     reject(err)

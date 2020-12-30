@@ -600,7 +600,4 @@ export const client = {
 	free(...args) {
 		return window.client_free(...args);
 	}
-// export function ObjectSet(...args) {
-// 	return window.ObjectSet(...args);
-// }
 };

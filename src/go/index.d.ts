@@ -7,11 +7,6 @@ declare class Go {
 }
 export = Go;
 
-// export function newWormholeClient(config?: ClientConfig): number;
-// export function ObjectSet(obj: Object, exportName: string, propertyName: string)
-// export function clientSendText(message: string): Promise<string>;
-// export function clientRecvText(code: string): Promise<string>;
-// export function clientFree(): void;
 declare interface ClientInterface {
     newClient(config?: ClientConfig): number
     sendText(goClient: number, message: string): Promise<string>
