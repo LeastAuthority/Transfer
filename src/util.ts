@@ -8,3 +8,4 @@ export function sizeToClosestUnit(fileSizeInBytes: number): string {
 
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 }
+

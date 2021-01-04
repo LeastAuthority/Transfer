@@ -122,11 +122,13 @@
             async download() {
                 console.log('downloading...')
                 // try {
-                const fileDataURI = await this.client.recvText(this.file.code)
+                console.log('sanity check')
+                const fileData = await this.client.recvFile(this.file.code)
 
 
-                console.log(fileDataURI);
-                this.file.dataURI = fileDataURI;
+                console.log('downloaded!')
+                console.log(fileData);
+                // this.file.dataURI = fileDataURI;
                 // const [_, data] = fileDataURI.split(',');
                 // this.file.dataURI = `/download/${data}`
 
