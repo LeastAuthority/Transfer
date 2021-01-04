@@ -7,14 +7,28 @@ export interface ClientConfig {
     passPhraseComponentLength: number;
 }
 
+const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
+    rendezvousURL: "ws://relay.magic-wormhole.io:4000/v1",
+    transitRelayAddress: "transit.magic-wormhole.io:4001",
+    passPhraseComponentLength: 2,
+}
+
 export default class Client {
     public goClient: number;
 
-    public sendText(message: string): Promise<string> {
+    constructor(config?: ClientConfig) {
+        if (!config && process.env.NODE_ENV === 'production') {
+            config = DEFAULT_PROD_CLIENT_CONFIG;
+        }
+
+        this.goClient = client.newClient(config)
+    }
+
+    public async sendText(message: string): Promise<string> {
         return client.sendText(this.goClient, message);
     }
 
-    public recvText(code: string): Promise<string> {
+    public async recvText(code: string): Promise<string> {
         return client.recvText(this.goClient, code)
     }
 
@@ -24,9 +38,4 @@ export default class Client {
             throw err;
         }
     }
-
-    constructor(config?: ClientConfig) {
-        this.goClient = client.newClient(config)
-    }
-
 }

@@ -42,6 +42,7 @@
                 </ion-col>
             </ion-row>
         </ion-grid>
+        <version-footer></version-footer>
     </ion-page>
 </template>
 
@@ -77,6 +78,7 @@
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
+    import VersionFooter from "@/components/VersionFooter";
 
     // TODO: move
     function encodeFileInfo(info) {
@@ -138,6 +140,7 @@
             IonIcon,
             IonInput,
             MyHeader,
+            VersionFooter,
         },
     });
 </script>

@@ -33,6 +33,7 @@
                 </ion-row>
             </ion-grid>
         </ion-content>
+        <version-footer></version-footer>
     </ion-page>
 </template>
 
@@ -54,6 +55,7 @@
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue'
+    import VersionFooter from "@/components/VersionFooter.vue";
 
     export default {
         name: 'Receive',
@@ -75,6 +77,7 @@
             IonIcon,
             IonInput,
             MyHeader,
+            VersionFooter,
         },
         methods: {
             navigate(code: string) {

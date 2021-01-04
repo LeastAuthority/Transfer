@@ -43,6 +43,7 @@
                 </ion-col>
             </ion-row>
         </ion-grid>
+        <version-footer></version-footer>
     </ion-page>
 </template>
 
@@ -63,6 +64,7 @@
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
+    import VersionFooter from '@/components/VersionFooter.vue';
     import Client from '@/go/wormhole/client.ts';
     import {sizeToClosestUnit} from "@/util";
 
@@ -113,6 +115,7 @@
             IonTitle,
             IonIcon,
             MyHeader,
+            VersionFooter,
         },
         methods: {
             // TODO: move this to Receive.vue

@@ -43,9 +43,7 @@
                class="ion-hide"
                @change="fileChanged"
         />
-        <ion-footer class="footer ion-text-right ion-padding-end">
-            <ion-text class="mono">v0-alpha.0</ion-text>
-        </ion-footer>
+        <version-footer></version-footer>
     </ion-page>
 </template>
 
@@ -53,14 +51,6 @@
     .modal {
         --min-width: 100vw;
         --min-height: 100vh;
-    }
-
-    .footer.md::before {
-        background-image: none;
-    }
-
-    .mono {
-        font-family: monospace;
     }
 </style>
 
@@ -84,6 +74,7 @@
 
     import MyHeader from '@/components/MyHeader.vue';
     import SendModal from '@/components/SendModal.vue';
+    import VersionFooter from "@/components/VersionFooter.vue";
 
     const isOpenRef = ref(false);
     // let loadedFile: File;
@@ -115,6 +106,7 @@
             IonModal,
             MyHeader,
             SendModal,
+            VersionFooter,
         },
         mounted() {
             // TODO: do this more vue idiomatically
