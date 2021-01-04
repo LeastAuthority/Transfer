@@ -7,4 +7,4 @@ RUN pip install pipenv
 WORKDIR /app
 RUN pipenv install
 
-CMD twist mailbox-server
+CMD pipenv run twist wormhole-mailbox

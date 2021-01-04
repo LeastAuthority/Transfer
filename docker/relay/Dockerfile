@@ -7,4 +7,4 @@ RUN pip install pipenv
 WORKDIR /app
 RUN pipenv install
 
-CMD twist transit-relay
+CMD pipenv run twist transitrelay
