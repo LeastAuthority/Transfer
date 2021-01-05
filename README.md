@@ -1,7 +1,5 @@
 # MyFileTransfer
-([wormhole.bryanchriswhite.com](http://wormhole.bryanchriswhite.com))
-
-_NOTE: no TLS yet :'(_
+([wormhole.bryanchriswhite.com](https://wormhole.bryanchriswhite.com))
 
 File transfer app that uses the magic wormhole protocol and ionic/vue UI framework.
 
