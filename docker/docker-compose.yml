@@ -1,27 +1,5 @@
 version: "3.3"
 services:
-  mailbox:
-    build:
-      context: ./mailbox
-    ports:
-      - "4000:4000"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
-      - "traefik.http.routers.mailbox.entrypoints=websecure"
-      - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
-
-#  relay:
-#    build:
-#      context: ./relay
-#    ports:
-#      - "4001:4001"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.relay.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
-#      - "traefik.http.routers.relay.entrypoints=websecure"
-#      - "traefik.http.routers.relay.tls.certresolver=mytlschallenge"
-
   traefik:
     image: "traefik:v2.3"
     container_name: "traefik"
@@ -43,3 +21,29 @@ services:
     volumes:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  mailbox:
+    build:
+      context: ./mailbox
+    ports:
+      - "4000:4000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
+      - "traefik.http.routers.mailbox.entrypoints=websecure"
+      - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
+    depends_on:
+      - traefik
+
+  relay:
+    build:
+      context: ./relay
+    ports:
+      - "4001:4001"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.relay.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
+      - "traefik.http.routers.relay.entrypoints=websecure"
+      - "traefik.http.routers.relay.tls.certresolver=mytlschallenge"
+    depends_on:
+      - traefik

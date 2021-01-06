@@ -32,3 +32,6 @@ npm-debug.log*
 
 # letsencrypt private
 docker/letsencrypt/*
+
+# docker compose overrides
+docker/docker-compose.override.yml
