@@ -100,18 +100,19 @@
             }
         },
         async beforeMount() {
-            const fileCode = await new Promise((resolve, reject) => {
-                try {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(this.file)
-                    reader.onloadend = async () => {
-                        const resultStr = reader.result.toString();
-                        resolve(await this.client.sendText(resultStr));
-                    }
-                } catch (err) {
-                    reject(err)
-                }
-            });
+            const fileCode = await this.client.sendFile(this.file);
+            // const fileCode = await new Promise((resolve, reject) => {
+            //     try {
+            //         const reader = new FileReader();
+            //         reader.readAsDataURL(this.file)
+            //         reader.onloadend = async () => {
+            //             const resultStr = reader.result.toString();
+            //             resolve(await this.client.sendText(resultStr));
+            //         }
+            //     } catch (err) {
+            //         reject(err)
+            //     }
+            // });
 
             const fileStats = encodeFileInfo({
                 name: this.file.name,

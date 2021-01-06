@@ -594,8 +594,14 @@ export const client = {
 	sendText(...args) {
 		return window.client_sendText(...args);
 	},
+	sendFile(...args) {
+		return window.client_sendFile(...args);
+	},
 	recvText(...args) {
 		return window.client_recvText(...args);
+	},
+	recvFile(...args) {
+		return window.client_recvFile(...args);
 	},
 	free(...args) {
 		return window.client_free(...args);
