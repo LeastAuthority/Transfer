@@ -122,22 +122,15 @@
             async download() {
                 console.log('downloading...')
                 // try {
-                console.log('sanity check')
+                // console.log('sanity check')
                 const fileData = await this.client.recvFile(this.file.code)
 
+                // const fileDataURI = await this.client.recvText(this.file.code)
+                // console.log(fileDataURI);
+                // this.file.dataURI = fileDataURI;
 
                 console.log('downloaded!')
                 console.log(fileData);
-                // this.file.dataURI = fileDataURI;
-                // const [_, data] = fileDataURI.split(',');
-                // this.file.dataURI = `/download/${data}`
-
-                // downloadAnchor.click();
-
-                // } catch (err) {
-                //     // TODO: error toast!
-                //     throw err;
-                // }
             },
         },
         setup() {

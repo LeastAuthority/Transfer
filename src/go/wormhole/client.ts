@@ -8,10 +8,10 @@ export interface ClientConfig {
 }
 
 const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
-    // rendezvousURL: "ws://relay.magic-wormhole.io:4000/v1",
+    // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
     // transitRelayAddress: "transit.magic-wormhole.io:4001",
     rendezvousURL: "wss://mailbox.wormhole.bryanchriswhite.com/v1",
-    transitRelayAddress: "relay.wormhole.bryanchriswhite.com",
+    transitRelayAddress: "wss://relay.wormhole.bryanchriswhite.com",
     passPhraseComponentLength: 2,
 }
 
