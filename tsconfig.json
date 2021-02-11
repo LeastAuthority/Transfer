@@ -14,7 +14,11 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "jest"
+      "jest",
+      "cypress",
+      "cypress-file-upload",
+      "cypress-wait-until",
+      "cypress-waitfor"
     ],
     "paths": {
       "@/*": [

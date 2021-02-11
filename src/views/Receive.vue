@@ -9,7 +9,8 @@
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
                     <ion-col size="8">
-                        <ion-input style="border: 1px solid #424242; border-radius: 5px;"
+                        <ion-input class="receive-code-input"
+                                   style="border: 1px solid #424242; border-radius: 5px;"
                                    type="text"
                                    placeholder="Enter code here"
                                    v-model="code"
@@ -25,7 +26,8 @@
                 </ion-row>
                 <ion-row class="ion-justify-content-center">
                     <ion-col class="ion-text-center">
-                        <ion-button color="light"
+                        <ion-button class="receive-next"
+                                    color="light"
                                     @click="navigate(code)">
                             <ion-text class="ion-text-capitalize">Next</ion-text>
                         </ion-button>

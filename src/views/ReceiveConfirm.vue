@@ -27,7 +27,7 @@
                     <a id="downloadAnchor"
                        :download="file.name"
                        :href="file.dataURI">
-                        <ion-button color="light">
+                        <ion-button class="download-button" color="light">
                             <ion-icon :icon="cloudDownloadOutline"></ion-icon>
                             <ion-text class="ion-padding-start">Download</ion-text>
                         </ion-button>
@@ -123,14 +123,14 @@
                 console.log('downloading...')
                 // try {
                 // console.log('sanity check')
-                const fileData = await this.client.recvFile(this.file.code)
+                // const fileData = await this.client.recvFile(this.file.code)
 
-                // const fileDataURI = await this.client.recvText(this.file.code)
-                // console.log(fileDataURI);
-                // this.file.dataURI = fileDataURI;
+                const fileDataURI = await this.client.recvText(this.file.code)
+                console.log(fileDataURI);
+                this.file.dataURI = fileDataURI;
 
-                console.log('downloaded!')
-                console.log(fileData);
+                // console.log('downloaded!')
+                // console.log(fileData);
             },
         },
         setup() {

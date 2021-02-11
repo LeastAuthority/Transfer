@@ -18,7 +18,8 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="light"
+                        <ion-button class="select-button"
+                                    color="light"
                                     size="large"
                                     @click="select">
                             <ion-icon :icon="add"></ion-icon>

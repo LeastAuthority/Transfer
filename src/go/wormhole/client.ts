@@ -1,4 +1,4 @@
-import {client} from '@/go'
+import {client} from '..'
 
 export interface ClientConfig {
     rendezvousURL: string;
@@ -31,7 +31,10 @@ export default class Client {
     }
 
     public async sendFile(file: File): Promise<string> {
+        console.log('sendFile called')
         const data = new Uint8Array(await file.arrayBuffer());
+        console.log('data')
+        console.log(data)
         return client.sendFile(this.goClient, file.name, data);
     }
 
