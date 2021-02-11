@@ -10,24 +10,18 @@ services:
 
   relay:
     build:
-      context: ../magic-wormhole-transit-relay
-      dockerfile: ../docker/relay/Dockerfile
+      context: ./relay
     volumes:
     - "../magic-wormhole-transit-relay:/app"
     ports:
       - "4001:4001"
 
-#  frontend:
-#    build:
-#      context: ..
-#      dockerfile: ./dev.dockerfile
-#
-#    volumes:
-#      - "..:/app"
-#    ports:
-#      - "8080:8080"
+  frontend:
+    build:
+      context: ..
+      dockerfile: ./dev.dockerfile
 
-#  gotest:
-#      image: golang
-#      volumes:
-#      -
+    volumes:
+      - "..:/app"
+    ports:
+      - "8080:8080"
