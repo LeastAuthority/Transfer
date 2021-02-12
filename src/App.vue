@@ -10,7 +10,7 @@
     import {defineComponent} from 'vue';
     import Go from '@/go';
 
-    // console.log("initializing wasm...")
+    console.log("initializing wasm...")
     const go = new Go();
     WebAssembly.instantiateStreaming(fetch("/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);

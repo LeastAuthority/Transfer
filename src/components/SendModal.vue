@@ -31,10 +31,7 @@
                     ></ion-input>
                 </ion-col>
                 <ion-col size="1">
-                    <ion-button color="light"
-                                disabled>
-                        <ion-icon :icon="clipboardOutline"></ion-icon>
-                    </ion-button>
+                    <copy-button :code="code"/>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -74,7 +71,7 @@
         IonTitle,
         IonToolbar,
     } from '@ionic/vue';
-    import {clipboardOutline, close} from 'ionicons/icons';
+    import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
     import Client from '@/go/wormhole/client.ts';
@@ -127,7 +124,6 @@
         },
         setup() {
             return {
-                clipboardOutline,
                 close,
                 router,
             }

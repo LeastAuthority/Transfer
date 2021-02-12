@@ -1,52 +1,75 @@
 // https://docs.cypress.io/api/introduction/api.html
 
+import Chainable = Cypress.Chainable;
 import Go from '../../../src/go'
 import Client from '@/go/wormhole/client.ts';
 
-// describe('Mobile portrait', () => {
-//     cy.visit('http://localhost:8080/send')
-//     cy.viewport('samsung-note9', 'portrait')
-// })
-function largeuint8ArrToString(uint8arr: Uint8Array) {
-    return new Promise((resolve, reject) => {
-        const bb = new Blob([uint8arr]);
-        const f = new FileReader();
-        f.onload = function (event) {
-            resolve(event.target.result);
-        };
-
-        f.readAsText(bb, 'utf-8');
-    })
-}
-
+// function largeuint8ArrToString(uint8arr: Uint8Array) {
+//     return new Promise((resolve, reject) => {
+//         const bb = new Blob([uint8arr]);
+//         const f = new FileReader();
+//         f.onload = function (event) {
+//             resolve(event.target.result);
+//         };
+//
+//         f.readAsText(bb, 'utf-8');
+//     })
+// }
 
 describe('Sender', () => {
+    const filename = 'large-file.txt';
+
     it('gets a code when a file is selected', async () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('http://localhost:8080/send')
 
-        const sendCode = await UIGetCode();
+        const sendCode = await UIGetCode(filename);
         const codeParts = sendCode.split('-');
         expect(codeParts).to.have.lengthOf(3);
     })
 
-    it.skip('shows send progress when the receiver connects', async () => {
+    it('copies a link embedding the code when copy button is clicked', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('http://localhost:8080/send')
 
-        const sendCode = await UIGetCode();
-        const receivedData = await mockReceive(sendCode);
-        console.log(receivedData);
-        const receivedText = await largeuint8ArrToString(receivedData);
-        console.log('text: ' + receivedText);
+        UIGetCode(filename).then(code => {
+            cy.get('.copy-button')
+                .should('be.visible')
+                .click().then(() => {
+                expect(navigator.clipboard.readText()).to.eq(code);
+            });
+        });
     })
+
+    // it('shows send progress when the receiver connects', async () => {
+    //     cy.viewport('samsung-note9', 'portrait')
+    //     cy.visit('http://localhost:8080/send')
+    //
+    //     const sendCode = await UIGetCode();
+    //     const receivedData = await mockReceive(sendCode);
+    //     console.log(receivedData);
+    //     const receivedText = await largeuint8ArrToString(receivedData);
+    //     console.log('text: ' + receivedText);
+    // })
 })
 
-async function UIGetCode(): Promise<string> {
-    // TODO: figure out what curse cypress has put on their async api such
-    //  that `cy.x().then(y => {...})` is not equivalent to `const y = await cy.x()`
+function selectTestFile(filename: string): Chainable<unknown> {
+    return cy.fixture('large-file.txt').then(fileContent => {
+        cy.contains('ion-button', 'select')
+            // TODO: doesn't test button triggers file dialog
+            // TODO: can't set / test file size?
+            .get('input[type="file"]')
+            .attachFile({
+                fileName: 'large-file.txt',
+                fileContent,
+            })
+    });
+}
+
+// TODO: refactor (application actions / page objects?)
+async function UIGetCode(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        cy.fixture('large-file.txt').then(fileContent => {
+        cy.fixture(filename).then(fileContent => {
             cy.contains('ion-button', 'select')
                 // TODO: doesn't test button triggers file dialog
                 // TODO: can't set / test file size?
@@ -56,16 +79,9 @@ async function UIGetCode(): Promise<string> {
                     fileContent,
                 })
                 .get('.send-code-input>input')
+                .should('not.have.value', '')
                 .then(el => {
-                    const _el = el[0] as HTMLInputElement;
-                    // TODO: refactor
-                    const id = setInterval(() => {
-                        const sendCode = _el.value;
-                        if (sendCode !== '') {
-                            clearInterval(id)
-                            resolve(sendCode);
-                        }
-                    }, 50)
+                    resolve((el[0] as HTMLInputElement).value);
                 })
         })
     });
