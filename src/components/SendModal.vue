@@ -31,7 +31,8 @@
                     ></ion-input>
                 </ion-col>
                 <ion-col size="1">
-                    <copy-button :code="code"/>
+                    <copy-button :code="code"
+                                 :host="host"/>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -80,6 +81,7 @@
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
     import VersionFooter from "@/components/VersionFooter";
+    import CopyButton from "@/components/CopyButton";
 
     // TODO: move
     function encodeFileInfo(info) {
@@ -90,9 +92,16 @@
         name: "SendModal.vue",
         props: ['setOpen', 'file'],
         data() {
+            // TODO: refactor
+            let host = 'http://localhost:8080';
+            if (process.env.NODE_ENV === 'production') {
+                host = 'https://wormhole.bryanchriswhite.com';
+            }
+
             return {
                 code: '',
                 client: new Client(),
+                host,
             }
         },
         computed: {
@@ -142,6 +151,7 @@
             IonInput,
             MyHeader,
             VersionFooter,
+            CopyButton,
         },
     });
 </script>

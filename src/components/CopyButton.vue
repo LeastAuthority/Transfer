@@ -1,7 +1,8 @@
 <template>
     <ion-button class="copy-button"
                 color="light"
-                disabled>
+                @click="copyLink"
+                :disabled="disabled">
         <ion-icon :icon="clipboardOutline"></ion-icon>
     </ion-button>
 </template>
@@ -17,7 +18,18 @@
 
     export default defineComponent({
         name: 'CopyButton.vue',
-        props: ['code'],
+        props: ['host', 'code'],
+        data() {
+            return {
+                disabled: !navigator.clipboard,
+            }
+        },
+        methods: {
+            copyLink() {
+                const url = `${this.host}/receive/${this.code}`;
+                navigator.clipboard.writeText(url);
+            },
+        },
         setup() {
             return {
                 clipboardOutline,
