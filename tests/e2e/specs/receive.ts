@@ -1,13 +1,12 @@
 import Go from '../../../src/go'
 import Client from '@/go/wormhole/client.ts';
 import {expectFileDownloaded, expectReceiveConfirm, mobileViewport} from "../support/util";
-import Chainable = Cypress.Chainable;
+import {TEST_HOST} from "../support/util";
 
 
-// before(initGo)
-// after(() => cy.task('clearDownloads'))
+before(initGo)
+after(() => cy.task('clearDownloads'))
 async function initGo() {
-    console.log('in initGo');
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
@@ -17,14 +16,11 @@ async function initGo() {
 describe('Receive', () => {
     const filename = 'small-file.txt';
     beforeEach(() => cy.task('clearDownloads'))
-    before(done => {
-        initGo().then(() => done())
-    });
 
     it('via typed code', (done) => {
         mobileViewport();
 
-        cy.visit('http://localhost:8080/receive')
+        cy.visit(`${TEST_HOST}/receive`)
         cy.fixture(filename).then(async (file: string) => {
             const code = await mockSend(filename, file)
             UIEnterCode(code).then(() => {
@@ -37,24 +33,23 @@ describe('Receive', () => {
         });
     });
 
-    // TODO: why cypress, why?
-    // it.skip('via code URL', (done) => {
-    //     mobileViewport();
-    //
-    //     cy.fixture(filename).then(async (file: string) => {
-    //         // await initGo();
-    //         const code = await mockSend(filename, file)
-    //         console.log(code);
-    //         // cy.wait(20000).then(() => {
-    //         cy.visit(`http://localhost:8080/receive/${code}`)
-    //         expectReceiveConfirm(code).then(() => {
-    //             expectFileDownloaded(filename, file).then(() => {
-    //                 done();
-    //             });
-    //         });
-    //         // });
-    //     });
-    // });
+    it('via code URL', (done) => {
+        mobileViewport();
+
+        cy.fixture(filename).then(async (file: string) => {
+            // await initGo();
+            const code = await mockSend(filename, file);
+            console.log(code);
+            // cy.wait(20000).then(() => {
+            cy.visit(`${TEST_HOST}/receive/${code}`)
+            expectReceiveConfirm(code).then(() => {
+                expectFileDownloaded(filename, file).then(() => {
+                    done();
+                });
+            });
+            // });
+        });
+    });
 });
 
 async function UIEnterCode(code: string) {

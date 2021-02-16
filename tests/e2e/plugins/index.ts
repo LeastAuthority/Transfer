@@ -1,6 +1,8 @@
 import glob from 'glob';
 import fs from 'fs';
 
+import clipboardy from 'clipboardy';
+
 /* eslint-disable arrow-body-style */
 // https://docs.cypress.io/guides/guides/plugins-guide.html
 
@@ -12,15 +14,22 @@ import fs from 'fs';
 // /* eslint-disable import/no-extraneous-dependencies, global-require */
 // const webpack = require('@cypress/webpack-preprocessor')
 
-module.exports = (on, config) => {
+module.exports = (on: Function, config: Object) => {
     on('task', {
-        clearDownloads() {
+        clearDownloads(): null {
             glob('./cypress/downloads/*', {}, (err, files) => {
                 for (const file of files) {
                     fs.unlinkSync(file);
                 }
             });
             return null
+        },
+        readClipboard(): string {
+            return clipboardy.readSync();
+        },
+        writeClipboard(text: string): null {
+            clipboardy.writeSync(text);
+            return null;
         }
     })
 

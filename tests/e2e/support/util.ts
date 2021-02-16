@@ -2,6 +2,9 @@ import Chainable = Cypress.Chainable;
 
 const downloadDir = 'cypress/downloads'
 
+// TODO: move / automate
+export const TEST_HOST = 'http://localhost:8080'
+
 export function mobileViewport() {
     cy.viewport('samsung-note9', 'portrait')
 }
@@ -37,4 +40,16 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
 //             resolve(file);
 //         });
 //     });
+// }
+
+// export function largeUint8ArrToString(uint8arr: Uint8Array) {
+//     return new Promise((resolve, reject) => {
+//         const bb = new Blob([uint8arr]);
+//         const f = new FileReader();
+//         f.onload = function (event) {
+//             resolve(event.target.result);
+//         };
+//
+//         f.readAsText(bb, 'utf-8');
+//     })
 // }

@@ -1,76 +1,69 @@
 // https://docs.cypress.io/api/introduction/api.html
 
 import Chainable = Cypress.Chainable;
+
 import Go from '../../../src/go'
 import Client from '@/go/wormhole/client.ts';
-
-// function largeuint8ArrToString(uint8arr: Uint8Array) {
-//     return new Promise((resolve, reject) => {
-//         const bb = new Blob([uint8arr]);
-//         const f = new FileReader();
-//         f.onload = function (event) {
-//             resolve(event.target.result);
-//         };
-//
-//         f.readAsText(bb, 'utf-8');
-//     })
-// }
+import {TEST_HOST} from "../support/util";
+// import {largeUint8ArrToString} from "../support/util";
 
 describe('Sender', () => {
     const filename = 'large-file.txt';
 
-    it('gets a code when a file is selected', async () => {
+    it('gets a code when a file is selected', (done) => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit('http://localhost:8080/send')
+        cy.visit(`${TEST_HOST}/send`)
 
-        const sendCode = await UIGetCode(filename);
-        const codeParts = sendCode.split('-');
-        expect(codeParts).to.have.lengthOf(3);
+        UIGetCode(filename).then(sendCode => {
+            const codeParts = sendCode.split('-');
+            expect(codeParts).to.have.lengthOf(3);
+            done();
+        })
     })
 
     // TODO: figure out how to read clipboard for test without document focus
     //  -- maybe there's a browser flag / arg to loosen permissions?
-    it.skip('copies a link embedding the code when copy button is clicked', () => {
+    it('copies a link embedding the code when copy button is clicked', (done) => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit('http://localhost:8080/send')
+        cy.visit(`${TEST_HOST}/send`)
 
         UIGetCode(filename).then(code => {
             cy.get('.copy-button')
                 .should('be.visible')
-                // TODO: investigate why not working
+                // TODO: investigate why not working as expected
                 // .should('not.be.enabled')
-                .click().then(() => {
-                navigator.clipboard.readText().then(actual => {
-                    expect(actual).to.eq(code);
-                });
-            });
+                .click()
+                .task('readClipboard').then(actual => {
+                expect(actual).to.eq(`${TEST_HOST}/receive/${code}`);
+                done();
+            })
         });
-    })
-
-    // it('shows send progress when the receiver connects', async () => {
-    //     cy.viewport('samsung-note9', 'portrait')
-    //     cy.visit('http://localhost:8080/send')
-    //
-    //     const sendCode = await UIGetCode();
-    //     const receivedData = await mockReceive(sendCode);
-    //     console.log(receivedData);
-    //     const receivedText = await largeuint8ArrToString(receivedData);
-    //     console.log('text: ' + receivedText);
-    // })
+    });
 })
 
-function selectTestFile(filename: string): Chainable<unknown> {
-    return cy.fixture('large-file.txt').then(fileContent => {
-        cy.contains('ion-button', 'select')
-            // TODO: doesn't test button triggers file dialog
-            // TODO: can't set / test file size?
-            .get('input[type="file"]')
-            .attachFile({
-                fileName: 'large-file.txt',
-                fileContent,
-            })
-    });
-}
+// it('shows send progress when the receiver connects', async () => {
+//     cy.viewport('samsung-note9', 'portrait')
+//     cy.visit(`${TEST_HOST}/send`)
+//
+//     const sendCode = await UIGetCode(filename);
+//     const receivedData = await mockReceive(sendCode);
+//     console.log(receivedData);
+//     const receivedText = await largeUint8ArrToString(receivedData);
+//     console.log('text: ' + receivedText);
+// })
+
+// function selectTestFile(filename: string): Chainable<unknown> {
+//     return cy.fixture('large-file.txt').then(fileContent => {
+//         cy.contains('ion-button', 'select')
+//             // TODO: doesn't test button triggers file dialog
+//             // TODO: can't set / test file size?
+//             .get('input[type="file"]')
+//             .attachFile({
+//                 fileName: 'large-file.txt',
+//                 fileContent,
+//             })
+//     });
+// }
 
 // TODO: refactor (application actions / page objects?)
 async function UIGetCode(filename: string): Promise<string> {
