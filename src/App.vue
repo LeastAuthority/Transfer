@@ -8,13 +8,6 @@
 <script lang="ts">
     import {IonApp, IonRouterOutlet, IonMenu} from '@ionic/vue';
     import {defineComponent} from 'vue';
-    import Go from '@/go';
-
-    console.log("initializing wasm...")
-    const go = new Go();
-    WebAssembly.instantiateStreaming(fetch("/assets/wormhole.wasm"), go.importObject).then((result) => {
-        go.run(result.instance);
-    });
 
     export default defineComponent({
         name: 'App',
