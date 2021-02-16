@@ -1,4 +1,5 @@
 {
   "pluginsFile": "tests/e2e/plugins/index.ts",
-  "projectId": "56zfjm"
+  "projectId": "56zfjm",
+  "baseUrl": "http://localhost:8080"
 }

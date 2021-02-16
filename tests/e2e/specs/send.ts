@@ -1,7 +1,3 @@
-// https://docs.cypress.io/api/introduction/api.html
-
-import Chainable = Cypress.Chainable;
-
 import Go from '../../../src/go'
 import Client from '@/go/wormhole/client.ts';
 import {TEST_HOST} from "../support/util";
@@ -12,7 +8,7 @@ describe('Sender', () => {
 
     it('gets a code when a file is selected', (done) => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit(`${TEST_HOST}/send`)
+        cy.visit('/send')
 
         UIGetCode(filename).then(sendCode => {
             const codeParts = sendCode.split('-');
@@ -25,7 +21,7 @@ describe('Sender', () => {
     //  -- maybe there's a browser flag / arg to loosen permissions?
     it('copies a link embedding the code when copy button is clicked', (done) => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit(`${TEST_HOST}/send`)
+        cy.visit('/send')
 
         UIGetCode(filename).then(code => {
             cy.get('.copy-button')
