@@ -32,8 +32,8 @@ services:
       - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.mailbox.entrypoints=websecure"
       - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
-    depends_on:
-      - traefik
+#    depends_on:
+#      - traefik
 
   relay:
     build:
