@@ -10,4 +10,4 @@ RUN pipenv install
 #CMD pipenv run twist transitrelay
 
 # depends on application source volume
-CMD bash -c "pipenv run pip install -e . && pipenv run twist transitrelay"
+CMD bash -c "pipenv run twist transitrelay"
