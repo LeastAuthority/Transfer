@@ -7,7 +7,12 @@ RUN pip install pipenv
 WORKDIR /app
 RUN pipenv install
 
-#CMD pipenv run twist transitrelay
+RUN bash -c "cat >>/root/.bashrc <<EOF \
+\
+function dev_server { \
+    pip install -e . && pipenv run twist transitrelay \
+} \
+export -f dev_server \
+EOF; cat $HOME/.bashrc"
 
-# depends on application source volume
 CMD bash -c "pipenv run twist transitrelay"
