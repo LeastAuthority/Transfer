@@ -38,6 +38,8 @@ services:
   relay:
     build:
       context: ./relay
+    volumes:
+      - "../magic-wormhole-transit-relay:/app"
     expose:
 #      - "4001"
       - "4002"
