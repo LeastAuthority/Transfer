@@ -5,11 +5,13 @@ export interface WindowWormhole {
 export interface WindowClient {
     newClient(config?: ClientConfig): number;
     sendText(goClient: number, message: string): Promise<string>;
-    sendFile(goClient: number, fileName: string, fileData: Uint8Array): Promise<string>;
+    sendFile(goClient: number, fileName: string, fileData: Uint8Array, progressCb?: ProgressCallback): Promise<string>;
     recvText(goClient: number, code: string): Promise<string>;
     recvFile(goClient: number, code: string): Promise<Uint8Array>;
     free(goClient: number): string | undefined;
 }
+
+export type ProgressCallback = (sentBytes: number, totalBytes: number) => void
 
 export interface ClientConfig {
     rendezvousURL: string;
