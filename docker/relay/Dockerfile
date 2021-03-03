@@ -7,4 +7,4 @@ RUN pip install pipenv
 WORKDIR /app
 RUN pipenv install
 
-CMD bash -c "pip install -e . && pipenv run twist transitrelay"
+CMD bash -c "pipenv install --dev -e . && pipenv run twist transitrelay"
