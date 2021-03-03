@@ -25,8 +25,8 @@ services:
   mailbox:
     build:
       context: ./mailbox
-    ports:
-      - "4000:4000"
+    expose:
+      - "4000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
@@ -38,9 +38,9 @@ services:
   relay:
     build:
       context: ./relay
-    ports:
-#      - "4001:4001"
-      - "4002:4002"
+    expose:
+#      - "4001"
+      - "4002"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.relay.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
