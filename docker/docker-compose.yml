@@ -32,18 +32,19 @@ services:
       - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.mailbox.entrypoints=websecure"
       - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
-#    depends_on:
-#      - traefik
+    depends_on:
+      - traefik
 
   relay:
     build:
       context: ./relay
     ports:
-      - "4001:4001"
+#      - "4001:4001"
+      - "4002:4002"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.relay.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.relay.entrypoints=websecure"
       - "traefik.http.routers.relay.tls.certresolver=mytlschallenge"
-#    depends_on:
-#      - traefik
+    depends_on:
+      - traefik
