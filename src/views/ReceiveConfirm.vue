@@ -59,6 +59,7 @@
         IonIcon,
     } from '@ionic/vue';
     import {cloudDownloadOutline, close} from 'ionicons/icons';
+    import streamSaver from 'streamsaver';
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
@@ -123,6 +124,26 @@
 
                 console.log('downloaded!')
                 console.log(fileData);
+                const fileStream = streamSaver.createWriteStream(this.file.name, {
+                    size: this.file.size,
+                })
+
+                // more optimized pipe version
+                // (Safari may have pipeTo but it's useless without the WritableStream)
+                // if (window.WritableStream && readableStream.pipeTo) {
+                //     return readableStream.pipeTo(fileStream)
+                //         .then(() => console.log('done writing'))
+                // }
+
+                const readStream = new Response(fileData.buffer).body
+                const writer = fileStream.getWriter()
+                const reader = readStream.getReader()
+                const pump = () => reader.read()
+                    .then(res => res.done
+                        ? writer.close()
+                        : writer.write(res.value).then(pump))
+
+                await pump()
             },
         },
         setup() {
