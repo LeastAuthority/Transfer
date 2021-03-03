@@ -1,4 +1,4 @@
-import _Client, {ClientConfig, ProgressCallback} from "@/go/wormhole/client";
+import {ClientConfig, ProgressCallback} from "@/go/wormhole/client";
 
 declare class Go {
     constructor();
@@ -8,7 +8,7 @@ declare class Go {
 export default Go;
 
 declare interface IWormhole {
-    Client: _Client
+    Client: ICLient
 }
 
 export interface IClient {
@@ -20,8 +20,4 @@ export interface IClient {
     free(goClient: number): string | undefined
 }
 
-// TODO: something better!
-// NB: dynamic import workaround
-export const wormhole;
-
-// export const Client = Client;
+export const wormhole: IWormhole;

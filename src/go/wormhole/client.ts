@@ -1,4 +1,5 @@
-import {client} from '..'
+import type {IClient} from '..'
+import {wormhole} from '..'
 
 export interface ClientConfig {
     rendezvousURL: string;
@@ -15,39 +16,39 @@ const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     passPhraseComponentLength: 2,
 }
 
+let _Client: IClient;
 export default class Client {
     public goClient: number;
 
     constructor(config?: ClientConfig) {
+        _Client = wormhole.Client
+
         if (!config && process.env.NODE_ENV === 'production') {
             config = DEFAULT_PROD_CLIENT_CONFIG;
         }
 
-        this.goClient = client.newClient(config)
+        this.goClient = _Client.newClient(config)
     }
 
     public async sendText(message: string): Promise<string> {
-        return client.sendText(this.goClient, message);
+        return _Client.sendText(this.goClient, message);
     }
 
     public async sendFile(file: File): Promise<string> {
-        console.log('sendFile called')
         const data = new Uint8Array(await file.arrayBuffer());
-        console.log('data')
-        console.log(data)
         return client.sendFile(this.goClient, file.name, data);
     }
 
     public async recvText(code: string): Promise<string> {
-        return client.recvText(this.goClient, code)
+        return _Client.recvText(this.goClient, code)
     }
 
     public async recvFile(code: string): Promise<Uint8Array> {
-        return client.recvFile(this.goClient, code)
+        return _Client.recvFile(this.goClient, code)
     }
 
     public free() {
-        const err = client.free(this.goClient)
+        const err = _Client.free(this.goClient)
         if (!err) {
             throw err;
         }
