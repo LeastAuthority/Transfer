@@ -24,14 +24,12 @@
             </ion-row>
             <ion-row>
                 <ion-col>
-                    <a id="downloadAnchor"
-                       :download="file.name"
-                       :href="file.dataURI">
-                        <ion-button class="download-button" color="light">
-                            <ion-icon :icon="cloudDownloadOutline"></ion-icon>
-                            <ion-text class="ion-padding-start">Download</ion-text>
-                        </ion-button>
-                    </a>
+                    <ion-button class="download-button" color="light">
+                        <ion-icon :icon="cloudDownloadOutline"></ion-icon>
+                        <ion-text class="ion-padding-start"
+                                  @click="download"
+                        >Download</ion-text>
+                    </ion-button>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -68,8 +66,6 @@
     import Client from '@/go/wormhole/client.ts';
     import {sizeToClosestUnit} from "@/util";
 
-    let downloadAnchor;
-
     // TODO: move
     function decodeFileInfo(infoStr) {
         return JSON.parse(window.atob(infoStr))
@@ -94,14 +90,10 @@
             }
         },
         async mounted() {
-            downloadAnchor = document.querySelector('#downloadAnchor');
-
+            // TODO: expose more of wormhole-william and handle this internally!
             const fileInfoStr = await this.client.recvText(this.$route.params.code);
             const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
             this.file = {name, size, code};
-
-            // TODO: should actually download after confirmation!
-            await this.download();
         },
         components: {
             IonPage,
@@ -123,14 +115,14 @@
                 console.log('downloading...')
                 // try {
                 // console.log('sanity check')
-                // const fileData = await this.client.recvFile(this.file.code)
+                const fileData = await this.client.recvFile(this.file.code)
 
-                const fileDataURI = await this.client.recvText(this.file.code)
-                console.log(fileDataURI);
-                this.file.dataURI = fileDataURI;
+                // const fileDataURI = await this.client.recvText(this.file.code)
+                // console.log(fileDataURI);
+                // this.file.dataURI = fileDataURI;
 
-                // console.log('downloaded!')
-                // console.log(fileData);
+                console.log('downloaded!')
+                console.log(fileData);
             },
         },
         setup() {

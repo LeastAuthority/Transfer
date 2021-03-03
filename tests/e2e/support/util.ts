@@ -10,9 +10,10 @@ export function mobileViewport() {
 }
 
 export function expectFileDownloaded(filename: string, expected: string): Chainable<undefined> {
-    return cy.wait(1000).get('.download-button').click().then(() => {
+    // NB: `cy.wait` for text msg with metadata.
+    return cy.wait(300).get('.download-button').click().then(() => {
         const path = `${downloadDir}/${filename}`
-        return cy.readFile(path, 'utf-8', {timeout: 500})
+        return cy.readFile(path, 'utf-8', {timeout: 3000})
             .should((actual) => {
                 expect(actual).to.eq(expected, 'file contents are not equal')
             });

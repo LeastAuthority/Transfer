@@ -14,7 +14,8 @@ async function initGo() {
 }
 
 describe('Receive', () => {
-    const filename = 'small-file.txt';
+    const filename = 'large-file.txt';
+    // const filename = 'small-file.txt';
     beforeEach(() => cy.task('clearDownloads'))
 
     it('via typed code', (done) => {
@@ -59,19 +60,17 @@ async function UIEnterCode(code: string) {
 
 async function mockSend(name: string, data: string): Promise<string> {
     const sender = new Client();
-    // const _file = {
-    //     arrayBuffer() {
-    //         console.log('encoding...')
-    //         const enc = new TextEncoder();
-    //         return enc.encode(data);
-    //     }
-    // }
-    // return sender.sendFile(_file);
+    const file = {
+        arrayBuffer() {
+            const enc = new TextEncoder();
+            return enc.encode(data);
+        }
+    }
+    const fileCode = await sender.sendFile(file);
 
-    const fileCode = await sender.sendText(`data:text/plain;base64,${btoa(data)}`);
+    // const fileCode = await sender.sendText(`data:text/plain;base64,${btoa(data)}`);
     const fileStats = btoa(JSON.stringify({
         name,
-        // size: this.file.size,
         fileCode,
     }));
     return sender.sendText(fileStats)
