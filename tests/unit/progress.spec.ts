@@ -17,14 +17,13 @@ describe('Send progress', () => {
 
     it('increments from 0 to total size', async () => {
         const sender = new Client()
-        const data = 'testing 123'
+        const sizeBytes = 1024 ** 2 // 1MiB
 
         const progressCb = jest.fn()
 
         const file = {
             arrayBuffer() {
-                const enc = new TextEncoder();
-                return enc.encode(data);
+                return new ArrayBuffer(sizeBytes)
             }
         }
 
@@ -35,16 +34,14 @@ describe('Send progress', () => {
         const receiver = new Client();
         await receiver.recvFile(code);
         expect(progressCb).toHaveBeenCalled();
+        expect(progressCb.mock.calls.length).toBeGreaterThan(10);
+
+        progressCb.mock.calls.reduce((prevSentBytes, curr, i, arr) => {
+            const [sentBytes, totalBytes] = curr;
+            expect(sentBytes).toBeGreaterThan(prevSentBytes)
+            expect(totalBytes).toEqual(sizeBytes)
+
+            return sentBytes;
+        }, 0)
     })
 })
-
-async function mockSend(name: string, data: string): Promise<string> {
-    const sender = new Client();
-    const file = {
-        arrayBuffer() {
-            const enc = new TextEncoder();
-            return enc.encode(data);
-        }
-    }
-    return await sender.sendFile(file);
-}
