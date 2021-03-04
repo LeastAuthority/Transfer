@@ -1,4 +1,4 @@
-import {ClientConfig, wormhole} from "@/go/wormhole/types";
+import {ClientConfig, ProgressCallback, wormhole} from "@/go/wormhole/types";
 
 const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
@@ -23,9 +23,9 @@ export default class Client {
         return wormhole.Client.sendText(this.goClient, message);
     }
 
-    public async sendFile(file: File): Promise<string> {
+    public async sendFile(file: File, progressCb?: ProgressCallback): Promise<string> {
         const data = new Uint8Array(await file.arrayBuffer());
-        return wormhole.Client.sendFile(this.goClient, file.name, data);
+        return wormhole.Client.sendFile(this.goClient, file.name, data, progressCb);
     }
 
     public async recvText(code: string): Promise<string> {
