@@ -174,14 +174,15 @@
         }
     }
 
-    // if (!global.crypto) {
-    // 	const nodeCrypto = require("crypto");
-    // 	global.crypto = {
-    // 		getRandomValues(b) {
-    // 			nodeCrypto.randomFillSync(b);
-    // 		},
-    // 	};
-    // }
+    if (!global.crypto) {
+        import('crypto').then(nodeCrypto => {
+            global.crypto = {
+                getRandomValues(b) {
+                    nodeCrypto.randomFillSync(b);
+                },
+            };
+        });
+    }
 
     if (!global.performance) {
         global.performance = {
@@ -656,16 +657,4 @@
     }
 })();
 
-export default window.Go;
-
-// TODO: something better!
-// NB: dynamic import workaround
-
-export const wormhole = new Proxy({}, {
-    get(target, prop, receiver) {
-        switch (prop) {
-            case 'Client':
-                return global.Wormhole.Client
-        }
-    }
-});
+export default global.Go;

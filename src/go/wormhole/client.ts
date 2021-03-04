@@ -1,12 +1,4 @@
-import type {IClient} from '..'
-import {wormhole} from '..'
-
-export interface ClientConfig {
-    rendezvousURL: string;
-    transitRelayAddress: string;
-    // TODO: int
-    passPhraseComponentLength: number;
-}
+import {ClientConfig, wormhole} from "@/go/wormhole/types";
 
 const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
@@ -16,39 +8,36 @@ const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     passPhraseComponentLength: 2,
 }
 
-let _Client: IClient;
 export default class Client {
     public goClient: number;
 
     constructor(config?: ClientConfig) {
-        _Client = wormhole.Client
-
         if (!config && process.env.NODE_ENV === 'production') {
             config = DEFAULT_PROD_CLIENT_CONFIG;
         }
 
-        this.goClient = _Client.newClient(config)
+        this.goClient = wormhole.Client.newClient(config)
     }
 
     public async sendText(message: string): Promise<string> {
-        return _Client.sendText(this.goClient, message);
+        return wormhole.Client.sendText(this.goClient, message);
     }
 
     public async sendFile(file: File): Promise<string> {
         const data = new Uint8Array(await file.arrayBuffer());
-        return client.sendFile(this.goClient, file.name, data);
+        return wormhole.Client.sendFile(this.goClient, file.name, data);
     }
 
     public async recvText(code: string): Promise<string> {
-        return _Client.recvText(this.goClient, code)
+        return wormhole.Client.recvText(this.goClient, code)
     }
 
     public async recvFile(code: string): Promise<Uint8Array> {
-        return _Client.recvFile(this.goClient, code)
+        return wormhole.Client.recvFile(this.goClient, code)
     }
 
     public free() {
-        const err = _Client.free(this.goClient)
+        const err = wormhole.Client.free(this.goClient)
         if (!err) {
             throw err;
         }
