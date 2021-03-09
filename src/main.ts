@@ -23,6 +23,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import {FileStreamReader} from "@/go/wormhole/streaming";
 
 const app = createApp(App)
     .use(IonicVue)
@@ -30,6 +31,10 @@ const app = createApp(App)
 
 const routerReady = router.isReady();
 
+(function() {
+    // TODO: JS -> wasm dependency injection
+    (window as any).FileStreamReader = FileStreamReader;
+}())
 const go = new Go();
 const wasmReady = WebAssembly.instantiateStreaming(fetch("/assets/wormhole.wasm"), go.importObject).then((result) => {
     go.run(result.instance);
