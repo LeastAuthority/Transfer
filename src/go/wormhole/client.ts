@@ -1,4 +1,5 @@
 import {ClientConfig, ProgressCallback, wormhole} from "@/go/wormhole/types";
+import {FileStreamReader} from '@/go/wormhole/streaming';
 
 const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
@@ -32,7 +33,7 @@ export default class Client {
         return wormhole.Client.recvText(this.goClient, code)
     }
 
-    public async recvFile(code: string): Promise<Uint8Array> {
+    public async recvFile(code: string): Promise<FileStreamReader> {
         return wormhole.Client.recvFile(this.goClient, code)
     }
 

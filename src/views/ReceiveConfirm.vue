@@ -114,36 +114,19 @@
             // TODO: move this to Receive.vue
             async download() {
                 console.log('downloading...')
-                // try {
-                // console.log('sanity check')
-                const fileData = await this.client.recvFile(this.file.code)
-
-                // const fileDataURI = await this.client.recvText(this.file.code)
-                // console.log(fileDataURI);
-                // this.file.dataURI = fileDataURI;
-
-                console.log('downloaded!')
-                console.log(fileData);
                 const fileStream = streamSaver.createWriteStream(this.file.name, {
                     size: this.file.size,
                 })
-
-                // more optimized pipe version
-                // (Safari may have pipeTo but it's useless without the WritableStream)
-                // if (window.WritableStream && readableStream.pipeTo) {
-                //     return readableStream.pipeTo(fileStream)
-                //         .then(() => console.log('done writing'))
-                // }
-
-                const readStream = new Response(fileData.buffer).body
-                const writer = fileStream.getWriter()
-                const reader = readStream.getReader()
-                const pump = () => reader.read()
-                    .then(res => res.done
-                        ? writer.close()
-                        : writer.write(res.value).then(pump))
-
-                await pump()
+                const writer = fileStream.getWriter();
+                const bufferSize = 1024 * 4 // 4KiB
+                const buf = new Uint8Array(bufferSize)
+                const recvReader = await this.client.recvFile(this.file.code)
+                for (let n = 0, done = false; !done;) {
+                    [n, done] = await recvReader.read(buf);
+                    await writer.write(buf.slice(0, n));
+                }
+                await writer.close();
+                console.log('downloaded!')
             },
         },
         setup() {

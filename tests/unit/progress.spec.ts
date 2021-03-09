@@ -1,16 +1,5 @@
-import fs from 'fs';
-import path from 'path';
-
-import Go from "@/go";
 import Client from '@/go/wormhole/client'
-
-async function initGo() {
-    const go = new Go();
-    const wasmPath = path.join(__dirname, '..', '..', 'public', 'assets', 'wormhole.wasm');
-    await WebAssembly.instantiate(fs.readFileSync(wasmPath), go.importObject).then((result) => {
-        go.run(result.instance);
-    });
-}
+import {initGo, newTestFile} from './util';
 
 describe('Send progress', () => {
     beforeAll(initGo)
@@ -18,18 +7,10 @@ describe('Send progress', () => {
     it('increments from 0 to total size', async () => {
         const sender = new Client()
         const sizeBytes = 1024 ** 2 // 1MiB
+        const file = newTestFile('test-file', sizeBytes)
 
         const progressCb = jest.fn()
-
-        const file = {
-            arrayBuffer() {
-                return new ArrayBuffer(sizeBytes)
-            }
-        }
-
-        const code = await sender.sendFile(file, (sentBytes: number, totalBytes: number) => {
-            progressCb(sentBytes, totalBytes);
-        })
+        const code = await sender.sendFile(file, progressCb)
 
         const receiver = new Client();
         await receiver.recvFile(code);

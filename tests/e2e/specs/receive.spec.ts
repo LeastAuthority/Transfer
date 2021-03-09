@@ -1,7 +1,7 @@
 import Go from '../../../src/go'
-import Client from '@/go/wormhole/client.ts';
-import {expectFileDownloaded, expectReceiveConfirm, mobileViewport} from "../support/util";
-import {TEST_HOST} from "../support/util";
+import {expectFileDownloaded, expectReceiveConfirm, mobileViewport, mockClientSend} from "../support/util";
+import {mount} from "@vue/test-utils";
+import ReceiveConfirm from "@/views/ReceiveConfirm.vue";
 
 
 before(initGo)
@@ -23,7 +23,7 @@ describe('Receive', () => {
 
         cy.visit('/receive')
         cy.fixture(filename).then(async (file: string) => {
-            const code = await mockSend(filename, file)
+            const code = await mockClientSend(filename, file)
             UIEnterCode(code).then(() => {
                 expectReceiveConfirm(code).then(() => {
                     expectFileDownloaded(filename, file).then(() => {
@@ -38,7 +38,7 @@ describe('Receive', () => {
         mobileViewport();
 
         cy.fixture(filename).then(async (file: string) => {
-            const code = await mockSend(filename, file);
+            const code = await mockClientSend(filename, file);
             console.log(code);
             cy.visit(`/receive/${code}`)
             expectReceiveConfirm(code).then(() => {
@@ -56,22 +56,4 @@ async function UIEnterCode(code: string) {
 
     cy.get('.receive-next')
         .click()
-}
-
-async function mockSend(name: string, data: string): Promise<string> {
-    const sender = new Client();
-    const file = {
-        arrayBuffer() {
-            const enc = new TextEncoder();
-            return enc.encode(data);
-        }
-    }
-    const fileCode = await sender.sendFile(file);
-
-    // const fileCode = await sender.sendText(`data:text/plain;base64,${btoa(data)}`);
-    const fileStats = btoa(JSON.stringify({
-        name,
-        fileCode,
-    }));
-    return sender.sendText(fileStats)
 }
