@@ -3,7 +3,6 @@ import {createApp} from 'vue'
 
 import App from '@/App.vue'
 import router from '@/router';
-import Go from '@/go';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -23,7 +22,6 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import {FileStreamReader} from "@/go/wormhole/streaming";
 
 const app = createApp(App)
     .use(IonicVue)
@@ -31,15 +29,6 @@ const app = createApp(App)
 
 const routerReady = router.isReady();
 
-(function() {
-    // TODO: JS -> wasm dependency injection
-    (window as any).FileStreamReader = FileStreamReader;
-}())
-const go = new Go();
-const wasmReady = WebAssembly.instantiateStreaming(fetch("/assets/wormhole.wasm"), go.importObject).then((result) => {
-    go.run(result.instance);
-});
-
-Promise.all([routerReady, wasmReady]).then(() => {
+Promise.all([routerReady]).then(() => {
     app.mount('#app');
 });
