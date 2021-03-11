@@ -36,6 +36,16 @@
                 </ion-col>
             </ion-row>
             <ion-row>
+                <ion-col>progress: {{progress.value}}</ion-col>
+                <ion-col>
+                    <ion-progress-bar></ion-progress-bar>
+<!--                    <ion-progress-bar color="primary"-->
+<!--                                      :type="progress.type"-->
+<!--                                      :value="progress.value"-->
+<!--                    ></ion-progress-bar>-->
+                </ion-col>
+            </ion-row>
+            <ion-row>
                 <ion-col class="ion-text-center">
                     <ion-button color="danger" @click="setOpen(false)">
                         <ion-icon :icon="close"></ion-icon>
@@ -71,6 +81,7 @@
         IonText,
         IonTitle,
         IonToolbar,
+        IonProgressBar,
     } from '@ionic/vue';
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
@@ -88,6 +99,10 @@
         return window.btoa(JSON.stringify(info));
     }
 
+    const PROGRESS_INDETERMINATE = 'indeterminate'
+    const PROGRESS_DETERMINATE = 'determinate'
+    const PROGRESS_DONE_TIMEOUT_MS = 500;
+
     export default defineComponent({
         name: "SendModal.vue",
         props: ['setOpen', 'file'],
@@ -102,6 +117,14 @@
                 code: '',
                 client: new ClientWorker(),
                 host,
+                progress: {
+                    type: PROGRESS_INDETERMINATE,
+                    // type: PROGRESS_DETERMINATE,
+                    value: -1,
+                    _value: -1,
+                    doneID: -1,
+                    updateID: -1,
+                }
             }
         },
         computed: {
@@ -110,7 +133,10 @@
             }
         },
         async beforeMount() {
-            const fileCode = await this.client.sendFile(this.file);
+            console.log(this.progress)
+
+            const fileCode = await this.client.sendFile(this.file, this.onProgress);
+            // const fileCode = await this.client.sendFile(this.file);
 
             // TODO: expose more of wormhole-william and handle this internally!
             const fileStats = encodeFileInfo({
@@ -119,6 +145,39 @@
                 fileCode,
             });
             this.code = await this.client.sendText(fileStats)
+        },
+        methods: {
+            onProgress(sentBytes, totalBytes) {
+                // this.progress.doneID++;
+                // console.log(`count: ${this.progress.doneID} | ${sentBytes/totalBytes * 100}%`)
+                // if (this.progress.updateID > 0) {
+                //    window.clearTimeout(this.progress.updateID)
+                // }
+                // this.progress.updateID = window.setTimeout(() => {
+                //     console.log('debounced')
+                    if (this.progress.type === PROGRESS_INDETERMINATE) {
+                        this.progress.type = PROGRESS_DETERMINATE;
+                    }
+                    this.progress._value = sentBytes / totalBytes;
+                    if (this.progress._value - this.progress.value >= 0.01) {
+                        this.progress.value = this.progress._value;
+                        console.log(`onProgress: ${this.progress.value}% | type: ${this.progress.type}`)
+                    }
+
+                    if (this.progress.doneID > 0) {
+                        window.clearTimeout(this.progress.doneID);
+                    }
+                    this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
+                // }, PROGRESS_UPDATE_TIMEOUT_MS);
+            },
+            resetProgress() {
+                console.log('resetting progress');
+                console.log(this.progress);
+                // this.progress.type = PROGRESS_INDETERMINATE;
+                // this.progress.value = -1;
+                this.progress.doneID = -1;
+            },
+
         },
         setup() {
             return {
@@ -138,6 +197,7 @@
             IonTitle,
             IonIcon,
             IonInput,
+            IonProgressBar,
             MyHeader,
             VersionFooter,
             CopyButton,
