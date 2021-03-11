@@ -2,16 +2,20 @@
   "name": "myFileTransfer",
   "version": "0.0.1",
   "private": true,
+  "description": "An Ionic project",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "compose": "bash scripts/docker-compose.sh",
-    "compose:up": "bash scripts/docker-compose.sh up",
-    "compose:logs": "bash scripts/docker-compose.sh logs -f",
     "build": "vue-cli-service build",
-    "build:wasm": "node scripts/build-wasm.js",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy:s3:playground": "npm run build && aws s3 sync ./dist s3://wormhole.bryanchriswhite.com ",
+    "deploy:s3:staging": "npm run build && aws s3 sync ./dist s3://staging.transfer.leastauthority.com ",
+    "deploy:s3:production": "aws s3 sync ./dist s3://transfer.leastauthority.com ",
+    "build:wasm": "node scripts/build-wasm.js",
+    "compose": "bash scripts/docker-compose.sh",
+    "compose:logs": "bash scripts/docker-compose.sh logs -f",
+    "compose:up": "bash scripts/docker-compose.sh up"
   },
   "dependencies": {
     "@capacitor/core": "2.4.5",
@@ -20,7 +24,8 @@
     "core-js": "^3.6.5",
     "streamsaver": "^2.0.5",
     "vue": "^3.0.0-0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "web-streams-polyfill": "^3.0.2"
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.5",
@@ -28,7 +33,7 @@
     "@types/node": "^14.14.25",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-babel": "^4.5.11",
     "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -46,8 +51,8 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "glob": "^7.1.6",
+    "tmp-promise": "^3.0.2",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0"
-  },
-  "description": "An Ionic project"
+  }
 }
