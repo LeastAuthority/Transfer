@@ -1,14 +1,12 @@
 import Go from '../../../src/go'
-import {expectFileDownloaded, expectReceiveConfirm, mobileViewport, mockClientSend} from "../support/util";
-import {mount} from "@vue/test-utils";
-import ReceiveConfirm from "@/views/ReceiveConfirm.vue";
+import {expectFileDownloaded, expectReceiveConfirm, mobileViewport, mockClientSend, TEST_HOST} from "../support/util";
 
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
 async function initGo() {
     const go = new Go();
-    await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
+    await WebAssembly.instantiateStreaming(fetch(`${TEST_HOST}/assets/wormhole.wasm`), go.importObject).then((result) => {
         go.run(result.instance);
     });
 }

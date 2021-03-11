@@ -31,15 +31,21 @@ const app = createApp(App)
 
 const routerReady = router.isReady();
 
-(function() {
-    // TODO: JS -> wasm dependency injection
-    (window as any).FileStreamReader = FileStreamReader;
-}())
-const go = new Go();
-const wasmReady = WebAssembly.instantiateStreaming(fetch("/assets/wormhole.wasm"), go.importObject).then((result) => {
-    go.run(result.instance);
-});
+const wasmWorker = new Worker(`${window.location.origin}/worker.js`);
+const channel = new MessageChannel();
+// wasmWorker.postMessage(null)
+wasmWorker.postMessage(null, [channel.port2])
+const wasmReady = new Promise((resolve, reject) => {
+    channel.port1.onmessage = function(event) {
+        if (event.data === 'ready:wasm') {
+            resolve();
+            return;
+        }
+        reject(event.data);
+    }
+})
 
+// Promise.all([routerReady, wasmReady]).then(() => {
 Promise.all([routerReady, wasmReady]).then(() => {
     app.mount('#app');
 });

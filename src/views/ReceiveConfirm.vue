@@ -58,6 +58,7 @@
         IonTitle,
         IonIcon,
     } from '@ionic/vue';
+    import {defineComponent} from 'vue';
     import {cloudDownloadOutline, close} from 'ionicons/icons';
     import streamSaver from 'streamsaver';
 
@@ -72,7 +73,7 @@
         return JSON.parse(window.atob(infoStr))
     }
 
-    export default {
+    export default defineComponent({
         name: "ReceiveConfirm",
         data() {
             return {
@@ -136,7 +137,7 @@
                 router,
             }
         }
-    }
+    });
 </script>
 
 <style lang="css" scoped>
