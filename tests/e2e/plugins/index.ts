@@ -14,7 +14,7 @@ import clipboardy from 'clipboardy';
 // /* eslint-disable import/no-extraneous-dependencies, global-require */
 // const webpack = require('@cypress/webpack-preprocessor')
 
-module.exports = (on: Function, config: Object) => {
+module.exports = (on: Function, config: Record<string, any>) => {
     on('task', {
         clearDownloads(): null {
             glob('./cypress/downloads/*', {}, (err, files) => {

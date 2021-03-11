@@ -4,11 +4,11 @@ import fs from "fs";
 
 export interface TestFile {
     name: string;
-    size: number,
+    size: number;
     arrayBuffer(): ArrayBuffer;
 }
 
-export function newTestFile(name: string, size: number = 1024): TestFile {
+export function newTestFile(name: string, size = 1024): TestFile {
     return {
         name,
         size,

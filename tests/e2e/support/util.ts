@@ -1,4 +1,5 @@
 import Chainable = Cypress.Chainable;
+import {ClientConfig} from "@/go/wormhole/types";
 import Client from "@/go/wormhole/client";
 
 const downloadDir = 'cypress/downloads'
@@ -11,6 +12,7 @@ export function mobileViewport() {
 }
 
 export function expectFileDownloaded(filename: string, expected: string): Chainable<undefined> {
+    // TODO: remove after hack is removed
     // NB: `cy.wait` for text msg with metadata.
     return cy.wait(500).get('.download-button').click().then(() => {
         const path = `${downloadDir}/${filename}`
@@ -32,8 +34,8 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
     });
 }
 
-export async function mockClientSend(name: string, data: string): Promise<string> {
-    const sender = new Client();
+export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<string> {
+    const sender = new Client(config);
     const file = {
         arrayBuffer() {
             const enc = new TextEncoder();

@@ -9,26 +9,44 @@ const testBufferSize = 1024 * 4 // 4KiB
 
 describe('Client', () => {
     beforeAll(initGo)
+    beforeAll(() => {
+        // TODO: JS -> wasm dependency injection
+        (global as any).FileStreamReader = FileStreamReader;
+    })
 
     describe('#recvFile', () => {
         it('returns a reader', async () => {
             const sender = new Client()
-            const file = newTestFile('test-file', testFileSize)
-            const fileBuffer = new DataView(file.arrayBuffer())
+            const file = new DataView(new ArrayBuffer(testFileSize))
+            for (let i = 0; i < file.byteLength; i++) {
+                file.setUint8(i, i % 255);
+            }
 
-            const code = await sender.sendFile(file)
+            const _file = {
+                name,
+                size: testFileSize,
+                arrayBuffer(): ArrayBuffer {
+                    return file.buffer;
+                }
+            }
+            const code = await sender.sendFile(_file)
 
             const receiver = new Client();
             const reader: FileStreamReader = await receiver.recvFile(code);
 
-            const buf = new ArrayBuffer(testBufferSize);
-            let readBytes: number = 0;
-            for (let n: number = 0, done: boolean = false; !done;) {
+            let buf = new Uint8Array(new ArrayBuffer(testBufferSize));
+            let readBytes = 0;
+            for (let n = 0, done = false; !done;) {
                 [n, done] = await reader.read(buf)
+                let _buf = buf.subarray(0, n);
 
                 // NB: expect buffer matches respective input subarray.
-                const expected = (new Uint8Array(fileBuffer)).subarray(readBytes, readBytes + n)
-                expect(new Uint8Array(buf)).toEqual(expected)
+                const expected = (new Uint8Array(file.buffer)).subarray(readBytes, readBytes + n)
+                expect(new Uint8Array(_buf)).toEqual(expected)
+
+                readBytes + n === testFileSize ?
+                    expect(done).toEqual(true) :
+                    expect(done).toEqual(false)
 
                 readBytes += n;
             }
@@ -36,13 +54,41 @@ describe('Client', () => {
             expect(readBytes).toEqual(testFileSize)
         })
     })
+
+    describe('#saveFile', () => {
+        it.skip('should ', async () => {
+            const sender = new Client()
+            const file = new DataView(new ArrayBuffer(testFileSize))
+            for (let i = 0; i < file.byteLength; i++) {
+                file.setUint8(i, i % 255);
+            }
+            // const file = newTestFile('test-file', testFileSize)
+            // const fileBuffer = new DataView(file.arrayBuffer())
+            // const tmpDir = tmp.dir();
+            const tmpFile = tmp.file();
+            const testFilePath = tmpFile.path;
+            // const testFilePath = path.join(tmpDir, '')
+            const _file = {
+                name,
+                size: testFileSize,
+                arrayBuffer(): ArrayBuffer {
+                    return file.buffer;
+                }
+            }
+            const code = await sender.sendFile(_file)
+
+            const receiver = new Client();
+            await receiver.saveFile(code, testFilePath);
+
+        });
+    })
 });
 
 describe('FileStreamReader', () => {
     describe('#read', () => {
-        it('should call the read function passed to the constructor', async () => {
+        it('should call the read function passed to the constructor and set done', async () => {
             const file = new DataView(new ArrayBuffer(testFileSize))
-            for (let i: number = 0; i < file.byteLength; i++) {
+            for (let i = 0; i < file.byteLength; i++) {
                 file.setUint8(i, i);
             }
 
@@ -62,13 +108,16 @@ describe('FileStreamReader', () => {
             const reader = new FileStreamReader(testBufferSize, readFn);
 
             const buf = new ArrayBuffer(testBufferSize);
-            let readBytes: number = 0;
-            for (let n: number = 0, done: boolean = false; !done;) {
+            let readBytes = 0;
+            for (let n = 0, done = false; !done;) {
                 [n, done] = await reader.read(buf)
 
                 // NB: expect buffer matches respective `file` subarray.
                 const expected = (new Uint8Array(file.buffer)).subarray(readBytes, readBytes + n)
                 expect(new Uint8Array(buf)).toEqual(expected)
+                n < testBufferSize || readBytes + n === testFileSize ?
+                    expect(done).toEqual(true) :
+                    expect(done).toEqual(false)
 
                 readBytes += n;
             }
