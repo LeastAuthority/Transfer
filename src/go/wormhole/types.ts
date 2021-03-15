@@ -27,7 +27,7 @@ export const wormhole: WindowWormhole = new Proxy({Client: {} as WindowClient}, 
     get(target, prop, receiver) {
         switch (prop) {
             case 'Client':
-                return (window as any).Wormhole.Client
+                return (globalThis as any).Wormhole.Client
         }
     }
 });

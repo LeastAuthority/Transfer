@@ -75,7 +75,7 @@
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
-    import Client from '@/go/wormhole/client.ts';
+    import ClientWorker from '@/go/wormhole/client.ts';
     import {sizeToClosestUnit} from '@/util';
 
     import router from '@/router/index.ts'
@@ -100,7 +100,7 @@
 
             return {
                 code: '',
-                client: new Client(),
+                client: new ClientWorker(),
                 host,
             }
         },
