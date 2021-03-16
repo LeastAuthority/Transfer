@@ -37,9 +37,9 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
 export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<string> {
     const sender = new Client(config);
     const file = {
-        arrayBuffer() {
+        arrayBuffer(): Promise<ArrayBuffer> {
             const enc = new TextEncoder();
-            return enc.encode(data);
+            return Promise.resolve(enc.encode(data));
         }
     }
     const fileCode = await sender.sendFile(file);

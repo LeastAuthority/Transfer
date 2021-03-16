@@ -36,13 +36,12 @@
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col>progress: {{progress.value}}</ion-col>
                 <ion-col>
-                    <ion-progress-bar></ion-progress-bar>
-<!--                    <ion-progress-bar color="primary"-->
-<!--                                      :type="progress.type"-->
-<!--                                      :value="progress.value"-->
-<!--                    ></ion-progress-bar>-->
+                    <ion-progress-bar color="primary"
+                                      v-show="progress.value >= 0"
+                                      :type="progress.type"
+                                      :value="progress.value"
+                    ></ion-progress-bar>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -86,7 +85,7 @@
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
-    import ClientWorker from '@/go/wormhole/client.ts';
+    import ClientWorker from '@/go/wormhole/client_worker';
     import {sizeToClosestUnit} from '@/util';
 
     import router from '@/router/index.ts'
@@ -133,8 +132,6 @@
             }
         },
         async beforeMount() {
-            console.log(this.progress)
-
             const fileCode = await this.client.sendFile(this.file, this.onProgress);
             // const fileCode = await this.client.sendFile(this.file);
 
@@ -148,27 +145,15 @@
         },
         methods: {
             onProgress(sentBytes, totalBytes) {
-                // this.progress.doneID++;
-                // console.log(`count: ${this.progress.doneID} | ${sentBytes/totalBytes * 100}%`)
-                // if (this.progress.updateID > 0) {
-                //    window.clearTimeout(this.progress.updateID)
-                // }
-                // this.progress.updateID = window.setTimeout(() => {
-                //     console.log('debounced')
-                    if (this.progress.type === PROGRESS_INDETERMINATE) {
-                        this.progress.type = PROGRESS_DETERMINATE;
-                    }
-                    this.progress._value = sentBytes / totalBytes;
-                    if (this.progress._value - this.progress.value >= 0.01) {
-                        this.progress.value = this.progress._value;
-                        console.log(`onProgress: ${this.progress.value}% | type: ${this.progress.type}`)
-                    }
+                if (this.progress.type === PROGRESS_INDETERMINATE) {
+                    this.progress.type = PROGRESS_DETERMINATE;
+                }
+                this.progress.value = sentBytes / totalBytes;
 
-                    if (this.progress.doneID > 0) {
-                        window.clearTimeout(this.progress.doneID);
-                    }
-                    this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
-                // }, PROGRESS_UPDATE_TIMEOUT_MS);
+                if (this.progress.doneID > 0) {
+                    window.clearTimeout(this.progress.doneID);
+                }
+                this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
             },
             resetProgress() {
                 console.log('resetting progress');
