@@ -1,6 +1,6 @@
 import Chainable = Cypress.Chainable;
 import {ClientConfig} from "@/go/wormhole/types";
-import ClientWorker from "@/go/wormhole/client_worker";
+import Client from "@/go/wormhole/client";
 
 const downloadDir = 'cypress/downloads'
 
@@ -35,7 +35,7 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
 }
 
 export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<string> {
-    const sender = new ClientWorker(config);
+    const sender = new Client(config);
     const file = {
         arrayBuffer(): Promise<ArrayBuffer> {
             const enc = new TextEncoder();

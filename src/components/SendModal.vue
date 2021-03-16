@@ -36,9 +36,9 @@
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col>progress: {{progress.value}}</ion-col>
                 <ion-col>
                     <ion-progress-bar color="primary"
+                                      v-show="progress.value >= 0"
                                       :type="progress.type"
                                       :value="progress.value"
                     ></ion-progress-bar>
@@ -154,11 +154,6 @@
                 //     console.log('debounced')
                     if (this.progress.type === PROGRESS_INDETERMINATE) {
                         this.progress.type = PROGRESS_DETERMINATE;
-                    }
-                    this.progress._value = sentBytes / totalBytes;
-                    if (this.progress._value - this.progress.value >= 0.01) {
-                        this.progress.value = this.progress._value;
-                        console.log(`onProgress: ${this.progress.value}% | type: ${this.progress.type}`)
                     }
 
                     if (this.progress.doneID > 0) {

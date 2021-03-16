@@ -2,12 +2,13 @@ import streamSaver from "streamsaver";
 
 import {ClientConfig, ProgressCallback} from "@/go/wormhole/types";
 import {
+    ActionMessage,
     FREE,
     isAction,
     NEW_CLIENT,
-    RECV_FILE,
+    RECV_FILE, RECV_FILE_DATA,
     RECV_TEXT,
-    SEND_FILE,
+    SEND_FILE, SEND_FILE_PROGRESS,
     SEND_TEXT,
     WASM_READY
 } from "@/go/wormhole/actions";
@@ -89,34 +90,72 @@ export default class ClientWorker implements ClientInterface {
                 resolve(event.data.text);
                 break;
             case SEND_FILE:
-                delete this.pending[id];
+                if (typeof(pending.progressCb) === 'undefined') {
+                    delete this.pending[id];
+                }
+                // TODO: delete in other case!
+
                 resolve(event.data.code);
                 break;
+            case SEND_FILE_PROGRESS:
+                this.handleSendFileProgress(event.data);
+                break;
             case RECV_FILE:
-                // TODO: delete in done instead?
+                // NB: don't delete pending until file is read completely.
+                this.handleRecvFile(event.data);
+                break;
+            case RECV_FILE_DATA:
                 delete this.pending[id];
-
-                if (typeof (this.receiving[id]) === 'undefined') {
-                    const fileStream = streamSaver.createWriteStream(event.data.name, {
-                        size: event.data.size,
-                    })
-
-                    const writer = fileStream.getWriter();
-                    this.receiving[id] = {writer};
-                }
-
-                this.receiving[id].writer.write(new Uint8Array(event.data.buffer.slice(0, event.data.n)));
-
-                if (event.data.done) {
-                    this.receiving[id].writer.close();
-                    delete this.receiving[id];
-                }
+                this.handleRecvFileData(event.data);
                 break;
             default:
                 throw new Error(`unexpected action: ${event.data.action}`)
         }
 
         resolve(event.data.code);
+    }
+
+    private handleRecvFile({id, name, size}: ActionMessage): void {
+        const receiving = this.receiving[id];
+
+        // TODO: delete in done instead
+        // delete this.pending[id];
+
+        if (typeof (receiving) !== 'undefined') {
+            throw new Error(`already receiving file named "${receiving.name}" with id ${id}`);
+        }
+
+        const fileStream = streamSaver.createWriteStream(name, {
+            size,
+        })
+        const writer = fileStream.getWriter();
+        this.receiving[id] = {writer};
+
+        this.port.postMessage({
+            action: RECV_FILE_DATA,
+            id,
+        });
+    }
+
+    private handleRecvFileData({id, buffer, n, done}: ActionMessage): void {
+        const {writer} = this.receiving[id];
+        // NB: must be Uint8Array.
+        const _truncated = new Uint8Array(buffer.slice(0, n));
+        writer.write(_truncated);
+
+        if (done) {
+            delete this.pending[id];
+            writer.close();
+            delete this.receiving[id];
+        }
+    }
+
+    private handleSendFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
+        const {progressCb} = this.pending[id];
+        if (typeof(progressCb) === 'undefined') {
+            return;
+        }
+        progressCb(sentBytes, totalBytes);
     }
 
     public async sendText(text: string): Promise<string> {
@@ -157,12 +196,13 @@ export default class ClientWorker implements ClientInterface {
                     id,
                     buffer,
                 }
-                this.pending[id] = {message, resolve, reject};
+                this.pending[id] = {message, progressCb, resolve, reject};
                 this.port.postMessage(message, [buffer]);
             });
         })
     }
 
+    // TODO: remove opts
     public async recvFile(code: string, opts?: Record<string, any>): Promise<FileStreamReader> {
         await this.ready;
         return new Promise((resolve, reject) => {
@@ -179,8 +219,6 @@ export default class ClientWorker implements ClientInterface {
                 name: opts.name,
                 size: opts.size,
             }
-            // TODO: potentially create streamsaver writable stream
-            //  here (on user action).
             this.pending[id] = {message, resolve, reject};
             this.port.postMessage(message)
         })

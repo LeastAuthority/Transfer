@@ -7,17 +7,71 @@ import {FileStreamReader} from "./go/wormhole/streaming";
 
 
 import Go from "./go";
-import {Client} from "./go/wormhole/client";
+import Client from "./go/wormhole/client";
 import {
+    ActionMessage,
     FREE,
     isAction,
     NEW_CLIENT,
-    RECV_FILE,
+    RECV_FILE, RECV_FILE_DATA,
     RECV_TEXT,
-    SEND_FILE,
+    SEND_FILE, SEND_FILE_PROGRESS,
     SEND_TEXT,
     WASM_READY
 } from "@/go/wormhole/actions";
+
+const bufferSize = 1024 * 4 // 4KiB
+let port: MessagePort;
+let client: Client;
+// TODO: be more specific
+const receiving: Record<number, any> = {};
+
+function handleReceiveFile({id, name, size, code}: ActionMessage): void {
+    const _receiving = receiving[id];
+    if (typeof (_receiving) !== 'undefined') {
+        throw new Error(`already receiving file with named "${_receiving.name}" with id ${id}`);
+    }
+
+    const promise = client.recvFile(code);
+    receiving[id] = {
+        name,
+        size,
+        promise,
+    };
+
+    port.postMessage({
+        action: RECV_FILE,
+        id,
+        name,
+        size
+    });
+}
+
+function handleReceiveFileData({id}: ActionMessage): void {
+    const _receiving = receiving[id];
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const buffer = new Uint8Array(bufferSize)
+    const readRecv = async (recvReader: FileStreamReader) => {
+        for (let n = 0, index = 0, done = false; !done; index++) {
+            // TODO: may need to synchronize/order on main thread.
+            // TODO: use rxJS?
+            // TODO: use Atomics?
+            [n, done] = await recvReader.read(buffer)
+            port.postMessage({
+                action: RECV_FILE_DATA,
+                id,
+                index,
+                n,
+                done,
+                buffer: buffer.buffer,
+            }, [buffer.buffer])
+        }
+    }
+    _receiving.promise.then(readRecv);
+}
 
 onmessage = async function (event) {
     // NB: unregister worker message handler.
@@ -36,15 +90,13 @@ onmessage = async function (event) {
         go.run(result.instance);
     });
 
-    const client = new Client(event.data.config);
-    const port = event.ports[0]
+    client = new Client(event.data.config);
+    port = event.ports[0]
     port.postMessage({
         action: WASM_READY,
         goClient: client.goClient,
     });
 
-
-    const bufferSize = 1024 * 4 // 4KiB
     port.onmessage = async function (event) {
         const _file = {
             arrayBuffer(): Promise<ArrayBuffer> {
@@ -52,23 +104,16 @@ onmessage = async function (event) {
             }
         };
 
-        const buffer = new Uint8Array(bufferSize)
         const {action, id} = event.data;
-        const readRecv = async (recvReader: FileStreamReader) => {
-            for (let n = 0, done = false; !done;) {
-                [n, done] = await recvReader.read(buffer)
-                port.postMessage({
-                    action: RECV_FILE,
-                    id,
-                    n,
-                    done,
-                    buffer: buffer.buffer,
-                    name: event.data.name,
-                    size: event.data.size,
-                }, [buffer.buffer])
-            }
-        }
 
+        const progressCb = (sentBytes: number, totalBytes: number): void => {
+            port.postMessage({
+                action: SEND_FILE_PROGRESS,
+                id,
+                sentBytes,
+                totalBytes,
+            });
+        };
 
         switch (action) {
             case NEW_CLIENT:
@@ -102,9 +147,9 @@ onmessage = async function (event) {
             case SEND_FILE:
                 // console.log('send_file')
                 // console.log(event);
+
                 // TODO: change signature to expect array buffer?
-                // TODO: progressCb...
-                client.sendFile(_file as File).then(code => {
+                client.sendFile(_file as File, progressCb).then(code => {
                     console.log(`got code: ${code}`)
                     port.postMessage({
                         action: SEND_FILE,
@@ -114,14 +159,10 @@ onmessage = async function (event) {
                 });
                 break;
             case RECV_FILE:
-                // console.log('RECV_FILE not yet implemented!');
-                console.log('worker downloading...')
-                console.log(event);
-                // const fileStream = streamSaver.createWriteStream(name, {
-                //     size
-                // })
-                // const writer = fileStream.getWriter();
-                client.recvFile(event.data.code).then(readRecv)
+                handleReceiveFile(event.data);
+                break;
+            case RECV_FILE_DATA:
+                handleReceiveFileData(event.data);
                 break;
             case FREE:
                 client.free();
@@ -131,5 +172,3 @@ onmessage = async function (event) {
         }
     }
 }
-
-// export {}

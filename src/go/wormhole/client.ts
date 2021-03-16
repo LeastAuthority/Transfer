@@ -25,7 +25,7 @@ export interface ClientInterface {
 }
 
 
-export class Client implements ClientInterface {
+export default class Client implements ClientInterface {
     public goClient: number;
 
     constructor(config?: ClientConfig) {
