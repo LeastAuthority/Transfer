@@ -65,7 +65,7 @@
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
     import VersionFooter from '@/components/VersionFooter.vue';
-    import Client from '@/go/wormhole/client.ts';
+    import ClientWorker from '@/go/wormhole/client_worker.ts';
     import {sizeToClosestUnit} from "@/util";
 
     // TODO: move
@@ -77,7 +77,7 @@
         name: "ReceiveConfirm",
         data() {
             return {
-                client: new Client(),
+                client: new ClientWorker(),
                 file: {
                     name: '',
                     size: 0,
@@ -114,20 +114,10 @@
         methods: {
             // TODO: move this to Receive.vue
             async download() {
-                console.log('downloading...')
-                const fileStream = streamSaver.createWriteStream(this.file.name, {
-                    size: this.file.size,
-                })
-                const writer = fileStream.getWriter();
-                const bufferSize = 1024 * 4 // 4KiB
-                const buf = new Uint8Array(bufferSize)
-                const recvReader = await this.client.recvFile(this.file.code)
-                for (let n = 0, done = false; !done;) {
-                    [n, done] = await recvReader.read(buf);
-                    await writer.write(buf.slice(0, n));
-                }
-                await writer.close();
-                console.log('downloaded!')
+                const {name, size} = this.file;
+                await this.client.saveFile(this.file.code, {
+                    name, size
+                });
             },
         },
         setup() {

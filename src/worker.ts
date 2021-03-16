@@ -1,4 +1,11 @@
-// import {FileStreamReader} from "../src/go/wormhole/streaming";
+import {FileStreamReader} from "./go/wormhole/streaming";
+
+(function () {
+    // TODO: JS -> wasm dependency injection
+    (globalThis as any).FileStreamReader = FileStreamReader;
+}())
+
+
 import Go from "./go";
 import {Client} from "./go/wormhole/client";
 import {
@@ -12,9 +19,12 @@ import {
     WASM_READY
 } from "@/go/wormhole/actions";
 
-console.log("running worker...")
-
 onmessage = async function (event) {
+    // NB: unregister worker message handler.
+    //  (use message channel port instead)
+    onmessage = () => {
+        // NB: noop
+    };
     console.log(event)
 
     if (!isAction(event.data)) {
@@ -33,14 +43,33 @@ onmessage = async function (event) {
         goClient: client.goClient,
     });
 
-    const _file = {
-        arrayBuffer(): Promise<ArrayBuffer> {
-            return event.data.buffer;
-        }
-    };
 
+    const bufferSize = 1024 * 4 // 4KiB
     port.onmessage = async function (event) {
+        const _file = {
+            arrayBuffer(): Promise<ArrayBuffer> {
+                return Promise.resolve(event.data.buffer);
+            }
+        };
+
+        const buffer = new Uint8Array(bufferSize)
         const {action, id} = event.data;
+        const readRecv = async (recvReader: FileStreamReader) => {
+            for (let n = 0, done = false; !done;) {
+                [n, done] = await recvReader.read(buffer)
+                port.postMessage({
+                    action: RECV_FILE,
+                    id,
+                    n,
+                    done,
+                    buffer: buffer.buffer,
+                    name: event.data.name,
+                    size: event.data.size,
+                }, [buffer.buffer])
+            }
+        }
+
+
         switch (action) {
             case NEW_CLIENT:
                 console.log('port.onmessage NEW_CLIENT')
@@ -85,7 +114,14 @@ onmessage = async function (event) {
                 });
                 break;
             case RECV_FILE:
-                console.log('RECV_FILE not yet implemented!');
+                // console.log('RECV_FILE not yet implemented!');
+                console.log('worker downloading...')
+                console.log(event);
+                // const fileStream = streamSaver.createWriteStream(name, {
+                //     size
+                // })
+                // const writer = fileStream.getWriter();
+                client.recvFile(event.data.code).then(readRecv)
                 break;
             case FREE:
                 client.free();
@@ -95,11 +131,5 @@ onmessage = async function (event) {
         }
     }
 }
-
-// (function() {
-//     // TODO: JS -> wasm dependency injection
-//     (window as any).FileStreamReader = FileStreamReader;
-// }())
-//
 
 // export {}

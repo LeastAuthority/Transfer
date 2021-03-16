@@ -38,11 +38,10 @@
             <ion-row>
                 <ion-col>progress: {{progress.value}}</ion-col>
                 <ion-col>
-                    <ion-progress-bar></ion-progress-bar>
-<!--                    <ion-progress-bar color="primary"-->
-<!--                                      :type="progress.type"-->
-<!--                                      :value="progress.value"-->
-<!--                    ></ion-progress-bar>-->
+                    <ion-progress-bar color="primary"
+                                      :type="progress.type"
+                                      :value="progress.value"
+                    ></ion-progress-bar>
                 </ion-col>
             </ion-row>
             <ion-row>
@@ -86,7 +85,7 @@
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
 
-    import ClientWorker from '@/go/wormhole/client.ts';
+    import ClientWorker from '@/go/wormhole/client_worker';
     import {sizeToClosestUnit} from '@/util';
 
     import router from '@/router/index.ts'
@@ -133,8 +132,6 @@
             }
         },
         async beforeMount() {
-            console.log(this.progress)
-
             const fileCode = await this.client.sendFile(this.file, this.onProgress);
             // const fileCode = await this.client.sendFile(this.file);
 
