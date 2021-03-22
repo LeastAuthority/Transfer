@@ -2,6 +2,7 @@ import Go from '../../../src/go'
 import Client from '@/go/wormhole/client.ts';
 import {TEST_HOST} from "../support/util";
 // import {largeUint8ArrToString} from "../support/util";
+import {FileStreamReader} from "@/go/wormhole/streaming";
 
 describe('Sender', () => {
     const filename = 'large-file.txt';
@@ -83,6 +84,11 @@ async function UIGetCode(filename: string): Promise<string> {
 }
 
 async function mockReceive(code: string): Promise<Uint8Array> {
+    (function () {
+        // TODO: JS -> wasm dependency injection
+        (globalThis as any).FileStreamReader = FileStreamReader;
+    }())
+
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
@@ -90,7 +96,14 @@ async function mockReceive(code: string): Promise<Uint8Array> {
 
     const receiver = new Client();
     const metadata = await receiver.recvText(code);
-    console.log(atob(metadata))
-    const fileCode = JSON.parse(atob(metadata)).fileCode
-    return receiver.recvFile(fileCode)
+    const {fileCode, size} = JSON.parse(atob(metadata))
+    const reader = await receiver.recvFile(fileCode);
+    const result = new Uint8Array(size)
+    for (let n = 0, accBytes = 0, done = false; !done;) {
+        const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
+        [n, done] = await reader.read(buffer);
+        result.set(buffer.slice(0, n), accBytes);
+        accBytes += n - 1;
+    }
+    return result;
 }

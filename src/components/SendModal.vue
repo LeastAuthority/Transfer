@@ -145,22 +145,15 @@
         },
         methods: {
             onProgress(sentBytes, totalBytes) {
-                // this.progress.doneID++;
-                // console.log(`count: ${this.progress.doneID} | ${sentBytes/totalBytes * 100}%`)
-                // if (this.progress.updateID > 0) {
-                //    window.clearTimeout(this.progress.updateID)
-                // }
-                // this.progress.updateID = window.setTimeout(() => {
-                //     console.log('debounced')
-                    if (this.progress.type === PROGRESS_INDETERMINATE) {
-                        this.progress.type = PROGRESS_DETERMINATE;
-                    }
+                if (this.progress.type === PROGRESS_INDETERMINATE) {
+                    this.progress.type = PROGRESS_DETERMINATE;
+                }
+                this.progress.value = sentBytes / totalBytes;
 
-                    if (this.progress.doneID > 0) {
-                        window.clearTimeout(this.progress.doneID);
-                    }
-                    this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
-                // }, PROGRESS_UPDATE_TIMEOUT_MS);
+                if (this.progress.doneID > 0) {
+                    window.clearTimeout(this.progress.doneID);
+                }
+                this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
             },
             resetProgress() {
                 console.log('resetting progress');

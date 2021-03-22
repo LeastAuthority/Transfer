@@ -32,45 +32,41 @@ function handleReceiveFile({id, name, size, code}: ActionMessage): void {
         throw new Error(`already receiving file with named "${_receiving.name}" with id ${id}`);
     }
 
-    const promise = client.recvFile(code);
-    receiving[id] = {
-        name,
-        size,
-        promise,
-    };
+    client.recvFile(code).then(reader => {
+        receiving[id] = {
+            name,
+            size,
+            reader,
+        };
 
-    port.postMessage({
-        action: RECV_FILE,
-        id,
-        name,
-        size
+        port.postMessage({
+            action: RECV_FILE,
+            id,
+            name,
+            size
+        });
     });
 }
 
-function handleReceiveFileData({id}: ActionMessage): void {
+async function handleReceiveFileData({id, done}: ActionMessage): Promise<void> {
     const _receiving = receiving[id];
     if (typeof (_receiving) === 'undefined') {
         throw new Error(`not currently receiving file with id ${id}`);
     }
 
-    const buffer = new Uint8Array(bufferSize)
-    const readRecv = async (recvReader: FileStreamReader) => {
-        for (let n = 0, index = 0, done = false; !done; index++) {
-            // TODO: may need to synchronize/order on main thread.
-            // TODO: use rxJS?
-            // TODO: use Atomics?
-            [n, done] = await recvReader.read(buffer)
+    const {reader} = _receiving;
+        for (let n = 0, done = false; !done;) {
+            console.log(`worker.ts:60| in for loop, n: ${n}; false: ${done}`);
+            const buffer = new Uint8Array(bufferSize);
+            [n, done] = await reader.read(buffer);
             port.postMessage({
                 action: RECV_FILE_DATA,
                 id,
-                index,
                 n,
                 done,
                 buffer: buffer.buffer,
-            }, [buffer.buffer])
+            }, [buffer.buffer]);
         }
-    }
-    _receiving.promise.then(readRecv);
 }
 
 onmessage = async function (event) {
@@ -79,7 +75,7 @@ onmessage = async function (event) {
     onmessage = () => {
         // NB: noop
     };
-    console.log(event)
+    // console.log(event)
 
     if (!isAction(event.data)) {
         throw new Error(`unexpected event: ${JSON.stringify(event, null, '  ')}`);
@@ -116,16 +112,11 @@ onmessage = async function (event) {
         };
 
         switch (action) {
-            case NEW_CLIENT:
-                console.log('port.onmessage NEW_CLIENT')
-                console.log(event);
-                //     client = new Client(event.data.config);
-                //
-                //     port.postMessage({
-                //         action: WASM_READY,
-                //         goClient: client.goClient,
-                //     });
-                break;
+            // case NEW_CLIENT:
+            //     // NB: this shouldn't happen
+            //     console.log('port.onmessage NEW_CLIENT')
+            //     console.log(event);
+            //     break;
             case SEND_TEXT:
                 client.sendText(event.data.text).then(code => {
                     port.postMessage({
@@ -145,12 +136,8 @@ onmessage = async function (event) {
                 });
                 break;
             case SEND_FILE:
-                // console.log('send_file')
-                // console.log(event);
-
-                // TODO: change signature to expect array buffer?
+                // TODO: change signature to expect array buffer or Uint8Array?
                 client.sendFile(_file as File, progressCb).then(code => {
-                    console.log(`got code: ${code}`)
                     port.postMessage({
                         action: SEND_FILE,
                         id,

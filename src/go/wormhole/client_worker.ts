@@ -1,4 +1,4 @@
-import streamSaver from "streamsaver";
+import streamSaver from 'streamsaver';
 
 import {ClientConfig, ProgressCallback} from "@/go/wormhole/types";
 import {
@@ -6,9 +6,11 @@ import {
     FREE,
     isAction,
     NEW_CLIENT,
-    RECV_FILE, RECV_FILE_DATA,
+    RECV_FILE,
+    RECV_FILE_DATA,
     RECV_TEXT,
-    SEND_FILE, SEND_FILE_PROGRESS,
+    SEND_FILE,
+    SEND_FILE_PROGRESS,
     SEND_TEXT,
     WASM_READY
 } from "@/go/wormhole/actions";
@@ -72,7 +74,8 @@ export default class ClientWorker implements ClientInterface {
         const {action, id, error} = event.data;
         const pending = this.pending[id];
         if (typeof (pending) === 'undefined') {
-            throw new Error(`pending message not found for id: ${id}`);
+            throw new Error(`pending message not found for id: ${id}
+action: ${JSON.stringify(event.data, null, '  ')}`);
         }
 
         const {resolve, reject} = pending;
@@ -80,6 +83,7 @@ export default class ClientWorker implements ClientInterface {
             reject(error)
         }
 
+        // TODO: Branch via union discrimination instead.
         switch (action) {
             case SEND_TEXT:
                 delete this.pending[id];
@@ -90,7 +94,7 @@ export default class ClientWorker implements ClientInterface {
                 resolve(event.data.text);
                 break;
             case SEND_FILE:
-                if (typeof(pending.progressCb) === 'undefined') {
+                if (typeof (pending.progressCb) === 'undefined') {
                     delete this.pending[id];
                 }
                 // TODO: delete in other case!
@@ -98,15 +102,13 @@ export default class ClientWorker implements ClientInterface {
                 resolve(event.data.code);
                 break;
             case SEND_FILE_PROGRESS:
-                this.handleSendFileProgress(event.data);
+                this._handleSendFileProgress(event.data);
                 break;
             case RECV_FILE:
-                // NB: don't delete pending until file is read completely.
-                this.handleRecvFile(event.data);
+                this._handleRecvFile(event.data);
                 break;
             case RECV_FILE_DATA:
-                delete this.pending[id];
-                this.handleRecvFileData(event.data);
+                this._handleRecvFileData(event.data);
                 break;
             default:
                 throw new Error(`unexpected action: ${event.data.action}`)
@@ -115,44 +117,42 @@ export default class ClientWorker implements ClientInterface {
         resolve(event.data.code);
     }
 
-    private handleRecvFile({id, name, size}: ActionMessage): void {
+    private _handleRecvFile({id, name, size}: ActionMessage): void {
         const receiving = this.receiving[id];
-
-        // TODO: delete in done instead
-        // delete this.pending[id];
 
         if (typeof (receiving) !== 'undefined') {
             throw new Error(`already receiving file named "${receiving.name}" with id ${id}`);
         }
 
-        const fileStream = streamSaver.createWriteStream(name, {
+        const writer = streamSaver.createWriteStream(name, {
             size,
-        })
-        const writer = fileStream.getWriter();
+        }).getWriter();
         this.receiving[id] = {writer};
-
         this.port.postMessage({
             action: RECV_FILE_DATA,
             id,
         });
     }
 
-    private handleRecvFileData({id, buffer, n, done}: ActionMessage): void {
-        const {writer} = this.receiving[id];
-        // NB: must be Uint8Array.
-        const _truncated = new Uint8Array(buffer.slice(0, n));
-        writer.write(_truncated);
+    private _handleRecvFileData({id, n, done, buffer}: ActionMessage): void {
+        const receiving = this.receiving[id];
+        if (typeof (receiving) === 'undefined') {
+            throw new Error(`not receiving file with id: ${id}`)
+        }
+
+        const {writer} = receiving;
+        writer.write(new Uint8Array(buffer).slice(0, n));
 
         if (done) {
+            delete this.receiving[id];
             delete this.pending[id];
             writer.close();
-            delete this.receiving[id];
         }
     }
 
-    private handleSendFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
+    private _handleSendFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
         const {progressCb} = this.pending[id];
-        if (typeof(progressCb) === 'undefined') {
+        if (typeof (progressCb) === 'undefined') {
             return;
         }
         progressCb(sentBytes, totalBytes);
@@ -231,15 +231,14 @@ export default class ClientWorker implements ClientInterface {
         }
 
         await this.recvFile(code, opts)
-        console.log('downloaded!')
     }
 
     public free(): void {
         this.ready.then(() => {
             this.port.postMessage({
                 action: FREE,
-
             })
         });
     }
 }
+
