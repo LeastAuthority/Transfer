@@ -7,7 +7,7 @@ import {
     isAction,
     NEW_CLIENT,
     RECV_FILE,
-    RECV_FILE_DATA,
+    RECV_FILE_DATA, RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
     SEND_FILE_PROGRESS,
@@ -41,9 +41,9 @@ export default class ClientWorker implements ClientInterface {
         // NB: wait for wasm module to be ready before listening to all events.
         this.ready = new Promise((resolve, reject) => {
             // TODO: remove?
-            const timeoutID = setTimeout(() => {
-                reject(new Error('timed out waiting for wasm to be ready!'))
-            }, 1000);
+            // const timeoutID = setTimeout(() => {
+            //     reject(new Error('timed out waiting for wasm to be ready!'))
+            // }, 1000);
 
             this.port.onmessage = (event: MessageEvent) => {
                 if (!isAction(event.data)) {
@@ -55,7 +55,7 @@ export default class ClientWorker implements ClientInterface {
                 if (event.data.action === WASM_READY) {
                     this.goClient = event.data.goClient;
                     this.port.onmessage = (...args) => this._onMessage(...args)
-                    clearTimeout(timeoutID);
+                    // clearTimeout(timeoutID);
                     resolve();
                     return;
                 }
@@ -66,6 +66,7 @@ export default class ClientWorker implements ClientInterface {
 
     protected async _onMessage(event: MessageEvent): Promise<void> {
         await this.ready;
+        // console.log(`client_worker:70| _onMessage called with msg: ${JSON.stringify(event, null, '  ')}`)
 
         if (!isAction(event.data)) {
             throw new Error(`unexpected error: ${JSON.stringify(event, null, '  ')}`);
@@ -102,10 +103,14 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 resolve(event.data.code);
                 break;
             case SEND_FILE_PROGRESS:
-                this._handleSendFileProgress(event.data);
+                this._handleFileProgress(event.data);
                 break;
             case RECV_FILE:
                 this._handleRecvFile(event.data);
+                break;
+            case RECV_FILE_PROGRESS:
+                console.log('RECV_FILE_PROGRESS received');
+                this._handleFileProgress(event.data);
                 break;
             case RECV_FILE_DATA:
                 this._handleRecvFileData(event.data);
@@ -150,7 +155,8 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         }
     }
 
-    private _handleSendFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
+    private _handleFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
+        console.log(`client_worker.ts:158| id: ${id}; sentBytes: ${sentBytes}; totalBytes: ${totalBytes}`);
         const {progressCb} = this.pending[id];
         if (typeof (progressCb) === 'undefined') {
             return;
@@ -219,7 +225,10 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 name: opts.name,
                 size: opts.size,
             }
-            this.pending[id] = {message, resolve, reject};
+            this.pending[id] = {
+                message, resolve, reject,
+                progressCb: opts.progressCb,
+            };
             this.port.postMessage(message)
         })
     }

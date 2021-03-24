@@ -144,6 +144,7 @@
             this.code = await this.client.sendText(fileStats)
         },
         methods: {
+            // TODO: refactor
             onProgress(sentBytes, totalBytes) {
                 if (this.progress.type === PROGRESS_INDETERMINATE) {
                     this.progress.type = PROGRESS_DETERMINATE;

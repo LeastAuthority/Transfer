@@ -63,14 +63,14 @@ export async function mockClientSend(name: string, data: string, config?: Client
 //     });
 // }
 
-// export function largeUint8ArrToString(uint8arr: Uint8Array) {
-//     return new Promise((resolve, reject) => {
-//         const bb = new Blob([uint8arr]);
-//         const f = new FileReader();
-//         f.onload = function (event) {
-//             resolve(event.target.result);
-//         };
-//
-//         f.readAsText(bb, 'utf-8');
-//     })
-// }
+export function largeUint8ArrToString(uint8arr: Uint8Array) {
+    return new Promise((resolve, reject) => {
+        const bb = new Blob([uint8arr]);
+        const f = new FileReader();
+        f.onload = function (event) {
+            resolve(event.target.result);
+        };
+
+        f.readAsText(bb, 'utf-8');
+    })
+}

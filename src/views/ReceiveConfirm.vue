@@ -24,7 +24,18 @@
             </ion-row>
             <ion-row>
                 <ion-col>
-                    <ion-button class="download-button" color="light">
+                    <ion-progress-bar color="primary"
+                                      v-show="progress.value >= 0"
+                                      :type="progress.type"
+                                      :value="progress.value"
+                    ></ion-progress-bar>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-button class="download-button"
+                                color="light"
+                                :disabled="!file.ready">
                         <ion-icon :icon="cloudDownloadOutline"></ion-icon>
                         <ion-text class="ion-padding-start"
                                   @click="download"
@@ -57,6 +68,7 @@
         IonToolbar,
         IonTitle,
         IonIcon,
+        IonProgressBar,
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
     import {cloudDownloadOutline, close} from 'ionicons/icons';
@@ -73,6 +85,11 @@
         return JSON.parse(window.atob(infoStr))
     }
 
+    // TODO: refactor
+    const PROGRESS_INDETERMINATE = 'indeterminate'
+    const PROGRESS_DETERMINATE = 'determinate'
+    const PROGRESS_DONE_TIMEOUT_MS = 500;
+
     export default defineComponent({
         name: "ReceiveConfirm",
         data() {
@@ -82,8 +99,16 @@
                     name: '',
                     size: 0,
                     code: '',
-                    dataURI: '',
+                    ready: false,
                 },
+                progress: {
+                    type: PROGRESS_INDETERMINATE,
+                    // type: PROGRESS_DETERMINATE,
+                    value: -1,
+                    _value: -1,
+                    doneID: -1,
+                    updateID: -1,
+                }
             }
         },
         computed: {
@@ -95,7 +120,7 @@
             // TODO: expose more of wormhole-william and handle this internally!
             const fileInfoStr = await this.client.recvText(this.$route.params.code);
             const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
-            this.file = {name, size, code};
+            this.file = {name, size, code, ready: true};
         },
         components: {
             IonPage,
@@ -108,6 +133,7 @@
             IonToolbar,
             IonTitle,
             IonIcon,
+            IonProgressBar,
             MyHeader,
             VersionFooter,
         },
@@ -116,8 +142,21 @@
             async download() {
                 const {name, size} = this.file;
                 await this.client.saveFile(this.file.code, {
-                    name, size
+                    name, size,
+                    progressCb: this.onProgress,
                 });
+            },
+            // TODO: refactor
+            onProgress(sentBytes, totalBytes) {
+                if (this.progress.type === PROGRESS_INDETERMINATE) {
+                    this.progress.type = PROGRESS_DETERMINATE;
+                }
+                this.progress.value = sentBytes / totalBytes;
+
+                if (this.progress.doneID > 0) {
+                    window.clearTimeout(this.progress.doneID);
+                }
+                this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
             },
         },
         setup() {

@@ -29,9 +29,10 @@ export default class Client implements ClientInterface {
     public goClient: number;
 
     constructor(config?: ClientConfig) {
-        if (!config && process.env.NODE_ENV === 'production') {
+        // console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+        // if (!config && process.env.NODE_ENV === 'production') {
             config = DEFAULT_PROD_CLIENT_CONFIG;
-        }
+        // }
 
         this.goClient = wormhole.Client.newClient(config)
     }
@@ -50,7 +51,15 @@ export default class Client implements ClientInterface {
     }
 
     public async recvFile(code: string, opts?: Record<string, any>): Promise<FileStreamReader> {
-        return wormhole.Client.recvFile(this.goClient, code)
+        console.log(`client.ts:54|`);
+        console.log(opts);
+        if (opts && opts.progressCb) {
+            console.log('client.ts:57: yes')
+            return wormhole.Client.recvFile(this.goClient, code, opts!.progressCb);
+        } else {
+            console.log('client.ts:57: no')
+        }
+        return wormhole.Client.recvFile(this.goClient, code);
     }
 
     public free() {
