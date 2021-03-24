@@ -1,21 +1,21 @@
 import streamSaver from 'streamsaver';
 
-import {ClientConfig, ProgressCallback} from "@/go/wormhole/types";
+import {ClientConfig} from "@/go/wormhole/types";
 import {
     ActionMessage,
     FREE,
     isAction,
     NEW_CLIENT,
     RECV_FILE,
-    RECV_FILE_DATA,
+    RECV_FILE_DATA, RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
     SEND_FILE_PROGRESS,
     SEND_TEXT,
     WASM_READY
 } from "@/go/wormhole/actions";
-import {FileStreamReader} from "@/go/wormhole/streaming";
-import {ClientInterface} from "@/go/wormhole/client";
+import {Reader} from "@/go/wormhole/streaming";
+import {ClientInterface, TransferOptions} from "@/go/wormhole/client";
 
 export default class ClientWorker implements ClientInterface {
     public goClient = -1;
@@ -41,9 +41,9 @@ export default class ClientWorker implements ClientInterface {
         // NB: wait for wasm module to be ready before listening to all events.
         this.ready = new Promise((resolve, reject) => {
             // TODO: remove?
-            const timeoutID = setTimeout(() => {
-                reject(new Error('timed out waiting for wasm to be ready!'))
-            }, 1000);
+            // const timeoutID = setTimeout(() => {
+            //     reject(new Error('timed out waiting for wasm to be ready!'))
+            // }, 1000);
 
             this.port.onmessage = (event: MessageEvent) => {
                 if (!isAction(event.data)) {
@@ -55,7 +55,7 @@ export default class ClientWorker implements ClientInterface {
                 if (event.data.action === WASM_READY) {
                     this.goClient = event.data.goClient;
                     this.port.onmessage = (...args) => this._onMessage(...args)
-                    clearTimeout(timeoutID);
+                    // clearTimeout(timeoutID);
                     resolve();
                     return;
                 }
@@ -66,6 +66,7 @@ export default class ClientWorker implements ClientInterface {
 
     protected async _onMessage(event: MessageEvent): Promise<void> {
         await this.ready;
+        // console.log(`client_worker:70| _onMessage called with msg: ${JSON.stringify(event, null, '  ')}`)
 
         if (!isAction(event.data)) {
             throw new Error(`unexpected error: ${JSON.stringify(event, null, '  ')}`);
@@ -94,18 +95,16 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 resolve(event.data.text);
                 break;
             case SEND_FILE:
-                if (typeof (pending.progressCb) === 'undefined') {
-                    delete this.pending[id];
-                }
-                // TODO: delete in other case!
-
                 resolve(event.data.code);
                 break;
             case SEND_FILE_PROGRESS:
-                this._handleSendFileProgress(event.data);
+                this._handleFileProgress(event.data);
                 break;
             case RECV_FILE:
                 this._handleRecvFile(event.data);
+                break;
+            case RECV_FILE_PROGRESS:
+                this._handleFileProgress(event.data);
                 break;
             case RECV_FILE_DATA:
                 this._handleRecvFileData(event.data);
@@ -150,12 +149,12 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         }
     }
 
-    private _handleSendFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
-        const {progressCb} = this.pending[id];
-        if (typeof (progressCb) === 'undefined') {
+    private _handleFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
+        const {opts} = this.pending[id];
+        if (typeof (opts) === 'undefined' || typeof (opts.progressFunc) === 'undefined') {
             return;
         }
-        progressCb(sentBytes, totalBytes);
+        opts.progressFunc(sentBytes, totalBytes);
     }
 
     public async sendText(text: string): Promise<string> {
@@ -186,7 +185,7 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         })
     }
 
-    public async sendFile(file: File, progressCb?: ProgressCallback): Promise<string> {
+    public async sendFile(file: File, opts?: TransferOptions): Promise<string> {
         await this.ready;
         return new Promise((resolve, reject) => {
             file.arrayBuffer().then(buffer => {
@@ -196,40 +195,38 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                     id,
                     buffer,
                 }
-                this.pending[id] = {message, progressCb, resolve, reject};
+                this.pending[id] = {message, opts, resolve, reject};
                 this.port.postMessage(message, [buffer]);
             });
         })
     }
 
     // TODO: remove opts
-    public async recvFile(code: string, opts?: Record<string, any>): Promise<FileStreamReader> {
+    public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
         await this.ready;
         return new Promise((resolve, reject) => {
             // TODO: refactor
             if (typeof (opts) === 'undefined') {
                 opts = {};
             }
-
             const id = Date.now()
+            const {name, size, progressFunc} = opts;
             const message = {
                 action: RECV_FILE,
                 id,
                 code,
-                name: opts.name,
-                size: opts.size,
+                name,
+                size,
             }
-            this.pending[id] = {message, resolve, reject};
+            this.pending[id] = {
+                message, resolve, reject,
+                opts: {progressFunc},
+            };
             this.port.postMessage(message)
         })
     }
 
-    public async saveFile(code: string, opts?: Record<string, any>): Promise<void> {
-        // TODO: refactor
-        if (typeof (opts) === 'undefined') {
-            opts = {};
-        }
-
+    public async saveFile(code: string, opts?: TransferOptions): Promise<void> {
         await this.recvFile(code, opts)
     }
 

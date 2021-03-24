@@ -3,12 +3,12 @@
         <my-header></my-header>
         <ion-content :fullscreen="true">
             <ion-toolbar>
-                <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
+                <ion-title size="large" class="ion-text-uppercase">Receive a file</ion-title>
             </ion-toolbar>
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text>Ready to send:</ion-text>
+                        <ion-text>Ready to download:</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -22,19 +22,6 @@
                     </ion-col>
                 </ion-row>
                 <ion-row>
-                    <ion-col size="8" class="ion-text-right">
-                        <ion-input class="send-code-input"
-                                   v-model="code"
-                                   placeholder="code"
-                                   readonly
-                        ></ion-input>
-                    </ion-col>
-                    <ion-col size="1">
-                        <copy-button :code="code"
-                                     :host="host"/>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
                     <ion-col>
                         <ion-progress-bar color="primary"
                                           v-show="progress.value >= 0"
@@ -45,7 +32,20 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="danger" @click="setOpen(false)">
+                        <ion-button class="download-button"
+                                    color="light"
+                                    :disabled="!file.ready">
+                            <ion-icon :icon="cloudDownloadOutline"></ion-icon>
+                            <ion-text class="ion-padding-start"
+                                      @click="download"
+                            >Download
+                            </ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-button color="danger" @click="router.push('/receive')">
                             <ion-icon :icon="close"></ion-icon>
                             <ion-text class="ion-padding-start">cancel</ion-text>
                         </ion-button>
@@ -57,65 +57,51 @@
     </ion-page>
 </template>
 
-<style lang="css" scoped>
-    .size {
-        font-size: small;
-    }
-
-    .filename {
-        font-weight: bold;
-    }
-</style>
-
 <script>
     import {
-        IonButton,
-        IonCol,
+        IonPage,
         IonContent,
         IonGrid,
-        IonIcon,
-        IonInput,
-        IonPage,
         IonRow,
+        IonCol,
         IonText,
-        IonTitle,
+        IonButton,
         IonToolbar,
+        IonTitle,
+        IonIcon,
         IonProgressBar,
     } from '@ionic/vue';
-    import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
-
-    import ClientWorker from '@/go/wormhole/client_worker';
-    import {sizeToClosestUnit} from '@/util';
+    import {cloudDownloadOutline, close} from 'ionicons/icons';
+    import streamSaver from 'streamsaver';
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
-    import VersionFooter from "@/components/VersionFooter";
-    import CopyButton from "@/components/CopyButton";
+    import VersionFooter from '@/components/VersionFooter.vue';
+    import ClientWorker from '@/go/wormhole/client_worker.ts';
+    import {sizeToClosestUnit} from "@/util";
 
     // TODO: move
-    function encodeFileInfo(info) {
-        return window.btoa(JSON.stringify(info));
+    function decodeFileInfo(infoStr) {
+        return JSON.parse(window.atob(infoStr))
     }
 
+    // TODO: refactor
     const PROGRESS_INDETERMINATE = 'indeterminate'
     const PROGRESS_DETERMINATE = 'determinate'
     const PROGRESS_DONE_TIMEOUT_MS = 500;
 
     export default defineComponent({
-        name: "SendModal.vue",
-        props: ['setOpen', 'file'],
+        name: "ReceiveConfirm",
         data() {
-            // TODO: refactor
-            let host = 'http://localhost:8080';
-            if (process.env.NODE_ENV === 'production') {
-                host = 'https://wormhole.bryanchriswhite.com';
-            }
-
             return {
-                code: '',
                 client: new ClientWorker(),
-                host,
+                file: {
+                    name: '',
+                    size: 0,
+                    code: '',
+                    ready: false,
+                },
                 progress: {
                     type: PROGRESS_INDETERMINATE,
                     // type: PROGRESS_DETERMINATE,
@@ -131,46 +117,11 @@
                 return sizeToClosestUnit(this.file.size);
             }
         },
-        async beforeMount() {
-            const opts = {progressFunc: this.onProgress};
-            const fileCode = await this.client.sendFile(this.file, opts);
-            // const fileCode = await this.client.sendFile(this.file);
-
+        async mounted() {
             // TODO: expose more of wormhole-william and handle this internally!
-            const fileStats = encodeFileInfo({
-                name: this.file.name,
-                size: this.file.size,
-                fileCode,
-            });
-            this.code = await this.client.sendText(fileStats)
-        },
-        methods: {
-            // TODO: refactor
-            onProgress(sentBytes, totalBytes) {
-                if (this.progress.type === PROGRESS_INDETERMINATE) {
-                    this.progress.type = PROGRESS_DETERMINATE;
-                }
-                this.progress.value = sentBytes / totalBytes;
-
-                if (this.progress.doneID > 0) {
-                    window.clearTimeout(this.progress.doneID);
-                }
-                this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
-            },
-            resetProgress() {
-                console.log('resetting progress');
-                console.log(this.progress);
-                // this.progress.type = PROGRESS_INDETERMINATE;
-                // this.progress.value = -1;
-                this.progress.doneID = -1;
-            },
-
-        },
-        setup() {
-            return {
-                close,
-                router,
-            }
+            const fileInfoStr = await this.client.recvText(this.$route.params.code);
+            const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
+            this.file = {name, size, code, ready: true};
         },
         components: {
             IonPage,
@@ -183,11 +134,48 @@
             IonToolbar,
             IonTitle,
             IonIcon,
-            IonInput,
             IonProgressBar,
             MyHeader,
             VersionFooter,
-            CopyButton,
         },
+        methods: {
+            // TODO: move this to Receive.vue
+            async download() {
+                const {name, size} = this.file;
+                await this.client.saveFile(this.file.code, {
+                    name, size,
+                    progressFunc: this.onProgress,
+                });
+            },
+            // TODO: refactor
+            onProgress(sentBytes, totalBytes) {
+                if (this.progress.type === PROGRESS_INDETERMINATE) {
+                    this.progress.type = PROGRESS_DETERMINATE;
+                }
+                this.progress.value = sentBytes / totalBytes;
+
+                if (this.progress.doneID > 0) {
+                    window.clearTimeout(this.progress.doneID);
+                }
+                this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
+            },
+        },
+        setup() {
+            return {
+                cloudDownloadOutline,
+                close,
+                router,
+            }
+        }
     });
 </script>
+
+<style lang="css" scoped>
+    .size {
+        font-size: small;
+    }
+
+    .filename {
+        font-weight: bold;
+    }
+</style>

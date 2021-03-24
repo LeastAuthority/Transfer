@@ -1,5 +1,5 @@
 import Client from '@/go/wormhole/client'
-import {FileStreamReader} from "@/go/wormhole/streaming";
+import {Reader} from "@/go/wormhole/streaming";
 import {initGo, newTestFile} from './util';
 
 // TODO: test weird file sizes!
@@ -9,13 +9,9 @@ const testBufferSize = 1024 * 4 // 4KiB
 
 describe('Client', () => {
     beforeAll(initGo)
-    beforeAll(() => {
-        // TODO: JS -> wasm dependency injection
-        (global as any).FileStreamReader = FileStreamReader;
-    })
 
     describe('#recvFile', () => {
-        it('returns a reader', async () => {
+        it('should return a reader', async () => {
             const sender = new Client()
             const file = new DataView(new ArrayBuffer(testFileSize))
             for (let i = 0; i < file.byteLength; i++) {
@@ -32,7 +28,7 @@ describe('Client', () => {
             const code = await sender.sendFile(_file)
 
             const receiver = new Client();
-            const reader: FileStreamReader = await receiver.recvFile(code);
+            const reader = await receiver.recvFile(code);
 
             let buf = new Uint8Array(new ArrayBuffer(testBufferSize));
             let readBytes = 0;
@@ -55,8 +51,8 @@ describe('Client', () => {
         })
     })
 
-    describe('#saveFile', () => {
-        it.skip('should ', async () => {
+    describe.skip('#saveFile', () => {
+        it('should ', async () => {
             const sender = new Client()
             const file = new DataView(new ArrayBuffer(testFileSize))
             for (let i = 0; i < file.byteLength; i++) {
@@ -84,9 +80,9 @@ describe('Client', () => {
     })
 });
 
-describe('FileStreamReader', () => {
+describe('Reader', () => {
     describe('#read', () => {
-        it('should call the read function passed to the constructor and set done', async () => {
+        it('should call the read function passed to the constructor', async () => {
             const file = new DataView(new ArrayBuffer(testFileSize))
             for (let i = 0; i < file.byteLength; i++) {
                 file.setUint8(i, i);
@@ -105,8 +101,7 @@ describe('FileStreamReader', () => {
                 return Promise.resolve([testBufferSize, false]);
             })
 
-            const reader = new FileStreamReader(testBufferSize, readFn);
-
+            const reader = new Reader(testBufferSize, readFn);
             const buf = new ArrayBuffer(testBufferSize);
             let readBytes = 0;
             for (let n = 0, done = false; !done;) {
