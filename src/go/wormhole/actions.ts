@@ -1,5 +1,3 @@
-import TinyQueue, {Comparator} from 'tinyqueue';
-
 export const WASM_READY = 'client/wasm_ready';
 export const NEW_CLIENT = 'client/new';
 export const SEND_TEXT = 'client/send_text';

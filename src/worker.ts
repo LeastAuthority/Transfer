@@ -1,14 +1,3 @@
-import {FileStreamReader} from "./go/wormhole/streaming";
-
-console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-
-(function () {
-    // TODO: JS -> wasm dependency injection
-    (globalThis as any).FileStreamReader = FileStreamReader;
-}())
-
-const wasmPromise = fetch("/assets/wormhole.wasm");
-
 import Go from "./go";
 import Client from "./go/wormhole/client";
 import {
@@ -25,9 +14,9 @@ import {
     WASM_READY
 } from "@/go/wormhole/actions";
 
-// const bufferSize = 1024 * 4 // 4KiB
-const bufferSize = 1024 * 256 // 4KiB
-// const bufferSize = (1024 ** 2) * 2 // 2MiB
+const wasmPromise = fetch("/assets/wormhole.wasm");
+
+const bufferSize = 1024 * 4 // 4KiB
 let port: MessagePort;
 let client: Client;
 // TODO: be more specific
@@ -50,7 +39,7 @@ function handleReceiveFile({id, name, size, code}: ActionMessage): void {
     }
 
     // TODO: cleanup!
-    const opts = {progressCb: recvProgressCb};
+    const opts = {progressFunc: recvProgressCb};
     console.log(`worker.ts:54| `)
     console.log(opts);
     client.recvFile(code, opts).then(reader => {
@@ -152,7 +141,7 @@ onmessage = async function (event) {
                 break;
             case SEND_FILE:
                 // TODO: change signature to expect array buffer or Uint8Array?
-                client.sendFile(_file as File, sendProgressCb).then(code => {
+                client.sendFile(_file as File, {progressFunc: sendProgressCb}).then(code => {
                     port.postMessage({
                         action: SEND_FILE,
                         id,
