@@ -24,7 +24,6 @@ const receiving: Record<number, any> = {};
 
 function handleReceiveFile({id, name, size, code}: ActionMessage): void {
     const recvProgressCb = (sentBytes: number, totalBytes: number): void => {
-        console.log(`worker.ts:38| sentBytes: ${sentBytes}; totalBytes: ${totalBytes}`);
         port.postMessage({
             action: RECV_FILE_PROGRESS,
             id,
@@ -40,8 +39,6 @@ function handleReceiveFile({id, name, size, code}: ActionMessage): void {
 
     // TODO: cleanup!
     const opts = {progressFunc: recvProgressCb};
-    console.log(`worker.ts:54| `)
-    console.log(opts);
     client.recvFile(code, opts).then(reader => {
         receiving[id] = {
             name,

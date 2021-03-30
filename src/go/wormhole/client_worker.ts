@@ -95,11 +95,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 resolve(event.data.text);
                 break;
             case SEND_FILE:
-                if (typeof (pending.progressCb) === 'undefined') {
-                    delete this.pending[id];
-                }
-                // TODO: delete in other case!
-
                 resolve(event.data.code);
                 break;
             case SEND_FILE_PROGRESS:
@@ -109,7 +104,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 this._handleRecvFile(event.data);
                 break;
             case RECV_FILE_PROGRESS:
-                console.log('RECV_FILE_PROGRESS received');
                 this._handleFileProgress(event.data);
                 break;
             case RECV_FILE_DATA:
@@ -156,7 +150,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     }
 
     private _handleFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {
-        console.log(`client_worker.ts:158| id: ${id}; sentBytes: ${sentBytes}; totalBytes: ${totalBytes}`);
         const {opts} = this.pending[id];
         if (typeof (opts) === 'undefined' || typeof (opts.progressFunc) === 'undefined') {
             return;
@@ -227,7 +220,7 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             }
             this.pending[id] = {
                 message, resolve, reject,
-                progressFunc,
+                opts: {progressFunc},
             };
             this.port.postMessage(message)
         })

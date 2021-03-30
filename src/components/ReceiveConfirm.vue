@@ -5,53 +5,54 @@
             <ion-toolbar>
                 <ion-title size="large" class="ion-text-uppercase">Receive a file</ion-title>
             </ion-toolbar>
+            <ion-grid>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text>Ready to download:</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text class="filename">{{ file.name }}</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text class="size">({{ fileSize }})</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-progress-bar color="primary"
+                                          v-show="progress.value >= 0"
+                                          :type="progress.type"
+                                          :value="progress.value"
+                        ></ion-progress-bar>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-button class="download-button"
+                                    color="light"
+                                    :disabled="!file.ready">
+                            <ion-icon :icon="cloudDownloadOutline"></ion-icon>
+                            <ion-text class="ion-padding-start"
+                                      @click="download"
+                            >Download
+                            </ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-button color="danger" @click="router.push('/receive')">
+                            <ion-icon :icon="close"></ion-icon>
+                            <ion-text class="ion-padding-start">cancel</ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
         </ion-content>
-        <ion-grid>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-text>Ready to download:</ion-text>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-text class="filename">{{ file.name }}</ion-text>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-text class="size">({{ fileSize }})</ion-text>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col>
-                    <ion-progress-bar color="primary"
-                                      v-show="progress.value >= 0"
-                                      :type="progress.type"
-                                      :value="progress.value"
-                    ></ion-progress-bar>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col>
-                    <ion-button class="download-button"
-                                color="light"
-                                :disabled="!file.ready">
-                        <ion-icon :icon="cloudDownloadOutline"></ion-icon>
-                        <ion-text class="ion-padding-start"
-                                  @click="download"
-                        >Download</ion-text>
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-button color="danger" @click="router.push('/receive')">
-                        <ion-icon :icon="close"></ion-icon>
-                        <ion-text class="ion-padding-start">cancel</ion-text>
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
         <version-footer></version-footer>
     </ion-page>
 </template>
@@ -143,7 +144,7 @@
                 const {name, size} = this.file;
                 await this.client.saveFile(this.file.code, {
                     name, size,
-                    progressCb: this.onProgress,
+                    progressFunc: this.onProgress,
                 });
             },
             // TODO: refactor

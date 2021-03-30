@@ -5,54 +5,54 @@
             <ion-toolbar>
                 <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
             </ion-toolbar>
+            <ion-grid>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text>Ready to send:</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text class="filename">{{ file.name }}</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text class="size">({{ fileSize }})</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col size="8" class="ion-text-right">
+                        <ion-input class="send-code-input"
+                                   v-model="code"
+                                   placeholder="code"
+                                   readonly
+                        ></ion-input>
+                    </ion-col>
+                    <ion-col size="1">
+                        <copy-button :code="code"
+                                     :host="host"/>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-progress-bar color="primary"
+                                          v-show="progress.value >= 0"
+                                          :type="progress.type"
+                                          :value="progress.value"
+                        ></ion-progress-bar>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-button color="danger" @click="setOpen(false)">
+                            <ion-icon :icon="close"></ion-icon>
+                            <ion-text class="ion-padding-start">cancel</ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
         </ion-content>
-        <ion-grid>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-text>Ready to send:</ion-text>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-text class="filename">{{ file.name }}</ion-text>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-text class="size">({{ fileSize }})</ion-text>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col size="8" class="ion-text-right">
-                    <ion-input class="send-code-input"
-                               v-model="code"
-                               placeholder="code"
-                               readonly
-                    ></ion-input>
-                </ion-col>
-                <ion-col size="1">
-                    <copy-button :code="code"
-                                 :host="host"/>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col>
-                    <ion-progress-bar color="primary"
-                                      v-show="progress.value >= 0"
-                                      :type="progress.type"
-                                      :value="progress.value"
-                    ></ion-progress-bar>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col class="ion-text-center">
-                    <ion-button color="danger" @click="setOpen(false)">
-                        <ion-icon :icon="close"></ion-icon>
-                        <ion-text class="ion-padding-start">cancel</ion-text>
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
         <version-footer></version-footer>
     </ion-page>
 </template>
@@ -132,7 +132,8 @@
             }
         },
         async beforeMount() {
-            const fileCode = await this.client.sendFile(this.file, this.onProgress);
+            const opts = {progressFunc: this.onProgress};
+            const fileCode = await this.client.sendFile(this.file, opts);
             // const fileCode = await this.client.sendFile(this.file);
 
             // TODO: expose more of wormhole-william and handle this internally!
