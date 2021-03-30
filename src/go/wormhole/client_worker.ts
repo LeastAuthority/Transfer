@@ -7,7 +7,7 @@ import {
     isAction,
     NEW_CLIENT,
     RECV_FILE,
-    RECV_FILE_DATA, RECV_FILE_PROGRESS,
+    RECV_FILE_DATA, RECV_FILE_OFFER, RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
     SEND_FILE_PROGRESS,
@@ -106,6 +106,9 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             case RECV_FILE_PROGRESS:
                 this._handleFileProgress(event.data);
                 break;
+            case RECV_FILE_OFFER:
+                this._handleRecvFileOffer(event.data);
+                break;
             case RECV_FILE_DATA:
                 this._handleRecvFileData(event.data);
                 break;
@@ -116,17 +119,13 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         resolve(event.data.code);
     }
 
-    private _handleRecvFile({id, name, size}: ActionMessage): void {
+    private _handleRecvFile({id}: ActionMessage): void {
         const receiving = this.receiving[id];
 
         if (typeof (receiving) !== 'undefined') {
             throw new Error(`already receiving file named "${receiving.name}" with id ${id}`);
         }
 
-        const writer = streamSaver.createWriteStream(name, {
-            size,
-        }).getWriter();
-        this.receiving[id] = {writer};
         this.port.postMessage({
             action: RECV_FILE_DATA,
             id,
@@ -155,6 +154,22 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             return;
         }
         opts.progressFunc(sentBytes, totalBytes);
+    }
+
+    private _handleRecvFileOffer({id, offer}: ActionMessage) {
+        console.log(`client_work.ts:160| opts: ${JSON.stringify(offer, null, '  ')}`)
+        const {opts} = this.pending[id];
+        // this.pending[id].offer = offer;
+        const {name, size} = offer;
+        const writer = streamSaver.createWriteStream(name, {
+            size,
+        }).getWriter();
+        this.receiving[id] = {writer};
+        if (typeof (opts) === 'undefined' || typeof (opts.offerCondition) === 'undefined') {
+            return;
+        }
+        // NB: ignore return value because offer rejection is currently synchronous.
+        opts.offerCondition(offer);
     }
 
     public async sendText(text: string): Promise<string> {
@@ -194,6 +209,7 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                     action: SEND_FILE,
                     id,
                     buffer,
+                    name: file.name,
                 }
                 this.pending[id] = {message, opts, resolve, reject};
                 this.port.postMessage(message, [buffer]);
@@ -205,22 +221,23 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
         await this.ready;
         return new Promise((resolve, reject) => {
+            // console.log(`client_work.ts:220| opts: ${JSON.stringify(opts, null, '  ')}`)
             // TODO: refactor
             if (typeof (opts) === 'undefined') {
                 opts = {};
             }
             const id = Date.now()
-            const {name, size, progressFunc} = opts;
+            // const {name, size} = opts;
             const message = {
                 action: RECV_FILE,
                 id,
                 code,
-                name,
-                size,
+                // name,
+                // size,
             }
             this.pending[id] = {
                 message, resolve, reject,
-                opts: {progressFunc},
+                opts, //: {progressFunc},
             };
             this.port.postMessage(message)
         })

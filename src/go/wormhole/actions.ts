@@ -6,6 +6,7 @@ export const SEND_FILE = 'client/send_file';
 export const SEND_FILE_PROGRESS = 'client/send_file/progress';
 export const RECV_FILE = 'client/recv_file';
 export const RECV_FILE_PROGRESS = 'client/recv_file/progress';
+export const RECV_FILE_OFFER = 'client/recv_file/offer';
 export const RECV_FILE_DATA = 'client/recv_file/data';
 export const FREE = 'client/free';
 

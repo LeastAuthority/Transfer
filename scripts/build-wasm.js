@@ -6,7 +6,8 @@ const execSync = require('child_process').execSync;
 
 const wormholeDir = path.join(__dirname, '..', 'wormhole-william');
 // TODO: error handling!
-const output = execSync('go build -o ../public/assets/wormhole.wasm ./wasm/module',
+// TODO: fix (and support asdf)!
+const output = execSync('/usr/local/go/bin/go build -o ../public/assets/wormhole.wasm ./wasm/module',
     {
         cwd: wormholeDir,
         env: {

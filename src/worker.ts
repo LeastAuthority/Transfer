@@ -6,6 +6,7 @@ import {
     isAction,
     RECV_FILE,
     RECV_FILE_DATA,
+    RECV_FILE_OFFER,
     RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
@@ -22,7 +23,7 @@ let client: Client;
 // TODO: be more specific
 const receiving: Record<number, any> = {};
 
-function handleReceiveFile({id, name, size, code}: ActionMessage): void {
+function handleReceiveFile({id, code}: ActionMessage): void {
     const recvProgressCb = (sentBytes: number, totalBytes: number): void => {
         port.postMessage({
             action: RECV_FILE_PROGRESS,
@@ -37,20 +38,29 @@ function handleReceiveFile({id, name, size, code}: ActionMessage): void {
         throw new Error(`already receiving file with named "${_receiving.name}" with id ${id}`);
     }
 
-    // TODO: cleanup!
-    const opts = {progressFunc: recvProgressCb};
+    // TODO: cleanup / refactor!
+    const offerCondition = function (offer: Record<string, any>): boolean {
+        console.log(`worker.ts:42| offer: ${JSON.stringify(offer, null, '  ')}`)
+        port.postMessage({
+            action: RECV_FILE_OFFER,
+            id,
+            offer,
+        })
+        // NB: worker can never reject offer directly because it's synchronous.
+        return true
+    }
+    const opts = {
+        progressFunc: recvProgressCb,
+        offerCondition,
+    };
     client.recvFile(code, opts).then(reader => {
         receiving[id] = {
-            name,
-            size,
             reader,
         };
 
         port.postMessage({
             action: RECV_FILE,
             id,
-            name,
-            size
         });
     });
 }
@@ -100,12 +110,6 @@ onmessage = async function (event) {
     });
 
     port.onmessage = async function (event) {
-        const _file = {
-            arrayBuffer(): Promise<ArrayBuffer> {
-                return Promise.resolve(event.data.buffer);
-            }
-        };
-
         const {action, id} = event.data;
 
         const sendProgressCb = (sentBytes: number, totalBytes: number): void => {
@@ -137,8 +141,15 @@ onmessage = async function (event) {
                 });
                 break;
             case SEND_FILE:
+                console.log("SANITY CHECK");
                 // TODO: change signature to expect array buffer or Uint8Array?
-                client.sendFile(_file as File, {progressFunc: sendProgressCb}).then(code => {
+                console.log(`worker.ts:145| event: ${JSON.stringify(event.data, null, '  ')}`);
+                client.sendFile({
+                    name: event.data.name,
+                    arrayBuffer(): Promise<ArrayBuffer> {
+                        return Promise.resolve(event.data.buffer);
+                    }
+                } as File, {progressFunc: sendProgressCb}).then(code => {
                     port.postMessage({
                         action: SEND_FILE,
                         id,

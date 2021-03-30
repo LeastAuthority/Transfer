@@ -12,9 +12,12 @@ const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
 // TODO: move to own client wrapper lib
 
 export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
+// TODO: be more specific
+export type OfferCondition = (offer: Record<string, any>) => boolean
 
 export interface TransferOptions {
     progressFunc?: ProgressFunc;
+    offerCondition?: OfferCondition;
     code?: string;
 
     // TODO: keep?
@@ -59,6 +62,7 @@ export default class Client implements ClientInterface {
 
     public async sendFile(file: File, opts?: TransferOptions): Promise<string> {
         const data = new Uint8Array(await file.arrayBuffer());
+        console.log(`client.ts:65| file.name: ${file.name}`);
         return wormhole.Client.sendFile(this.goClient, file.name, data, opts);
     }
 
@@ -67,6 +71,7 @@ export default class Client implements ClientInterface {
     }
 
     public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
+        // console.log(`opts.offerCondition: ${opts!.offerCondition}`);
         const reader = await wormhole.Client.recvFile(this.goClient, code, opts);
         let bufferSizeBytes = reader.bufferSizeBytes;
         if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
