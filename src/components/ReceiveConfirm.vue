@@ -8,7 +8,9 @@
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text>Ready to download:</ion-text>
+                        <ion-text v-if="!progress.done && progress.value <= 0">Ready to download:</ion-text>
+                        <ion-text v-else-if="!progress.done && progress.value > 0">Downloading:</ion-text>
+                        <ion-text v-else-if="progress.done">Downloaded!</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -21,7 +23,7 @@
                         <ion-text class="size">({{ fileSize }})</ion-text>
                     </ion-col>
                 </ion-row>
-                <ion-row>
+                <ion-row v-show="!progress.done">
                     <ion-col>
                         <ion-progress-bar color="primary"
                                           v-show="progress.value >= 0"
@@ -30,7 +32,7 @@
                         ></ion-progress-bar>
                     </ion-col>
                 </ion-row>
-                <ion-row>
+                <ion-row v-if="!progress.done">
                     <ion-col class="ion-text-center">
                         <ion-button class="download-button"
                                     color="light"
@@ -43,11 +45,36 @@
                         </ion-button>
                     </ion-col>
                 </ion-row>
-                <ion-row>
+                <ion-row v-else>
+                    <ion-col>
+                        <ion-text class="ion-text-center">
+                            <h1>
+                                &#x1f389; <!-- party popper -->
+                            </h1>
+                        </ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row v-if="!progress.done">
                     <ion-col class="ion-text-center">
-                        <ion-button color="danger" @click="router.push('/receive')">
+                        <ion-button color="danger" @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
                             <ion-text class="ion-padding-start">cancel</ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row v-else>
+                    <ion-col>
+                        <ion-button color="light"
+                                @click=sendFile()>
+                            <ion-icon :icon="exitOutline"></ion-icon>
+                            <ion-text class="ion-padding-start">Send a file</ion-text>
+                        </ion-button>
+                    </ion-col>
+                    <ion-col>
+                        <ion-button color="light"
+                                    @click="router.push('/receive')">
+                            <ion-icon :icon="enterOutline"></ion-icon>
+                            <ion-text class="ion-padding-start">Receive more</ion-text>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -72,19 +99,13 @@
         IonProgressBar,
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
-    import {cloudDownloadOutline, close} from 'ionicons/icons';
-    import streamSaver from 'streamsaver';
+    import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
     import VersionFooter from '@/components/VersionFooter.vue';
     import ClientWorker from '@/go/wormhole/client_worker.ts';
     import {sizeToClosestUnit} from "@/util";
-
-    // TODO: move
-    function decodeFileInfo(infoStr) {
-        return JSON.parse(window.atob(infoStr))
-    }
 
     // TODO: refactor
     const PROGRESS_INDETERMINATE = 'indeterminate'
@@ -101,6 +122,8 @@
                     size: 0,
                     code: '',
                     ready: false,
+                    accept: undefined,
+                    reject: undefined,
                 },
                 progress: {
                     type: PROGRESS_INDETERMINATE,
@@ -118,10 +141,13 @@
             }
         },
         async mounted() {
-            // TODO: expose more of wormhole-william and handle this internally!
-            const fileInfoStr = await this.client.recvText(this.$route.params.code);
-            const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
-            this.file = {name, size, code, ready: true};
+            const code = this.$route.params.code;
+            await this.client.saveFile(code, {
+                name,
+                progressFunc: this.onProgress,
+                offerCondition: this.offerCondition,
+            });
+            this.file.ready = true;
         },
         components: {
             IonPage,
@@ -139,13 +165,10 @@
             VersionFooter,
         },
         methods: {
-            // TODO: move this to Receive.vue
             async download() {
-                const {name, size} = this.file;
-                await this.client.saveFile(this.file.code, {
-                    name, size,
-                    progressFunc: this.onProgress,
-                });
+                console.log('Download clicked!');
+                this.file.accept();
+                // TODO: reject on cancel.
             },
             // TODO: refactor
             onProgress(sentBytes, totalBytes) {
@@ -159,11 +182,40 @@
                 }
                 this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
             },
+            resetProgress() {
+                if (this.progress.value > .99) {
+                    // this.progress.type = PROGRESS_INDETERMINATE;
+                    // this.progress.value = -1;
+                    this.progress.doneID = -1;
+                    this.progress.done = true;
+                }
+            },
+            offerCondition(offer, accept, reject) {
+                this.file = {
+                    ...offer,
+                    accept,
+                    reject,
+                }
+            },
+            cancel() {
+                if (typeof (this.file.reject) !== 'undefined') {
+                    this.file.reject();
+                }
+                router.push('/receive');
+            },
+            sendFile() {
+                // TODO:
+                // navigate to send/select
+                router.push('/send?select');
+            },
         },
         setup() {
             return {
                 cloudDownloadOutline,
                 close,
+                enterOutline,
+                exit,
+                exitOutline,
                 router,
             }
         }

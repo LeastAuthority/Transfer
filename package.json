@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "serve:worker": "vue-cli-service build --dest ./public/worker/ --target lib --formats umd --name worker --filename index --mode developement --watch ./src/worker.ts",
-    "build": "NODE_ENV=production yarn build:worker && yarn build:wasm && NODE_ENV=production vue-cli-service build",
+    "build": "NODE_ENV=production yarn build:worker && NODE_ENV=production vue-cli-service build",
     "build:worker": "NODE_ENV=production vue-cli-service build --dest ./dest/worker/ --target lib --formats umd --name worker --filename index --mode production ./src/worker.ts",
     "build:wasm": "node scripts/build-wasm.js",
     "test:unit": "vue-cli-service test:unit",
@@ -20,12 +20,12 @@
     "compose:up": "bash scripts/docker-compose.sh up"
   },
   "dependencies": {
+    "@capacitor/android": "^2.4.5",
     "@capacitor/core": "2.4.5",
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
     "core-js": "^3.6.5",
     "streamsaver": "^2.0.5",
-    "tinyqueue": "^2.0.3",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0",
     "web-streams-polyfill": "^3.0.2"

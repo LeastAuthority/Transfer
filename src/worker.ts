@@ -6,6 +6,7 @@ import {
     isAction,
     RECV_FILE,
     RECV_FILE_DATA,
+    RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_OFFER_REJECT,
     RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
@@ -22,7 +23,7 @@ let client: Client;
 // TODO: be more specific
 const receiving: Record<number, any> = {};
 
-function handleReceiveFile({id, name, size, code}: ActionMessage): void {
+function handleReceiveFile({id, code}: ActionMessage): void {
     const recvProgressCb = (sentBytes: number, totalBytes: number): void => {
         port.postMessage({
             action: RECV_FILE_PROGRESS,
@@ -37,22 +38,60 @@ function handleReceiveFile({id, name, size, code}: ActionMessage): void {
         throw new Error(`already receiving file with named "${_receiving.name}" with id ${id}`);
     }
 
-    // TODO: cleanup!
-    const opts = {progressFunc: recvProgressCb};
+    // TODO: cleanup / refactor!
+    const offerCondition = function (offer: Record<string, any>, accept: () => Error, reject: () => Error): void {
+        receiving[id] = {
+            ...receiving[id],
+            offer: {
+                ...offer,
+                accept,
+                reject
+            }
+        };
+        port.postMessage({
+            action: RECV_FILE_OFFER,
+            id,
+            offer,
+        })
+    }
+    const opts = {
+        progressFunc: recvProgressCb,
+        offerCondition,
+    };
     client.recvFile(code, opts).then(reader => {
         receiving[id] = {
-            name,
-            size,
+            ...receiving[id],
             reader,
         };
 
+    });
+}
+
+function handleReceiveOfferAccept({id}: ActionMessage): void {
+    const _receiving = receiving[id]
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const {offer: {accept}} = _receiving;
+    // TODO: handle error
+    accept().then(() => {
         port.postMessage({
             action: RECV_FILE,
             id,
-            name,
-            size
         });
     });
+}
+
+function handleReceiveOfferReject({id}: ActionMessage): void {
+    const _receiving = receiving[id]
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const {offer: {reject}} = _receiving;
+    // TODO: currently ignoring error.
+    reject();
 }
 
 async function handleReceiveFileData({id, done}: ActionMessage): Promise<void> {
@@ -100,12 +139,6 @@ onmessage = async function (event) {
     });
 
     port.onmessage = async function (event) {
-        const _file = {
-            arrayBuffer(): Promise<ArrayBuffer> {
-                return Promise.resolve(event.data.buffer);
-            }
-        };
-
         const {action, id} = event.data;
 
         const sendProgressCb = (sentBytes: number, totalBytes: number): void => {
@@ -137,8 +170,14 @@ onmessage = async function (event) {
                 });
                 break;
             case SEND_FILE:
+                console.log("SANITY CHECK");
                 // TODO: change signature to expect array buffer or Uint8Array?
-                client.sendFile(_file as File, {progressFunc: sendProgressCb}).then(code => {
+                client.sendFile({
+                    name: event.data.name,
+                    arrayBuffer(): Promise<ArrayBuffer> {
+                        return Promise.resolve(event.data.buffer);
+                    }
+                } as File, {progressFunc: sendProgressCb}).then(code => {
                     port.postMessage({
                         action: SEND_FILE,
                         id,
@@ -151,6 +190,12 @@ onmessage = async function (event) {
                 break;
             case RECV_FILE_DATA:
                 handleReceiveFileData(event.data);
+                break;
+            case RECV_FILE_OFFER_ACCEPT:
+                handleReceiveOfferAccept(event.data);
+                break;
+            case RECV_FILE_OFFER_REJECT:
+                handleReceiveOfferReject(event.data);
                 break;
             case FREE:
                 client.free();

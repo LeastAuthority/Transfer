@@ -5,12 +5,11 @@
             <ion-toolbar>
                 <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
             </ion-toolbar>
-
-            <ion-grid>
+            <ion-grid v-if="!done">
                 <ion-row>
-                    <ion-col>
+                    <ion-col class="ion-text-center">
                         <ion-text color="medium">
-                            <h4 class="ion-text-center">
+                            <h4>
                                 Send files securely, easily, and fast.
                             </h4>
                         </ion-text>
@@ -28,6 +27,42 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
+
+            <ion-grid v-else>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text>Sent!</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text class="filename">{{ file.name }}</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-text class="size">({{ fileSize() }})</ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-text class="ion-text-center">
+                            <h1>
+                                &#x1f389; <!-- party popper -->
+                            </h1>
+                        </ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col class="ion-text-center">
+                        <ion-button color="light"
+                                    @click="sendMore()">
+                            <ion-icon :icon="add"></ion-icon>
+                            <ion-text class="ion-padding-start">Send more</ion-text>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
         </ion-content>
         <ion-modal
                 :is-open="isOpenRef"
@@ -36,6 +71,8 @@
         >
             <SendModal
                     :setOpen="setOpen"
+                    :setDone="setDone"
+                    :selectFile="select"
                     :file="file"
             ></SendModal>
         </ion-modal>
@@ -52,6 +89,14 @@
     .modal {
         --min-width: 100vw;
         --min-height: 100vh;
+    }
+
+    .size {
+        font-size: small;
+    }
+
+    .filename {
+        font-weight: bold;
     }
 </style>
 
@@ -76,6 +121,8 @@
     import MyHeader from '@/components/MyHeader.vue';
     import SendModal from '@/components/SendModal.vue';
     import VersionFooter from "@/components/VersionFooter.vue";
+    import router from '@/router/index.ts'
+    import {sizeToClosestUnit} from "@/util";
 
     const isOpenRef = ref(false);
     // let loadedFile: File;
@@ -83,6 +130,7 @@
 
     interface SendData {
         file: File | null;
+        done: boolean;
     }
 
     export default defineComponent({
@@ -90,6 +138,7 @@
         data(): SendData {
             return {
                 file: null,
+                done: false,
             };
         },
         components: {
@@ -112,6 +161,11 @@
         mounted() {
             // TODO: do this more vue idiomatically
             fileInput = document.querySelector('#fileInput') as HTMLInputElement;
+            console.log('route params:');
+            console.log(this.$route)
+            if (typeof (this.$route.query.select) !== 'undefined') {
+                this.select();
+            }
         },
         methods: {
             select() {
@@ -120,17 +174,29 @@
             setOpen(state: boolean) {
                 isOpenRef.value = state;
             },
+            setDone(done: boolean) {
+                console.log(`set done called: ${done}`);
+                this.done = done;
+            },
             fileChanged() {
                 if (fileInput!.files!.length > 0) {
                     this.file = fileInput!.files![0];
                     this.setOpen(true);
                 }
-            }
+            },
+            fileSize(): string {
+                return sizeToClosestUnit(this.file!.size);
+            },
+            sendMore() {
+                this.done = false;
+                this.select();
+            },
         },
         setup() {
             return {
                 add,
                 isOpenRef,
+                router,
             };
         }
     });

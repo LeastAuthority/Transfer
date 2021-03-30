@@ -45,7 +45,8 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="danger" @click="setOpen(false)">
+                        <ion-button color="danger"
+                                    @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
                             <ion-text class="ion-padding-start">cancel</ion-text>
                         </ion-button>
@@ -84,6 +85,7 @@
     } from '@ionic/vue';
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
+    import {add} from 'ionicons/icons';
 
     import ClientWorker from '@/go/wormhole/client_worker';
     import {sizeToClosestUnit} from '@/util';
@@ -93,18 +95,13 @@
     import VersionFooter from "@/components/VersionFooter";
     import CopyButton from "@/components/CopyButton";
 
-    // TODO: move
-    function encodeFileInfo(info) {
-        return window.btoa(JSON.stringify(info));
-    }
-
     const PROGRESS_INDETERMINATE = 'indeterminate'
     const PROGRESS_DETERMINATE = 'determinate'
     const PROGRESS_DONE_TIMEOUT_MS = 500;
 
     export default defineComponent({
         name: "SendModal.vue",
-        props: ['setOpen', 'file'],
+        props: ['setOpen', 'setDone', 'selectFile', 'file'],
         data() {
             // TODO: refactor
             let host = 'http://localhost:8080';
@@ -123,6 +120,7 @@
                     _value: -1,
                     doneID: -1,
                     updateID: -1,
+                    done: false,
                 }
             }
         },
@@ -133,16 +131,7 @@
         },
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
-            const fileCode = await this.client.sendFile(this.file, opts);
-            // const fileCode = await this.client.sendFile(this.file);
-
-            // TODO: expose more of wormhole-william and handle this internally!
-            const fileStats = encodeFileInfo({
-                name: this.file.name,
-                size: this.file.size,
-                fileCode,
-            });
-            this.code = await this.client.sendText(fileStats)
+            this.code = await this.client.sendFile(this.file, opts);
         },
         methods: {
             // TODO: refactor
@@ -163,11 +152,39 @@
                 // this.progress.type = PROGRESS_INDETERMINATE;
                 // this.progress.value = -1;
                 this.progress.doneID = -1;
+                this.progress.done = true;
+                this.setDone(true);
+                this.setOpen(false);
             },
-
+            cancel() {
+                this.setOpen(false);
+                this.reset();
+            },
+            sendMore() {
+                this.setOpen(false);
+                this.selectFile();
+                // NB: wait for animation to finish.
+                window.setTimeout(() => {
+                    this.reset();
+                }, 300);
+            },
+            reset() {
+                this.code = '';
+                this.client = new ClientWorker();
+                this.progress = {
+                    type: PROGRESS_INDETERMINATE,
+                    // type: PROGRESS_DETERMINATE,
+                    value: -1,
+                    _value: -1,
+                    doneID: -1,
+                    updateID: -1,
+                    done: false,
+                }
+            },
         },
         setup() {
             return {
+                add,
                 close,
                 router,
             }

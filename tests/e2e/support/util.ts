@@ -37,18 +37,13 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
 export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<string> {
     const sender = new Client(config);
     const file = {
+        name,
         arrayBuffer(): Promise<ArrayBuffer> {
             const enc = new TextEncoder();
             return Promise.resolve(enc.encode(data));
         }
     }
-    const fileCode = await sender.sendFile(file);
-
-    const fileStats = btoa(JSON.stringify({
-        name,
-        fileCode,
-    }));
-    return sender.sendText(fileStats)
+    return sender.sendFile(file);
 }
 
 // TODO: use cypress-promise?

@@ -54,19 +54,6 @@ describe('Sender', () => {
     })
 })
 
-// function selectTestFile(filename: string): Chainable<unknown> {
-//     return cy.fixture('large-file.txt').then(fileContent => {
-//         cy.contains('ion-button', 'select')
-//             // TODO: doesn't test button triggers file dialog
-//             // TODO: can't set / test file size?
-//             .get('input[type="file"]')
-//             .attachFile({
-//                 fileName: 'large-file.txt',
-//                 fileContent,
-//             })
-//     });
-// }
-
 // TODO: refactor (application actions / page objects?)
 async function UIGetCode(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -95,10 +82,15 @@ async function mockReceive(code: string): Promise<Uint8Array> {
     });
 
     const receiver = new Client();
-    const metadata = await receiver.recvText(code);
-    // console.log(atob(metadata))
-    const {fileCode, size} = JSON.parse(atob(metadata))
-    const reader = await receiver.recvFile(fileCode);
+    // TODO: cleanup
+    let size: number;
+    const offerCondition = (offer: Record<string, any>, accept: ()=>void, reject: ()=>Error): void => {
+        size = offer.size;
+    }
+    const reader = await receiver.recvFile(code, {
+        offerCondition,
+    });
+    // @ts-ignore
     const result = new Uint8Array(size)
     for (let n = 0, accBytes = 0, done = false; !done;) {
         const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
