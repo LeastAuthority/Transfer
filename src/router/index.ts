@@ -25,7 +25,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'receive/:code',
-        component: () => import('@/views/ReceiveConfirm.vue')
+        component: () => import('@/components/ReceiveConfirm.vue')
       },
     ]
   }
