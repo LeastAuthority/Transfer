@@ -95,10 +95,15 @@ async function mockReceive(code: string): Promise<Uint8Array> {
     });
 
     const receiver = new Client();
-    const metadata = await receiver.recvText(code);
-    // console.log(atob(metadata))
-    const {fileCode, size} = JSON.parse(atob(metadata))
-    const reader = await receiver.recvFile(fileCode);
+    // TODO: cleanup
+    let size: number;
+    const offerCondition = (offer: Record<string, any>, accept: ()=>void, reject: ()=>Error): void => {
+        size = offer.size;
+    }
+    const reader = await receiver.recvFile(code, {
+        offerCondition,
+    });
+    // @ts-ignore
     const result = new Uint8Array(size)
     for (let n = 0, accBytes = 0, done = false; !done;) {
         const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));

@@ -7,7 +7,7 @@ import {
     isAction,
     NEW_CLIENT,
     RECV_FILE,
-    RECV_FILE_DATA, RECV_FILE_OFFER, RECV_FILE_PROGRESS,
+    RECV_FILE_DATA, RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
     SEND_FILE_PROGRESS,
@@ -122,9 +122,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     private _handleRecvFile({id}: ActionMessage): void {
         const receiving = this.receiving[id];
 
-        if (typeof (receiving) !== 'undefined') {
-            throw new Error(`already receiving file named "${receiving.name}" with id ${id}`);
-        }
 
         this.port.postMessage({
             action: RECV_FILE_DATA,
@@ -168,8 +165,22 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         if (typeof (opts) === 'undefined' || typeof (opts.offerCondition) === 'undefined') {
             return;
         }
-        // NB: ignore return value because offer rejection is currently synchronous.
-        opts.offerCondition(offer);
+
+        const accept = (): void => {
+            this.port.postMessage({
+                action: RECV_FILE_OFFER_ACCEPT,
+                id,
+            })
+        }
+        // TODO: currently ignoring error because async
+        // const reject = (): Promise<Error> => {
+        const reject = () => {
+            this.port.postMessage({
+                action: RECV_FILE_OFFER_ACCEPT,
+                id,
+            })
+        }
+        opts.offerCondition(offer, accept, reject);
     }
 
     public async sendText(text: string): Promise<string> {

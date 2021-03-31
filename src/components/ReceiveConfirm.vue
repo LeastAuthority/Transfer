@@ -100,6 +100,8 @@
                     size: 0,
                     code: '',
                     ready: false,
+                    accept: undefined,
+                    reject: undefined,
                 },
                 progress: {
                     type: PROGRESS_INDETERMINATE,
@@ -118,10 +120,14 @@
         },
         async mounted() {
             // TODO: expose more of wormhole-william and handle this internally!
-            const fileInfoStr = await this.client.recvText(this.$route.params.code);
-            const {name, size, fileCode: code} = decodeFileInfo(fileInfoStr);
             // this.file = {name, size, code, ready: true};
-            this.file = {code, ready: true};
+            const code = this.$route.params.code;
+            await this.client.saveFile(code, {
+                name, //size,
+                progressFunc: this.onProgress,
+                offerCondition: this.offerCondition,
+            });
+            this.file.ready = true;
         },
         components: {
             IonPage,
@@ -144,12 +150,8 @@
                 console.log('Download clicked!');
                 // const {name, size} = this.file;
                 // console.log(`ReceiveConfirm:145| name: ${name}; size: ${size}`);
-                await this.client.saveFile(this.file.code, {
-                    name, //size,
-                    progressFunc: this.onProgress,
-                    offerCondition: this.offerCondition,
-                });
-                console.log('...done saveFile');
+                this.file.accept();
+                // TODO: reject on cancel.
             },
             // TODO: refactor
             onProgress(sentBytes, totalBytes) {
@@ -163,14 +165,12 @@
                 }
                 this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
             },
-            offerCondition(offer) {
-                console.log(`ReceiveConfirm.vue:166| offer: ${JSON.stringify(offer, null, '  ')}`)
-                const {name, size} = offer;
-                this.data.file = {
-                    name,
-                    size
+            offerCondition(offer, accept, reject) {
+                this.file = {
+                    ...offer,
+                    accept,
+                    reject,
                 }
-                return true;
             },
         },
         setup() {

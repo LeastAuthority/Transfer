@@ -6,7 +6,7 @@ import {
     isAction,
     RECV_FILE,
     RECV_FILE_DATA,
-    RECV_FILE_OFFER,
+    RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_OFFER_REJECT,
     RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
@@ -39,15 +39,20 @@ function handleReceiveFile({id, code}: ActionMessage): void {
     }
 
     // TODO: cleanup / refactor!
-    const offerCondition = function (offer: Record<string, any>): boolean {
+    const offerCondition = function (offer: Record<string, any>, accept: () => void, reject: () => Error): void {
         console.log(`worker.ts:42| offer: ${JSON.stringify(offer, null, '  ')}`)
+        receiving[id] = {
+            offer: {
+                ...offer,
+                accept,
+                reject
+            }
+        };
         port.postMessage({
             action: RECV_FILE_OFFER,
             id,
             offer,
         })
-        // NB: worker can never reject offer directly because it's synchronous.
-        return true
     }
     const opts = {
         progressFunc: recvProgressCb,
@@ -63,6 +68,27 @@ function handleReceiveFile({id, code}: ActionMessage): void {
             id,
         });
     });
+}
+
+function handleReceiveOfferAccept({id}: ActionMessage): void {
+    const _receiving = receiving[id]
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const {offer: {accept}} = _receiving;
+    accept();
+}
+
+function handleReceiveOfferReject({id}: ActionMessage): void {
+    const _receiving = receiving[id]
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const {offer: {reject}} = _receiving;
+    // TODO: currently ignoring error.
+    reject();
 }
 
 async function handleReceiveFileData({id, done}: ActionMessage): Promise<void> {
@@ -143,7 +169,6 @@ onmessage = async function (event) {
             case SEND_FILE:
                 console.log("SANITY CHECK");
                 // TODO: change signature to expect array buffer or Uint8Array?
-                console.log(`worker.ts:145| event: ${JSON.stringify(event.data, null, '  ')}`);
                 client.sendFile({
                     name: event.data.name,
                     arrayBuffer(): Promise<ArrayBuffer> {
@@ -162,6 +187,12 @@ onmessage = async function (event) {
                 break;
             case RECV_FILE_DATA:
                 handleReceiveFileData(event.data);
+                break;
+            case RECV_FILE_OFFER_ACCEPT:
+                handleReceiveOfferAccept(event.data);
+                break;
+            case RECV_FILE_OFFER_REJECT:
+                handleReceiveOfferReject(event.data);
                 break;
             case FREE:
                 client.free();

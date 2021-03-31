@@ -13,7 +13,7 @@ const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
 
 export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
 // TODO: be more specific
-export type OfferCondition = (offer: Record<string, any>) => boolean
+export type OfferCondition = (offer: Record<string, any>, accept: () => void, reject: () => Error) => void
 
 export interface TransferOptions {
     progressFunc?: ProgressFunc;

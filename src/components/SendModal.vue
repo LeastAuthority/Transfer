@@ -133,16 +133,9 @@
         },
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
-            const fileCode = await this.client.sendFile(this.file, opts);
-            // const fileCode = await this.client.sendFile(this.file);
+            this.code = await this.client.sendFile(this.file, opts);
 
             // TODO: expose more of wormhole-william and handle this internally!
-            const fileStats = encodeFileInfo({
-                name: this.file.name,
-                size: this.file.size,
-                fileCode,
-            });
-            this.code = await this.client.sendText(fileStats)
         },
         methods: {
             // TODO: refactor
