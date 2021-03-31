@@ -119,11 +119,9 @@
             }
         },
         async mounted() {
-            // TODO: expose more of wormhole-william and handle this internally!
-            // this.file = {name, size, code, ready: true};
             const code = this.$route.params.code;
             await this.client.saveFile(code, {
-                name, //size,
+                name,
                 progressFunc: this.onProgress,
                 offerCondition: this.offerCondition,
             });
@@ -145,11 +143,8 @@
             VersionFooter,
         },
         methods: {
-            // TODO: move this to Receive.vue
             async download() {
                 console.log('Download clicked!');
-                // const {name, size} = this.file;
-                // console.log(`ReceiveConfirm:145| name: ${name}; size: ${size}`);
                 this.file.accept();
                 // TODO: reject on cancel.
             },

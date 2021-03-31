@@ -54,19 +54,6 @@ describe('Sender', () => {
     })
 })
 
-// function selectTestFile(filename: string): Chainable<unknown> {
-//     return cy.fixture('large-file.txt').then(fileContent => {
-//         cy.contains('ion-button', 'select')
-//             // TODO: doesn't test button triggers file dialog
-//             // TODO: can't set / test file size?
-//             .get('input[type="file"]')
-//             .attachFile({
-//                 fileName: 'large-file.txt',
-//                 fileContent,
-//             })
-//     });
-// }
-
 // TODO: refactor (application actions / page objects?)
 async function UIGetCode(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {

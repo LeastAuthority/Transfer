@@ -122,7 +122,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     private _handleRecvFile({id}: ActionMessage): void {
         const receiving = this.receiving[id];
 
-
         this.port.postMessage({
             action: RECV_FILE_DATA,
             id,

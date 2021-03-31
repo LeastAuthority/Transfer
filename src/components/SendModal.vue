@@ -134,8 +134,6 @@
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
             this.code = await this.client.sendFile(this.file, opts);
-
-            // TODO: expose more of wormhole-william and handle this internally!
         },
         methods: {
             // TODO: refactor
