@@ -8,8 +8,7 @@
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text v-if="progress.done">Sent!</ion-text>
-                        <ion-text v-else>Ready to send:</ion-text>
+                        <ion-text>Ready to send:</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -22,16 +21,7 @@
                         <ion-text class="size">({{ fileSize }})</ion-text>
                     </ion-col>
                 </ion-row>
-                <ion-row v-if="progress.done">
-                    <ion-col>
-                        <ion-text class="ion-text-center">
-                            <h1>
-                                &#x1f389; <!-- party popper -->
-                            </h1>
-                        </ion-text>
-                    </ion-col>
-                </ion-row>
-                <ion-row v-else>
+                <ion-row>
                     <ion-col size="8" class="ion-text-right">
                         <ion-input class="send-code-input"
                                    v-model="code"
@@ -44,7 +34,7 @@
                                      :host="host"/>
                     </ion-col>
                 </ion-row>
-                <ion-row v-show="!progress.done">
+                <ion-row>
                     <ion-col>
                         <ion-progress-bar color="primary"
                                           v-show="progress.value >= 0"
@@ -55,11 +45,8 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button v-if="progress.done" @click="sendMore()">
-                            <ion-icon :icon="add"></ion-icon>
-                            <ion-text class="ion-padding-start">Send more</ion-text>
-                        </ion-button>
-                        <ion-button v-else color="danger" @click="cancel()">
+                        <ion-button color="danger"
+                                    @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
                             <ion-text class="ion-padding-start">cancel</ion-text>
                         </ion-button>
@@ -108,18 +95,13 @@
     import VersionFooter from "@/components/VersionFooter";
     import CopyButton from "@/components/CopyButton";
 
-    // TODO: move
-    function encodeFileInfo(info) {
-        return window.btoa(JSON.stringify(info));
-    }
-
     const PROGRESS_INDETERMINATE = 'indeterminate'
     const PROGRESS_DETERMINATE = 'determinate'
     const PROGRESS_DONE_TIMEOUT_MS = 500;
 
     export default defineComponent({
         name: "SendModal.vue",
-        props: ['setOpen', 'selectFile', 'file'],
+        props: ['setOpen', 'setDone', 'selectFile', 'file'],
         data() {
             // TODO: refactor
             let host = 'http://localhost:8080';
@@ -171,6 +153,8 @@
                 // this.progress.value = -1;
                 this.progress.doneID = -1;
                 this.progress.done = true;
+                this.setDone(true);
+                this.setOpen(false);
             },
             cancel() {
                 this.setOpen(false);
