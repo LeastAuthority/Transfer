@@ -183,12 +183,12 @@
                 this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
             },
             resetProgress() {
-                console.log('resetting progress');
-                console.log(this.progress);
-                // this.progress.type = PROGRESS_INDETERMINATE;
-                // this.progress.value = -1;
-                this.progress.doneID = -1;
-                this.progress.done = true;
+                if (this.progress.value > .99) {
+                    // this.progress.type = PROGRESS_INDETERMINATE;
+                    // this.progress.value = -1;
+                    this.progress.doneID = -1;
+                    this.progress.done = true;
+                }
             },
             offerCondition(offer, accept, reject) {
                 this.file = {
