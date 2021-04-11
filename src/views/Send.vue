@@ -5,7 +5,6 @@
             <ion-toolbar>
                 <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
             </ion-toolbar>
-
             <ion-grid>
                 <ion-row>
                     <ion-col>
@@ -36,6 +35,7 @@
         >
             <SendModal
                     :setOpen="setOpen"
+                    :selectFile="select"
                     :file="file"
             ></SendModal>
         </ion-modal>

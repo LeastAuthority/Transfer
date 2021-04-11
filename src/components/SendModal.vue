@@ -8,7 +8,8 @@
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text>Ready to send:</ion-text>
+                        <ion-text v-if="progress.done">Sent!</ion-text>
+                        <ion-text v-else>Ready to send:</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -21,7 +22,16 @@
                         <ion-text class="size">({{ fileSize }})</ion-text>
                     </ion-col>
                 </ion-row>
-                <ion-row>
+                <ion-row v-if="progress.done">
+                    <ion-col>
+                        <ion-text class="ion-text-center">
+                            <h1>
+                                &#x1f389; <!-- party popper -->
+                            </h1>
+                        </ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row v-else>
                     <ion-col size="8" class="ion-text-right">
                         <ion-input class="send-code-input"
                                    v-model="code"
@@ -34,7 +44,7 @@
                                      :host="host"/>
                     </ion-col>
                 </ion-row>
-                <ion-row>
+                <ion-row v-show="!progress.done">
                     <ion-col>
                         <ion-progress-bar color="primary"
                                           v-show="progress.value >= 0"
@@ -45,7 +55,11 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="danger" @click="setOpen(false)">
+                        <ion-button v-if="progress.done" @click="sendMore()">
+                            <ion-icon :icon="add"></ion-icon>
+                            <ion-text class="ion-padding-start">Send more</ion-text>
+                        </ion-button>
+                        <ion-button v-else color="danger" @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
                             <ion-text class="ion-padding-start">cancel</ion-text>
                         </ion-button>
@@ -84,6 +98,7 @@
     } from '@ionic/vue';
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
+    import {add} from 'ionicons/icons';
 
     import ClientWorker from '@/go/wormhole/client_worker';
     import {sizeToClosestUnit} from '@/util';
@@ -104,7 +119,7 @@
 
     export default defineComponent({
         name: "SendModal.vue",
-        props: ['setOpen', 'file'],
+        props: ['setOpen', 'selectFile', 'file'],
         data() {
             // TODO: refactor
             let host = 'http://localhost:8080';
@@ -123,6 +138,7 @@
                     _value: -1,
                     doneID: -1,
                     updateID: -1,
+                    done: false,
                 }
             }
         },
@@ -154,11 +170,37 @@
                 // this.progress.type = PROGRESS_INDETERMINATE;
                 // this.progress.value = -1;
                 this.progress.doneID = -1;
+                this.progress.done = true;
             },
-
+            cancel() {
+                this.setOpen(false);
+                this.reset();
+            },
+            sendMore() {
+                this.setOpen(false);
+                this.selectFile();
+                // NB: wait for animation to finish.
+                window.setTimeout(() => {
+                    this.reset();
+                }, 300);
+            },
+            reset() {
+                this.code = '';
+                this.client = new ClientWorker();
+                this.progress = {
+                    type: PROGRESS_INDETERMINATE,
+                    // type: PROGRESS_DETERMINATE,
+                    value: -1,
+                    _value: -1,
+                    doneID: -1,
+                    updateID: -1,
+                    done: false,
+                }
+            },
         },
         setup() {
             return {
+                add,
                 close,
                 router,
             }
