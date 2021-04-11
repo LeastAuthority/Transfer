@@ -9,5 +9,6 @@
       "launchShowDuration": 0
     }
   },
-  "cordova": {}
+  "cordova": {},
+  "linuxAndroidStudioPath": "/home/bwhite/.local/share/JetBrains/Toolbox/apps/AndroidStudio/ch-0/192.6308749/bin/studio.sh"
 }
