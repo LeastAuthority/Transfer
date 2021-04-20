@@ -39,9 +39,9 @@ function handleReceiveFile({id, code}: ActionMessage): void {
     }
 
     // TODO: cleanup / refactor!
-    const offerCondition = function (offer: Record<string, any>, accept: () => void, reject: () => Error): void {
-        console.log(`worker.ts:42| offer: ${JSON.stringify(offer, null, '  ')}`)
+    const offerCondition = function (offer: Record<string, any>, accept: () => Error, reject: () => Error): void {
         receiving[id] = {
+            ...receiving[id],
             offer: {
                 ...offer,
                 accept,
@@ -60,13 +60,10 @@ function handleReceiveFile({id, code}: ActionMessage): void {
     };
     client.recvFile(code, opts).then(reader => {
         receiving[id] = {
+            ...receiving[id],
             reader,
         };
 
-        port.postMessage({
-            action: RECV_FILE,
-            id,
-        });
     });
 }
 
@@ -77,7 +74,13 @@ function handleReceiveOfferAccept({id}: ActionMessage): void {
     }
 
     const {offer: {accept}} = _receiving;
-    accept();
+    // TODO: handle error
+    accept().then(() => {
+        port.postMessage({
+            action: RECV_FILE,
+            id,
+        });
+    });
 }
 
 function handleReceiveOfferReject({id}: ActionMessage): void {

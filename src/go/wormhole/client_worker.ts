@@ -7,7 +7,7 @@ import {
     isAction,
     NEW_CLIENT,
     RECV_FILE,
-    RECV_FILE_DATA, RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_PROGRESS,
+    RECV_FILE_DATA, RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_OFFER_REJECT, RECV_FILE_PROGRESS,
     RECV_TEXT,
     SEND_FILE,
     SEND_FILE_PROGRESS,
@@ -153,7 +153,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     }
 
     private _handleRecvFileOffer({id, offer}: ActionMessage) {
-        console.log(`client_work.ts:160| opts: ${JSON.stringify(offer, null, '  ')}`)
         const {opts} = this.pending[id];
         // this.pending[id].offer = offer;
         const {name, size} = offer;
@@ -165,17 +164,19 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             return;
         }
 
-        const accept = (): void => {
+        // TODO: fix; currently ignoring error because async
+        // const accept = (): Promise<Error> => {
+        const accept = () => {
             this.port.postMessage({
                 action: RECV_FILE_OFFER_ACCEPT,
                 id,
             })
         }
-        // TODO: currently ignoring error because async
+        // TODO: fix; currently ignoring error because async
         // const reject = (): Promise<Error> => {
         const reject = () => {
             this.port.postMessage({
-                action: RECV_FILE_OFFER_ACCEPT,
+                action: RECV_FILE_OFFER_REJECT,
                 id,
             })
         }
@@ -227,7 +228,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         })
     }
 
-    // TODO: remove opts
     public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
         await this.ready;
         return new Promise((resolve, reject) => {
