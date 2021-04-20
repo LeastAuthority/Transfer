@@ -62,7 +62,7 @@
                         </ion-button>
                     </ion-col>
                 </ion-row>
-                <ion-row v-else>
+                <ion-row v-else class="ion-text-center">
                     <ion-col>
                         <ion-button color="light"
                                 @click=sendFile()>
