@@ -76,7 +76,7 @@
                     :file="file"
             ></SendModal>
         </ion-modal>
-        <input id="fileInput"
+        <input ref="fileInput"
                type="file"
                class="ion-hide"
                @change="fileChanged"
@@ -124,9 +124,8 @@
     import router from '@/router/index.ts'
     import {sizeToClosestUnit} from "@/util";
 
+    // TODO: use proper state management.
     const isOpenRef = ref(false);
-    // let loadedFile: File;
-    let fileInput: HTMLInputElement;
 
     interface SendData {
         file: File | null;
@@ -159,26 +158,23 @@
             VersionFooter,
         },
         mounted() {
-            // TODO: do this more vue idiomatically
-            fileInput = document.querySelector('#fileInput') as HTMLInputElement;
-            console.log('route params:');
-            console.log(this.$route)
             if (typeof (this.$route.query.select) !== 'undefined') {
                 this.select();
+                this.router.replace(this.$route.path)
             }
         },
         methods: {
             select() {
-                fileInput.click();
+                (this.$refs.fileInput as HTMLInputElement).click();
             },
             setOpen(state: boolean) {
                 isOpenRef.value = state;
             },
             setDone(done: boolean) {
-                console.log(`set done called: ${done}`);
                 this.done = done;
             },
             fileChanged() {
+                const fileInput = this.$refs.fileInput as HTMLInputElement;
                 if (fileInput!.files!.length > 0) {
                     this.file = fileInput!.files![0];
                     this.setOpen(true);

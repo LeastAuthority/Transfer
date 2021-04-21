@@ -114,8 +114,8 @@
                 client: new ClientWorker(),
                 host,
                 progress: {
-                    type: PROGRESS_INDETERMINATE,
-                    // type: PROGRESS_DETERMINATE,
+                    // type: PROGRESS_INDETERMINATE,
+                    type: PROGRESS_DETERMINATE,
                     value: -1,
                     _value: -1,
                     doneID: -1,
@@ -136,9 +136,9 @@
         methods: {
             // TODO: refactor
             onProgress(sentBytes, totalBytes) {
-                if (this.progress.type === PROGRESS_INDETERMINATE) {
-                    this.progress.type = PROGRESS_DETERMINATE;
-                }
+                // if (this.progress.type === PROGRESS_INDETERMINATE) {
+                //     this.progress.type = PROGRESS_DETERMINATE;
+                // }
                 this.progress.value = sentBytes / totalBytes;
 
                 if (this.progress.doneID > 0) {
