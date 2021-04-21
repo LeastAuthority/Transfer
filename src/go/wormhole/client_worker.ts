@@ -183,6 +183,11 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         opts.offerCondition(offer, accept, reject);
     }
 
+    private _handleSendFileError({id, error}: ActionMessage) {
+        const {reject} = this.pending[id];
+        reject(error);
+    }
+
     public async sendText(text: string): Promise<string> {
         await this.ready;
         return new Promise((resolve, reject) => {

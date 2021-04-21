@@ -5,11 +5,11 @@ import {
     FREE,
     isAction,
     RECV_FILE,
-    RECV_FILE_DATA,
+    RECV_FILE_DATA, RECV_FILE_ERROR,
     RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_OFFER_REJECT,
     RECV_FILE_PROGRESS,
     RECV_TEXT,
-    SEND_FILE,
+    SEND_FILE, SEND_FILE_ERROR,
     SEND_FILE_PROGRESS,
     SEND_TEXT,
     WASM_READY
@@ -22,6 +22,41 @@ let port: MessagePort;
 let client: Client;
 // TODO: be more specific
 const receiving: Record<number, any> = {};
+
+function handleSendFile({id, name, buffer}: ActionMessage): void {
+    const sendProgressCb = (sentBytes: number, totalBytes: number): void => {
+        port.postMessage({
+            action: SEND_FILE_PROGRESS,
+            id,
+            sentBytes,
+            totalBytes,
+        });
+    };
+
+    const _file = {
+        name,
+        arrayBuffer(): Promise<ArrayBuffer> {
+            return Promise.resolve(buffer);
+        }
+    };
+
+    // TODO: change signature to expect array buffer or Uint8Array?
+    client.sendFile(_file as File, {progressFunc: sendProgressCb})
+        .then(code => {
+            port.postMessage({
+                action: SEND_FILE,
+                id,
+                code,
+            })
+        })
+        .catch(error => {
+            port.postMessage({
+                action: SEND_FILE_ERROR,
+                id,
+                error,
+            })
+        });
+}
 
 function handleReceiveFile({id, code}: ActionMessage): void {
     const recvProgressCb = (sentBytes: number, totalBytes: number): void => {
@@ -60,13 +95,20 @@ function handleReceiveFile({id, code}: ActionMessage): void {
         progressFunc: recvProgressCb,
         offerCondition,
     };
-    client.recvFile(code, opts).then(reader => {
-        receiving[id] = {
-            ...receiving[id],
-            reader,
-        };
-
-    });
+    client.recvFile(code, opts)
+        .then(reader => {
+            receiving[id] = {
+                ...receiving[id],
+                reader,
+            };
+        })
+        .catch(error => {
+            port.postMessage({
+                action: RECV_FILE_ERROR,
+                id,
+                error,
+            })
+        });
 }
 
 function handleReceiveOfferAccept({id}: ActionMessage): void {
@@ -143,15 +185,6 @@ onmessage = async function (event) {
     port.onmessage = async function (event) {
         const {action, id} = event.data;
 
-        const sendProgressCb = (sentBytes: number, totalBytes: number): void => {
-            port.postMessage({
-                action: SEND_FILE_PROGRESS,
-                id,
-                sentBytes,
-                totalBytes,
-            });
-        };
-
         switch (action) {
             case SEND_TEXT:
                 client.sendText(event.data.text).then(code => {
@@ -172,20 +205,7 @@ onmessage = async function (event) {
                 });
                 break;
             case SEND_FILE:
-                console.log("SANITY CHECK");
-                // TODO: change signature to expect array buffer or Uint8Array?
-                client.sendFile({
-                    name: event.data.name,
-                    arrayBuffer(): Promise<ArrayBuffer> {
-                        return Promise.resolve(event.data.buffer);
-                    }
-                } as File, {progressFunc: sendProgressCb}).then(code => {
-                    port.postMessage({
-                        action: SEND_FILE,
-                        id,
-                        code,
-                    })
-                });
+                handleSendFile(event.data);
                 break;
             case RECV_FILE:
                 handleReceiveFile(event.data);

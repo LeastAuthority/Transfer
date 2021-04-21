@@ -96,7 +96,7 @@
         IonToolbar,
         IonTitle,
         IonIcon,
-        IonProgressBar,
+        IonProgressBar, alertController,
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
     import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
@@ -142,12 +142,16 @@
         },
         async mounted() {
             const code = this.$route.params.code;
-            await this.client.saveFile(code, {
-                name,
-                progressFunc: this.onProgress,
-                offerCondition: this.offerCondition,
-            });
-            this.file.ready = true;
+            try {
+                await this.client.saveFile(code, {
+                    name,
+                    progressFunc: this.onProgress,
+                    offerCondition: this.offerCondition,
+                });
+                this.file.ready = true;
+            } catch (error) {
+                await this.presentAlert(error);
+            }
         },
         components: {
             IonPage,
@@ -165,6 +169,19 @@
             VersionFooter,
         },
         methods: {
+            async presentAlert(error) {
+                const alert = await alertController
+                    .create({
+                        // cssClass: 'my-custom-class',
+                        header: 'Mailbox Error',
+                        // subHeader: 'error type',
+                        message: error,
+                        buttons: ['OK'],
+                    });
+                await alert.present();
+                await alert.onWillDismiss();
+                this.cancel();
+            },
             async download() {
                 console.log('Download clicked!');
                 this.file.accept();

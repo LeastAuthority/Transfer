@@ -82,6 +82,7 @@
         IonTitle,
         IonToolbar,
         IonProgressBar,
+        alertController,
     } from '@ionic/vue';
     import {close} from 'ionicons/icons';
     import {defineComponent} from 'vue';
@@ -131,9 +132,26 @@
         },
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
-            this.code = await this.client.sendFile(this.file, opts);
+            try {
+                this.code = await this.client.sendFile(this.file, opts);
+            } catch (error) {
+                await this.presentAlert(error);
+            }
         },
         methods: {
+            async presentAlert(error) {
+                const alert = await alertController
+                    .create({
+                        // cssClass: 'my-custom-class',
+                        header: 'Mailbox Error',
+                        // subHeader: 'error type',
+                        message: error,
+                        buttons: ['OK'],
+                    });
+                await alert.present();
+                await alert.onWillDismiss();
+                this.cancel();
+            },
             // TODO: refactor
             onProgress(sentBytes, totalBytes) {
                 // if (this.progress.type === PROGRESS_INDETERMINATE) {
