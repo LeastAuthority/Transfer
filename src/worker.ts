@@ -1,5 +1,5 @@
 import Go from "./go";
-import Client from "./go/wormhole/client";
+import Client, {Offer} from "./go/wormhole/client";
 import {
     ActionMessage,
     FREE,
@@ -39,19 +39,21 @@ function handleReceiveFile({id, code}: ActionMessage): void {
     }
 
     // TODO: cleanup / refactor!
-    const offerCondition = function (offer: Record<string, any>, accept: () => Error, reject: () => Error): void {
+    const offerCondition = function (offer: Offer): void {
         receiving[id] = {
             ...receiving[id],
-            offer: {
-                ...offer,
-                accept,
-                reject
-            }
+            offer,
         };
+
+        // NB: don't send `accept` or `reject`.
+        const {name, size} = offer;
         port.postMessage({
             action: RECV_FILE_OFFER,
             id,
-            offer,
+            offer: {
+                name,
+                size
+            },
         })
     }
     const opts = {

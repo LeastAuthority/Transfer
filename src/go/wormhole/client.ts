@@ -12,8 +12,15 @@ const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
 // TODO: move to own client wrapper lib
 
 export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
-// TODO: be more specific
-export type OfferCondition = (offer: Record<string, any>, accept: () => Error, reject: () => Error) => void
+
+export interface Offer {
+    name: string;
+    size: number;
+    accept?: () => Promise<Error>;
+    reject?: () => Promise<Error>;
+}
+
+export type OfferCondition = (offer: Offer) => void
 
 export interface TransferOptions {
     progressFunc?: ProgressFunc;
