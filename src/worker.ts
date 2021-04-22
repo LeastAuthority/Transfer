@@ -1,16 +1,22 @@
 import Go from "./go";
-import Client, {Offer} from "./go/wormhole/client";
+import Client, {Offer, SendResult} from "./go/wormhole/client";
 import {
     ActionMessage,
     FREE,
     isAction,
     RECV_FILE,
-    RECV_FILE_DATA, RECV_FILE_ERROR,
-    RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_OFFER_REJECT,
-    RECV_FILE_PROGRESS,
+    RECV_FILE_DATA,
+    RECV_FILE_ERROR,
+    RECV_FILE_OFFER,
+    RECV_FILE_OFFER_ACCEPT,
+    RECV_FILE_OFFER_REJECT,
+    RECV_FILE_PROGRESS, RECV_FILE_READ_ERROR,
     RECV_TEXT,
-    SEND_FILE, SEND_FILE_ERROR,
+    SEND_FILE,
+    SEND_FILE_ERROR,
     SEND_FILE_PROGRESS,
+    SEND_FILE_RESULT_ERROR,
+    SEND_FILE_RESULT_OK,
     SEND_TEXT,
     WASM_READY
 } from "@/go/wormhole/actions";
@@ -42,12 +48,27 @@ function handleSendFile({id, name, buffer}: ActionMessage): void {
 
     // TODO: change signature to expect array buffer or Uint8Array?
     client.sendFile(_file as File, {progressFunc: sendProgressCb})
-        .then(code => {
+        .then(({code, result}: SendResult) => {
             port.postMessage({
                 action: SEND_FILE,
                 id,
                 code,
-            })
+            });
+
+            result
+                .then(() => {
+                    port.postMessage({
+                        action: SEND_FILE_RESULT_OK,
+                        id,
+                    })
+                })
+                .catch((error: Error) => {
+                    port.postMessage({
+                        action: SEND_FILE_RESULT_ERROR,
+                        id,
+                        error,
+                    });
+                });
         })
         .catch(error => {
             port.postMessage({
@@ -145,16 +166,24 @@ async function handleReceiveFileData({id, done}: ActionMessage): Promise<void> {
     }
 
     const {reader} = _receiving;
-    for (let n = 0, done = false; !done;) {
-        const buffer = new Uint8Array(bufferSize);
-        [n, done] = await reader.read(buffer);
+    try {
+        for (let n = 0, done = false; !done;) {
+            const buffer = new Uint8Array(bufferSize);
+            [n, done] = await reader.read(buffer);
+            port.postMessage({
+                action: RECV_FILE_DATA,
+                id,
+                n,
+                done,
+                buffer: buffer.buffer,
+            }, [buffer.buffer]);
+        }
+    } catch (error) {
         port.postMessage({
-            action: RECV_FILE_DATA,
+            action: RECV_FILE_READ_ERROR,
             id,
-            n,
-            done,
-            buffer: buffer.buffer,
-        }, [buffer.buffer]);
+            error,
+        })
     }
 }
 

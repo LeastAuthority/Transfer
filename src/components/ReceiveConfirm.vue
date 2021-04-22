@@ -121,7 +121,7 @@
                     name: '',
                     size: 0,
                     code: '',
-                    ready: false,
+                    ready: true,
                     accept: undefined,
                     reject: undefined,
                 },
@@ -148,7 +148,6 @@
                     progressFunc: this.onProgress,
                     offerCondition: this.offerCondition,
                 });
-                this.file.ready = true;
             } catch (error) {
                 await this.presentAlert(error);
             }
@@ -173,7 +172,7 @@
                 const alert = await alertController
                     .create({
                         // cssClass: 'my-custom-class',
-                        header: 'Mailbox Error',
+                        header: 'Error',
                         // subHeader: 'error type',
                         message: error,
                         buttons: ['OK'],
@@ -207,12 +206,11 @@
                     this.progress.done = true;
                 }
             },
-            offerCondition(offer, accept, reject) {
+            offerCondition(offer) {
                 this.file = {
+                    ...this.file,
                     ...offer,
-                    accept,
-                    reject,
-                }
+                };
             },
             cancel() {
                 if (typeof (this.file.reject) !== 'undefined') {
@@ -221,8 +219,6 @@
                 router.push('/receive');
             },
             sendFile() {
-                // TODO:
-                // navigate to send/select
                 router.push('/send?select');
             },
         },

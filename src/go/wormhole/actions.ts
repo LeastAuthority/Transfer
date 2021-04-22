@@ -5,6 +5,8 @@ export const RECV_TEXT = 'client/recv_text';
 export const SEND_FILE = 'client/send_file';
 export const SEND_FILE_PROGRESS = 'client/send_file/progress';
 export const SEND_FILE_ERROR = 'client/send_file/error';
+export const SEND_FILE_RESULT_OK = 'client/send_file/result/ok';
+export const SEND_FILE_RESULT_ERROR = 'client/send_file/result/error';
 export const RECV_FILE = 'client/recv_file';
 export const RECV_FILE_PROGRESS = 'client/recv_file/progress';
 export const RECV_FILE_OFFER = 'client/recv_file/offer';
@@ -12,6 +14,7 @@ export const RECV_FILE_OFFER_ACCEPT = 'client/recv_file/offer/accept';
 export const RECV_FILE_OFFER_REJECT = 'client/recv_file/offer/reject';
 export const RECV_FILE_DATA = 'client/recv_file/data';
 export const RECV_FILE_ERROR = 'client/recv_file/error';
+export const RECV_FILE_READ_ERROR = 'client/recv_file/read/error';
 export const FREE = 'client/free';
 
 export interface ActionMessage {

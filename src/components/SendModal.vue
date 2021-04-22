@@ -133,7 +133,9 @@
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
             try {
-                this.code = await this.client.sendFile(this.file, opts);
+                const {code, result} = await this.client.sendFile(this.file, opts);
+                this.code = code;
+                result.catch(this.presentAlert)
             } catch (error) {
                 await this.presentAlert(error);
             }

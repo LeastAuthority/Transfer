@@ -1,5 +1,6 @@
 import {ClientConfig, wormhole} from "@/go/wormhole/types";
 import {Reader} from '@/go/wormhole/streaming';
+import Send from "@/views/Send.vue";
 
 const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
@@ -35,6 +36,11 @@ export interface TransferOptions {
     size?: number;
 }
 
+export interface SendResult {
+    code: string;
+    result: Promise<void>;
+}
+
 export interface ClientInterface {
     // TODO: readonly or at least protected.
     goClient: number;
@@ -43,7 +49,7 @@ export interface ClientInterface {
 
     recvText(code: string): Promise<string>;
 
-    sendFile(file: File, opts?: TransferOptions): Promise<string>;
+    sendFile(file: File, opts?: TransferOptions): Promise<SendResult>;
 
     recvFile(code: string, opts?: TransferOptions): Promise<Reader>;
 
@@ -67,9 +73,8 @@ export default class Client implements ClientInterface {
         return wormhole.Client.sendText(this.goClient, message);
     }
 
-    public async sendFile(file: File, opts?: TransferOptions): Promise<string> {
+    public async sendFile(file: File, opts?: TransferOptions): Promise<SendResult> {
         const data = new Uint8Array(await file.arrayBuffer());
-        console.log(`client.ts:65| file.name: ${file.name}`);
         return wormhole.Client.sendFile(this.goClient, file.name, data, opts);
     }
 
@@ -79,12 +84,16 @@ export default class Client implements ClientInterface {
 
     public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
         // console.log(`opts.offerCondition: ${opts!.offerCondition}`);
-        const reader = await wormhole.Client.recvFile(this.goClient, code, opts);
-        let bufferSizeBytes = reader.bufferSizeBytes;
-        if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
-            bufferSizeBytes = opts.bufferSizeBytes;
+        try {
+            const reader = await wormhole.Client.recvFile(this.goClient, code, opts);
+            let bufferSizeBytes = reader.bufferSizeBytes;
+            if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
+                bufferSizeBytes = opts.bufferSizeBytes;
+            }
+            return new Reader(bufferSizeBytes, reader.read);
+        } catch (error) {
+            return Promise.reject(error);
         }
-        return new Reader(bufferSizeBytes, reader.read);
     }
 
     public free() {

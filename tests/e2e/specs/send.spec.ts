@@ -1,13 +1,13 @@
 import Go from '../../../src/go'
-import Client from '@/go/wormhole/client.ts';
+import Client, {Offer} from '@/go/wormhole/client.ts';
 import {TEST_HOST} from "../support/util";
 import {largeUint8ArrToString} from "../support/util";
 
-describe('Sender', () => {
+describe('Sending', () => {
     const filename = 'large-file.txt';
     // const filename = 'small-file.txt';
 
-    it('gets a code when a file is selected', (done) => {
+    it('should get a code when a file is selected', (done) => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('/send')
 
@@ -20,7 +20,7 @@ describe('Sender', () => {
 
     // TODO: figure out how to read clipboard for test without document focus
     //  -- maybe there's a browser flag / arg to loosen permissions?
-    it('copies a link embedding the code when copy button is clicked', (done) => {
+    it('should copy a link, embedding the code, when copy button is clicked', (done) => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('/send')
 
@@ -37,12 +37,12 @@ describe('Sender', () => {
         });
     });
 
-    it.skip('shows send progress when the receiver connects', (done) => {
+    it.skip('should show send progress when the receiver connects', (done) => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('/send')
 
         UIGetCode(filename).then(sendCode => {
-            mockReceive(sendCode).then(receivedData => {
+            mockClientReceive(sendCode).then(receivedData => {
                 console.log(receivedData);
                 largeUint8ArrToString(receivedData).then(receivedText => {
                     // TODO: add assertions!
@@ -75,7 +75,7 @@ async function UIGetCode(filename: string): Promise<string> {
     });
 }
 
-async function mockReceive(code: string): Promise<Uint8Array> {
+async function mockClientReceive(code: string): Promise<Uint8Array> {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
@@ -84,7 +84,7 @@ async function mockReceive(code: string): Promise<Uint8Array> {
     const receiver = new Client();
     // TODO: cleanup
     let size: number;
-    const offerCondition = (offer: Record<string, any>, accept: ()=>void, reject: ()=>Error): void => {
+    const offerCondition = (offer: Offer): void => {
         size = offer.size;
     }
     const reader = await receiver.recvFile(code, {
@@ -95,7 +95,6 @@ async function mockReceive(code: string): Promise<Uint8Array> {
     for (let n = 0, accBytes = 0, done = false; !done;) {
         const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
         [n, done] = await reader.read(buffer);
-        console.log(`mockReceive| n: ${n} | done: ${done}`);
         result.set(buffer.slice(0, n), accBytes);
         accBytes += n - 1;
     }

@@ -1,6 +1,6 @@
 import Chainable = Cypress.Chainable;
 import {ClientConfig} from "@/go/wormhole/types";
-import Client from "@/go/wormhole/client";
+import Client, {SendResult} from "@/go/wormhole/client";
 
 const downloadDir = 'cypress/downloads'
 
@@ -12,9 +12,8 @@ export function mobileViewport() {
 }
 
 export function expectFileDownloaded(filename: string, expected: string): Chainable<undefined> {
-    // TODO: remove after hack is removed
-    // NB: `cy.wait` for text msg with metadata.
-    return cy.wait(500).get('.download-button').click().then(() => {
+    // TODO: get rid of wait.
+    return cy.get('.download-button').wait(500).click().then(() => {
         const path = `${downloadDir}/${filename}`
         return cy.readFile(path, 'utf-8', {timeout: 3000})
             .should((actual) => {
@@ -34,7 +33,7 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
     });
 }
 
-export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<string> {
+export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<SendResult> {
     const sender = new Client(config);
     const file = {
         name,

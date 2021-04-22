@@ -7,15 +7,21 @@ import {
     isAction,
     NEW_CLIENT,
     RECV_FILE,
-    RECV_FILE_DATA, RECV_FILE_OFFER, RECV_FILE_OFFER_ACCEPT, RECV_FILE_OFFER_REJECT, RECV_FILE_PROGRESS,
+    RECV_FILE_DATA,
+    RECV_FILE_OFFER,
+    RECV_FILE_OFFER_ACCEPT,
+    RECV_FILE_OFFER_REJECT,
+    RECV_FILE_PROGRESS, RECV_FILE_READ_ERROR,
     RECV_TEXT,
     SEND_FILE,
-    SEND_FILE_PROGRESS,
+    SEND_FILE_ERROR,
+    SEND_FILE_PROGRESS, SEND_FILE_RESULT_ERROR,
+    SEND_FILE_RESULT_OK,
     SEND_TEXT,
     WASM_READY
 } from "@/go/wormhole/actions";
 import {Reader} from "@/go/wormhole/streaming";
-import {ClientInterface, TransferOptions} from "@/go/wormhole/client";
+import {ClientInterface, SendResult, TransferOptions} from "@/go/wormhole/client";
 
 export default class ClientWorker implements ClientInterface {
     public goClient = -1;
@@ -95,10 +101,19 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 resolve(event.data.text);
                 break;
             case SEND_FILE:
-                resolve(event.data.code);
+                this._handleSendFile(event.data)
                 break;
             case SEND_FILE_PROGRESS:
                 this._handleFileProgress(event.data);
+                break;
+            case SEND_FILE_ERROR:
+                this._handleSendFileError(event.data)
+                break;
+            case SEND_FILE_RESULT_OK:
+                this._handleSendFileResultOK(event.data)
+                break;
+            case SEND_FILE_RESULT_ERROR:
+                this._handleSendFileResultError(event.data)
                 break;
             case RECV_FILE:
                 this._handleRecvFile(event.data);
@@ -112,20 +127,41 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             case RECV_FILE_DATA:
                 this._handleRecvFileData(event.data);
                 break;
+            case RECV_FILE_READ_ERROR:
+                this._handleRecvFileReadError(event.data);
+                break;
             default:
                 throw new Error(`unexpected action: ${event.data.action}`)
         }
 
-        resolve(event.data.code);
+        // resolve(event.data.code);
     }
 
     private _handleRecvFile({id}: ActionMessage): void {
-        const receiving = this.receiving[id];
-
         this.port.postMessage({
             action: RECV_FILE_DATA,
             id,
         });
+    }
+
+    private _handleSendFile({id, code}: ActionMessage): void {
+        const {resolve} = this.pending[id];
+        resolve({
+            code,
+            result: new Promise((resolve, reject) => {
+                this.pending[id].result = {resolve, reject};
+            })
+        });
+    }
+
+    private _handleSendFileResultOK({id}: ActionMessage): void {
+        const {result: {resolve}} = this.pending[id];
+        resolve();
+    }
+
+    private _handleSendFileResultError({id, error}: ActionMessage): void {
+        const {result: {reject}} = this.pending[id];
+        reject(error);
     }
 
     private _handleRecvFileData({id, n, done, buffer}: ActionMessage): void {
@@ -180,7 +216,12 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
                 id,
             })
         }
-        opts.offerCondition(offer, accept, reject);
+        opts.offerCondition({...offer, accept, reject});
+    }
+
+    private _handleRecvFileReadError({id, error}: ActionMessage) {
+        const {reject} = this.pending[id];
+        reject(error);
     }
 
     private _handleSendFileError({id, error}: ActionMessage) {
@@ -216,7 +257,7 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         })
     }
 
-    public async sendFile(file: File, opts?: TransferOptions): Promise<string> {
+    public async sendFile(file: File, opts?: TransferOptions): Promise<SendResult> {
         await this.ready;
         return new Promise((resolve, reject) => {
             file.arrayBuffer().then(buffer => {
@@ -236,24 +277,13 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
         await this.ready;
         return new Promise((resolve, reject) => {
-            // console.log(`client_work.ts:220| opts: ${JSON.stringify(opts, null, '  ')}`)
-            // TODO: refactor
-            if (typeof (opts) === 'undefined') {
-                opts = {};
-            }
             const id = Date.now()
-            // const {name, size} = opts;
             const message = {
                 action: RECV_FILE,
                 id,
                 code,
-                // name,
-                // size,
             }
-            this.pending[id] = {
-                message, resolve, reject,
-                opts, //: {progressFunc},
-            };
+            this.pending[id] = {message, opts, resolve, reject};
             this.port.postMessage(message)
         })
     }
