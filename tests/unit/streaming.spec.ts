@@ -25,7 +25,7 @@ describe('Client', () => {
                     return file.buffer;
                 }
             }
-            const code = await sender.sendFile(_file)
+            const {code} = await sender.sendFile(_file)
 
             const receiver = new Client();
             const reader = await receiver.recvFile(code);
@@ -88,18 +88,7 @@ describe('Reader', () => {
                 file.setUint8(i, i);
             }
 
-            let counter = 0;
-            const readFn = jest.fn().mockImplementation((buf) => {
-                const dataView = new DataView(buf);
-                for (let i = 0; i < testBufferSize; i++) {
-                    dataView.setUint8(i, file.getUint8((testBufferSize * counter) + i));
-                    if ((testBufferSize * counter) + i === file.byteLength - 1) {
-                        return Promise.resolve([i + 1, true]);
-                    }
-                }
-                counter++;
-                return Promise.resolve([testBufferSize, false]);
-            })
+            const readFn = mockReadFn(file)
 
             const reader = new Reader(testBufferSize, readFn);
             const buf = new ArrayBuffer(testBufferSize);
@@ -126,3 +115,18 @@ describe('Reader', () => {
         });
     });
 })
+
+function mockReadFn (file: DataView) {
+    return jest.fn().mockImplementation((buf) => {
+        let counter = 0;
+        const dataView = new DataView(buf);
+        for (let i = 0; i < testBufferSize; i++) {
+            dataView.setUint8(i, file.getUint8((testBufferSize * counter) + i));
+            if ((testBufferSize * counter) + i === file.byteLength - 1) {
+                return Promise.resolve([i + 1, true]);
+            }
+        }
+        counter++;
+        return Promise.resolve([testBufferSize, false]);
+    })
+}

@@ -71,8 +71,9 @@ describe.only('Receiving', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
             cy.visit('/receive');
+
             cy.get('input[type="text"]')
-                .type('12-not-real')
+                .type('12-not-real');
 
             cy.get('.receive-next')
                 .click()
@@ -102,6 +103,23 @@ describe.only('Receiving', () => {
                 .screenshot()
         });
     });
+
+    // NB: relay must be running!
+    it.skip('should show a specific error when the transfer is interrupted on the receive-side', () => {
+        cy.viewport('samsung-note9', 'portrait')
+        cy.fixture(filename).then(async (file: string) => {
+            const {code} = await mockClientSend(filename, file)
+
+            cy.visit(`/receive/${code}`)
+
+            cy.get('.download-button').wait(500)
+                .click()
+
+            cy.get('.alert-wrapper').should('exist')
+                .get('.alert-title').should('contain.text', 'Error')
+                .screenshot()
+        });
+    });
 })
 
 async function UISend(filename: string): Promise<string> {
@@ -113,8 +131,8 @@ async function UISend(filename: string): Promise<string> {
                     fileName: 'large-file.txt',
                     fileContent,
                 }).then(() => {
-                    resolve()
-                })
+                resolve()
+            })
         })
     });
 }

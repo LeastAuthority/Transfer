@@ -61,8 +61,7 @@ export default class Client implements ClientInterface {
     public goClient: number;
 
     constructor(config?: ClientConfig) {
-        // console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-        if (!config && process.env.NODE_ENV === 'production') {
+        if (!config && process.env['NODE_ENV'] === 'production') {
             config = DEFAULT_PROD_CLIENT_CONFIG;
         }
 

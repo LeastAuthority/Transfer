@@ -1,6 +1,6 @@
 import Chainable = Cypress.Chainable;
 import {ClientConfig} from "@/go/wormhole/types";
-import Client, {SendResult} from "@/go/wormhole/client";
+import Client, {SendResult, TransferOptions} from "@/go/wormhole/client";
 
 const downloadDir = 'cypress/downloads'
 
@@ -33,16 +33,16 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
     });
 }
 
-export async function mockClientSend(name: string, data: string, config?: ClientConfig): Promise<SendResult> {
-    const sender = new Client(config);
+export async function mockClientSend(name: string, data: string, opts?: TransferOptions): Promise<SendResult> {
+    const sender = new Client();
     const file = {
         name,
         arrayBuffer(): Promise<ArrayBuffer> {
             const enc = new TextEncoder();
             return Promise.resolve(enc.encode(data));
         }
-    }
-    return sender.sendFile(file);
+    } as File;
+    return sender.sendFile(file, opts);
 }
 
 // TODO: use cypress-promise?

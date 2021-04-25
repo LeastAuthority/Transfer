@@ -184,7 +184,6 @@
             async download() {
                 console.log('Download clicked!');
                 this.file.accept();
-                // TODO: reject on cancel.
             },
             // TODO: refactor
             onProgress(sentBytes, totalBytes) {
