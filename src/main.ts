@@ -3,6 +3,8 @@ import {createApp} from 'vue'
 
 import App from '@/App.vue'
 import router from '@/router';
+import store from '@/store';
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -23,8 +25,26 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+
+// TODO: move
+const SET_CONFIG = 'test/set_config';
+
+// TODO: move
+if (process.env['NODE_ENV'] !== 'production') {
+    window.addEventListener('message', ({data}: MessageEvent) => {
+        if (typeof(data.action) !== 'undefined') {
+            const {action, config} = data;
+            switch (action) {
+                case SET_CONFIG:
+                    store.dispatch('setConfig', config)
+            }
+        }
+    })
+}
+
 const app = createApp(App)
     .use(IonicVue)
+    .use(store)
     .use(router);
 
 const routerReady = router.isReady();

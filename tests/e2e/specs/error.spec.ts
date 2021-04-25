@@ -93,14 +93,30 @@ describe.only('Receiving', () => {
             // NB: ignore send-side relay error
             result.catch(() => {})
 
-            cy.visit(`/receive/${code}`)
+            cy.visit(`/receive`)
+                .wait(500)
+                .then(() => {
+                    cy.window().then(window => {
+                        window.postMessage({
+                            // TODO: reference constant.
+                            action: 'test/set_config',
+                            config: {
+                                rendezvousURL: 'ws://localhost:1',
+                            }
+                        }, '*')
+                        cy.wait(500)
 
-            cy.get('.download-button').wait(500)
-                .click()
+                        cy.get('input[type="text"]')
+                            .type(code);
 
-            cy.get('.alert-wrapper').should('exist')
-                .get('.alert-title').should('contain.text', 'Error')
-                .screenshot()
+                        cy.get('.receive-next')
+                            .click()
+
+                        cy.get('.alert-wrapper').should('exist')
+                            .get('.alert-title').should('contain.text', 'Error')
+                            // .screenshot()
+                    })
+                })
         });
     });
 

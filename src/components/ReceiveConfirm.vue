@@ -115,8 +115,10 @@
     export default defineComponent({
         name: "ReceiveConfirm",
         data() {
+            const config = Object.assign({},this.$store.state.config);
+
             return {
-                client: new ClientWorker(),
+                client: new ClientWorker(config),
                 file: {
                     name: '',
                     size: 0,
@@ -138,7 +140,7 @@
         computed: {
             fileSize() {
                 return sizeToClosestUnit(this.file.size);
-            }
+            },
         },
         async mounted() {
             const code = this.$route.params.code;

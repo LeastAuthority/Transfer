@@ -88,6 +88,7 @@
     import {defineComponent} from 'vue';
     import {add} from 'ionicons/icons';
 
+    import {ClientConfig} from '@/go/wormhole/types'
     import ClientWorker from '@/go/wormhole/client_worker';
     import {sizeToClosestUnit} from '@/util';
 
@@ -110,9 +111,11 @@
                 host = 'https://wormhole.bryanchriswhite.com';
             }
 
+            const config = Object.assign({},this.$store.state.config);
+
             return {
                 code: '',
-                client: new ClientWorker(),
+                client: new ClientWorker(config),
                 host,
                 progress: {
                     // type: PROGRESS_INDETERMINATE,
@@ -128,7 +131,7 @@
         computed: {
             fileSize() {
                 return sizeToClosestUnit(this.file.size);
-            }
+            },
         },
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};

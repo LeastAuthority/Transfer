@@ -2,7 +2,7 @@ import {ClientConfig, wormhole} from "@/go/wormhole/types";
 import {Reader} from '@/go/wormhole/streaming';
 import Send from "@/views/Send.vue";
 
-const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
+export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
     // transitRelayAddress: "transit.magic-wormhole.io:4001",
     rendezvousURL: "wss://mailbox.wormhole.bryanchriswhite.com/v1",
@@ -61,10 +61,6 @@ export default class Client implements ClientInterface {
     public goClient: number;
 
     constructor(config?: ClientConfig) {
-        if (!config && process.env['NODE_ENV'] === 'production') {
-            config = DEFAULT_PROD_CLIENT_CONFIG;
-        }
-
         this.goClient = wormhole.Client.newClient(config)
     }
 
