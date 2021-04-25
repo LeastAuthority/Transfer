@@ -4,9 +4,9 @@ import Send from "@/views/Send.vue";
 
 export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
-    // transitRelayAddress: "transit.magic-wormhole.io:4001",
+    // transitRelayURL: "transit.magic-wormhole.io:4001",
     rendezvousURL: "wss://mailbox.wormhole.bryanchriswhite.com/v1",
-    transitRelayAddress: "wss://relay.wormhole.bryanchriswhite.com:443",
+    transitRelayURL: "wss://relay.wormhole.bryanchriswhite.com:443",
     passPhraseComponentLength: 2,
 }
 

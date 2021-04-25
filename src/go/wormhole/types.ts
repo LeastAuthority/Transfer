@@ -22,7 +22,7 @@ export interface WindowClient {
 
 export interface ClientConfig {
     rendezvousURL: string;
-    transitRelayAddress: string;
+    transitRelayURL: string;
     // TODO: int
     passPhraseComponentLength: number;
 }

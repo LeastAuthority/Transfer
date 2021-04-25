@@ -1,6 +1,6 @@
 import Go from '../../../src/go'
 
-import {mockClientSend, TEST_HOST} from "../support/util";
+import {mockClientReceive, mockClientSend, TEST_HOST, UIGetCode} from "../support/util";
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
@@ -15,14 +15,53 @@ async function initGo() {
 const filename = 'large-file.txt';
 
 describe('Sending', () => {
-    // NB: mailbox must not be running!
     // TODO: be more specific
     it('should show a specific error when unable to connect to the mailbox', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('/send')
 
-        UISend(filename)
-            .then(() => {
+        cy.window().then(window => {
+            window.postMessage({
+                // TODO: reference constant.
+                action: 'test/set_config',
+                config: {
+                    rendezvousURL: 'ws://localhost:1',
+                }
+            }, '*')
+            cy.wait(100)
+            UISend(filename)
+                .then(() => {
+                    // TODO: expect error message.
+                    cy.get('.alert-wrapper').should('exist')
+                        .get('.alert-title').should('contain.text', 'Error')
+                    // .get('.alert-message').should('contain.text', 'unable to connect to the mailbox server')
+                    // .alert-wrapper
+                    // & .alert-title
+                    // & .alert-message
+                    // & .alert-button
+                })
+                .catch(error => {
+                    fail(error);
+                });
+        });
+    });
+
+    it.skip('should show a specific error when unable to connect to the relay', () => {
+        cy.viewport('samsung-note9', 'portrait')
+        cy.visit('/send')
+
+        window.postMessage({
+            // TODO: reference constant.
+            action: 'test/set_config',
+            config: {
+                transitRelayURL: 'ws://localhost:1',
+            }
+        }, '*')
+        cy.wait(100)
+        UIGetCode(filename)
+            .then((code) => {
+                mockClientReceive(code)
+
                 // TODO: expect error message.
                 cy.get('.alert-wrapper').should('exist')
                     .get('.alert-title').should('contain.text', 'Error')
@@ -38,54 +77,38 @@ describe('Sending', () => {
                 fail(error);
             });
     });
-
-    // NB: relay must not be running!
-    // it.skip('should show a specific error when unable to connect to the relay', () => {
-    //     cy.viewport('samsung-note9', 'portrait')
-    //     cy.visit('/send')
-    //
-    //     console.log('error.spec.ts:9| UISend...')
-    //     UISend(filename)
-    //         .then(() => {
-    //             // TODO: expect error message.
-    //             console.log('error.spec.ts:12| .then...')
-    //             cy.get('.alert-wrapper').should('exist')
-    //                 .get('.alert-title').should('contain.text', 'Mailbox Error')
-    //                 .screenshot()
-    //             // .get('.alert-message').should('contain.text', 'unable to connect to the mailbox server')
-    //             // .alert-wrapper
-    //             // & .alert-title
-    //             // & .alert-message
-    //             // & .alert-button
-    //         })
-    //         .catch(error => {
-    //             console.log('error.spec.ts:20| error')
-    //             fail(error);
-    //         });
-    // });
 })
 
-describe.only('Receiving', () => {
+describe('Receiving', () => {
     // NB: mailbox must not be running!
     it('should show a specific error when unable to connect to the mailbox', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
             cy.visit('/receive');
 
-            cy.get('input[type="text"]')
-                .type('12-not-real');
+            cy.window().then(window => {
+                window.postMessage({
+                    // TODO: reference constant.
+                    action: 'test/set_config',
+                    config: {
+                        rendezvousURL: 'ws://localhost:1',
+                    }
+                }, '*')
+                cy.wait(100)
 
-            cy.get('.receive-next')
-                .click()
+                cy.get('input[type="text"]')
+                    .type('12-not-real');
 
-            cy.get('.alert-wrapper').should('exist')
-                .get('.alert-title').should('contain.text', 'Error')
-                .screenshot()
+                cy.get('.receive-next')
+                    .click()
+
+                cy.get('.alert-wrapper').should('exist')
+                    .get('.alert-title').should('contain.text', 'Error')
+            });
         });
     });
 
-    // NB: relay must not be running!
-    it.only('should show a specific error when unable to connect to the relay', () => {
+    it('should show a specific error when unable to connect to the relay', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
             const {code, result} = await mockClientSend(filename, file)
@@ -101,22 +124,24 @@ describe.only('Receiving', () => {
                             // TODO: reference constant.
                             action: 'test/set_config',
                             config: {
-                                rendezvousURL: 'ws://localhost:1',
+                                transitRelayURL: 'ws://localhost:1',
                             }
                         }, '*')
-                        cy.wait(500)
+                        cy.wait(100)
 
                         cy.get('input[type="text"]')
                             .type(code);
 
                         cy.get('.receive-next')
+                            .click().wait(500)
+
+                        cy.get('.download-button').wait(500)
                             .click()
 
                         cy.get('.alert-wrapper').should('exist')
                             .get('.alert-title').should('contain.text', 'Error')
-                            // .screenshot()
-                    })
-                })
+                    });
+                });
         });
     });
 
@@ -133,22 +158,25 @@ describe.only('Receiving', () => {
 
             cy.get('.alert-wrapper').should('exist')
                 .get('.alert-title').should('contain.text', 'Error')
-                .screenshot()
         });
     });
 })
 
 async function UISend(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        cy.fixture(filename).then(fileContent => {
-            cy.contains('ion-button', 'select')
-                .get('input[type="file"]')
-                .attachFile({
-                    fileName: 'large-file.txt',
-                    fileContent,
-                }).then(() => {
-                resolve()
-            })
-        })
+        try {
+            cy.fixture(filename).then(fileContent => {
+                cy.contains('ion-button', 'select')
+                    .get('input[type="file"]')
+                    .attachFile({
+                        fileName: 'large-file.txt',
+                        fileContent,
+                    }).then(() => {
+                    resolve()
+                })
+            });
+        } catch (err) {
+            reject(err);
+        }
     });
 }

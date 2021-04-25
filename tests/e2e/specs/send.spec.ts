@@ -1,7 +1,4 @@
-import Go from '../../../src/go'
-import Client, {Offer} from '@/go/wormhole/client.ts';
-import {TEST_HOST} from "../support/util";
-import {largeUint8ArrToString} from "../support/util";
+import {largeUint8ArrToString, mockClientReceive, TEST_HOST, UIGetCode} from "../support/util";
 
 describe('Sending', () => {
     const filename = 'large-file.txt';
@@ -54,49 +51,3 @@ describe('Sending', () => {
     })
 })
 
-// TODO: refactor (application actions / page objects?)
-async function UIGetCode(filename: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        cy.fixture(filename).then(fileContent => {
-            cy.contains('ion-button', 'select')
-                // TODO: doesn't test button triggers file dialog
-                // TODO: can't set / test file size?
-                .get('input[type="file"]')
-                .attachFile({
-                    fileName: 'large-file.txt',
-                    fileContent,
-                })
-                .get('.send-code-input>input')
-                .should('not.have.value', '')
-                .then(el => {
-                    resolve((el[0] as HTMLInputElement).value);
-                })
-        })
-    });
-}
-
-async function mockClientReceive(code: string): Promise<Uint8Array> {
-    const go = new Go();
-    await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
-        go.run(result.instance);
-    });
-
-    const receiver = new Client();
-    // TODO: cleanup
-    let size: number;
-    const offerCondition = (offer: Offer): void => {
-        size = offer.size;
-    }
-    const reader = await receiver.recvFile(code, {
-        offerCondition,
-    });
-    // @ts-ignore
-    const result = new Uint8Array(size)
-    for (let n = 0, accBytes = 0, done = false; !done;) {
-        const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
-        [n, done] = await reader.read(buffer);
-        result.set(buffer.slice(0, n), accBytes);
-        accBytes += n - 1;
-    }
-    return result;
-}
