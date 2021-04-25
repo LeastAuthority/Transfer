@@ -39,6 +39,8 @@ export interface TransferOptions {
 export interface SendResult {
     code: string;
     result: Promise<void>;
+
+    cancel(): void;
 }
 
 export interface ClientInterface {

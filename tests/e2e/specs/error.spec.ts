@@ -1,6 +1,12 @@
 import Go from '../../../src/go'
 
-import {mockClientReceive, mockClientSend, mockGetReceiveReader, TEST_HOST, UIGetCode} from "../support/util";
+import {
+    mockClientSend,
+    mockGetReceiveReader,
+    TEST_HOST,
+    UIGetCode
+} from "../support/util";
+import {SET_CONFIG} from "../support/const";
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
@@ -34,10 +40,11 @@ describe('Sending', () => {
                     // TODO: expect error message.
                     cy.get('.alert-wrapper').should('exist')
                         .get('.alert-title').should('contain.text', 'Error')
-                        .wait(250)
-                        .then(() => {
-                            cy.screenshot()
-                        })
+                        // TODO: use cli flag or something
+                        // .wait(250)
+                        // .then(() => {
+                        //     cy.screenshot()
+                        // })
                     // .get('.alert-message').should('contain.text', 'unable to connect to the mailbox server')
                     // .alert-wrapper
                     // & .alert-title
@@ -67,10 +74,11 @@ describe('Sending', () => {
 
                     cy.get('.alert-wrapper').should('exist')
                         .get('.alert-title').should('contain.text', 'Mailbox Error')
-                        .wait(250)
-                        .then(() => {
-                            cy.screenshot()
-                        })
+                        // TODO: use cli flag or something
+                        // .wait(250)
+                        // .then(() => {
+                        //     cy.screenshot()
+                        // })
                 })
         })
     });
@@ -100,10 +108,11 @@ describe('Receiving', () => {
 
                 cy.get('.alert-wrapper').should('exist')
                     .get('.alert-title').should('contain.text', 'Error')
-                    .wait(250)
-                    .then(() => {
-                        cy.screenshot()
-                    })
+                    // TODO: use cli flag or something
+                    // .wait(250)
+                    // .then(() => {
+                    //     cy.screenshot()
+                    // })
             });
         });
     });
@@ -122,7 +131,7 @@ describe('Receiving', () => {
                     cy.window().then(window => {
                         window.postMessage({
                             // TODO: reference constant.
-                            action: 'test/set_config',
+                            action: SET_CONFIG,
                             config: {
                                 transitRelayURL: 'ws://localhost:1',
                             }
@@ -140,31 +149,38 @@ describe('Receiving', () => {
 
                         cy.get('.alert-wrapper').should('exist')
                             .get('.alert-title').should('contain.text', 'Error')
-                            .wait(250)
-                            .then(() => {
-                                cy.screenshot()
-                            })
+                            // TODO: use cli flag or something
+                            // .wait(250)
+                            // .then(() => {
+                            //     cy.screenshot()
+                            // })
                     });
                 });
         });
     });
 
-    it.skip('should show a specific error when the transfer is interrupted on the receive-side', () => {
+    it.skip('should show a specific error when the transfer is interrupted on the send-side', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
-            const {code} = await mockClientSend(filename, file)
+            const {code, result} = await mockClientSend(filename, file)
 
             cy.visit(`/receive/${code}`)
 
             cy.get('.download-button').wait(500)
                 .click()
+                // TODO: use cli flag or something
+                // .wait(250)
+                // .then(() => {
+                //     result.cancel();
+                // })
 
             cy.get('.alert-wrapper').should('exist')
                 .get('.alert-title').should('contain.text', 'Error')
-                .wait(250)
-                .then(() => {
-                    cy.screenshot()
-                })
+                // TODO: use cli flag or something
+                // .wait(250)
+                // .then(() => {
+                //     cy.screenshot()
+                // })
 
         });
     });

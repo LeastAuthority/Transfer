@@ -15,7 +15,7 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text class="filename">{{ file.name }}</ion-text>
+                        <ion-text class="filename">{{ offer.name }}</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -27,7 +27,6 @@
                     <ion-col>
                         <ion-progress-bar color="primary"
                                           v-show="progress.value >= 0"
-                                          :type="progress.type"
                                           :value="progress.value"
                         ></ion-progress-bar>
                     </ion-col>
@@ -35,8 +34,7 @@
                 <ion-row v-if="!progress.done">
                     <ion-col class="ion-text-center">
                         <ion-button class="download-button"
-                                    color="light"
-                                    :disabled="!file.ready">
+                                    color="light">
                             <ion-icon :icon="cloudDownloadOutline"></ion-icon>
                             <ion-text class="ion-padding-start"
                                       @click="download"
@@ -99,6 +97,7 @@
         IonProgressBar, alertController,
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
+    import {mapState, mapActions} from 'vuex';
     import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
     import router from '@/router/index.ts'
@@ -107,39 +106,20 @@
     import ClientWorker from '@/go/wormhole/client_worker.ts';
     import {sizeToClosestUnit} from "@/util";
 
-    // TODO: refactor
-    const PROGRESS_INDETERMINATE = 'indeterminate'
-    const PROGRESS_DETERMINATE = 'determinate'
-    const PROGRESS_DONE_TIMEOUT_MS = 500;
-
     export default defineComponent({
         name: "ReceiveConfirm",
         data() {
+            // NB: state proxy can't be cloned.
             const config = Object.assign({},this.$store.state.config);
 
             return {
                 client: new ClientWorker(config),
-                file: {
-                    name: '',
-                    size: 0,
-                    code: '',
-                    ready: true,
-                    accept: undefined,
-                    reject: undefined,
-                },
-                progress: {
-                    type: PROGRESS_INDETERMINATE,
-                    // type: PROGRESS_DETERMINATE,
-                    value: -1,
-                    _value: -1,
-                    doneID: -1,
-                    updateID: -1,
-                }
             }
         },
         computed: {
+            ...mapState('receive', ['offer', 'progress']),
             fileSize() {
-                return sizeToClosestUnit(this.file.size);
+                return sizeToClosestUnit(this.offer.size);
             },
         },
         async mounted() {
@@ -150,7 +130,9 @@
                     progressFunc: this.onProgress,
                     offerCondition: this.offerCondition,
                 });
+                this.setDone(true);
             } catch (error) {
+                console.log(error);
                 await this.presentAlert(error);
             }
         },
@@ -170,6 +152,7 @@
             VersionFooter,
         },
         methods: {
+            ...mapActions('receive', ['setOffer', 'setProgress', 'setDone']),
             async presentAlert(error) {
                 const alert = await alertController
                     .create({
@@ -185,37 +168,17 @@
             },
             async download() {
                 console.log('Download clicked!');
-                this.file.accept();
+                this.offer.accept();
             },
-            // TODO: refactor
             onProgress(sentBytes, totalBytes) {
-                if (this.progress.type === PROGRESS_INDETERMINATE) {
-                    this.progress.type = PROGRESS_DETERMINATE;
-                }
-                this.progress.value = sentBytes / totalBytes;
-
-                if (this.progress.doneID > 0) {
-                    window.clearTimeout(this.progress.doneID);
-                }
-                this.progress.doneID = window.setTimeout(this.resetProgress, PROGRESS_DONE_TIMEOUT_MS);
-            },
-            resetProgress() {
-                if (this.progress.value > .99) {
-                    // this.progress.type = PROGRESS_INDETERMINATE;
-                    // this.progress.value = -1;
-                    this.progress.doneID = -1;
-                    this.progress.done = true;
-                }
+                this.setProgress(sentBytes / totalBytes);
             },
             offerCondition(offer) {
-                this.file = {
-                    ...this.file,
-                    ...offer,
-                };
+                this.setOffer(offer);
             },
             cancel() {
-                if (typeof (this.file.reject) !== 'undefined') {
-                    this.file.reject();
+                if (typeof (this.offer.reject) !== 'undefined') {
+                    this.offer.reject();
                 }
                 router.push('/receive');
             },

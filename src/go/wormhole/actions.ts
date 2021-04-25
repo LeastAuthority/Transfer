@@ -3,6 +3,7 @@ export const NEW_CLIENT = 'client/new';
 export const SEND_TEXT = 'client/send_text';
 export const RECV_TEXT = 'client/recv_text';
 export const SEND_FILE = 'client/send_file';
+export const SEND_FILE_CANCEL = 'client/send_file/cancel';
 export const SEND_FILE_PROGRESS = 'client/send_file/progress';
 export const SEND_FILE_ERROR = 'client/send_file/error';
 export const SEND_FILE_RESULT_OK = 'client/send_file/result/ok';

@@ -13,7 +13,7 @@ import {
     RECV_FILE_OFFER_REJECT,
     RECV_FILE_PROGRESS, RECV_FILE_READ_ERROR,
     RECV_TEXT,
-    SEND_FILE,
+    SEND_FILE, SEND_FILE_CANCEL,
     SEND_FILE_ERROR,
     SEND_FILE_PROGRESS, SEND_FILE_RESULT_ERROR,
     SEND_FILE_RESULT_OK,
@@ -115,9 +115,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             case SEND_FILE_RESULT_ERROR:
                 this._handleSendFileResultError(event.data)
                 break;
-            case RECV_FILE:
-                this._handleRecvFile(event.data);
-                break;
             case RECV_FILE_PROGRESS:
                 this._handleFileProgress(event.data);
                 break;
@@ -133,24 +130,43 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             default:
                 throw new Error(`unexpected action: ${event.data.action}`)
         }
-
-        // resolve(event.data.code);
     }
 
-    private _handleRecvFile({id}: ActionMessage): void {
-        this.port.postMessage({
-            action: RECV_FILE_DATA,
-            id,
-        });
+    private _handleRecvFileData({id, n, done, buffer}: ActionMessage): void {
+        // TODO: combine?
+        const pending = this.pending[id];
+        const receiving = this.receiving[id];
+        if (typeof (receiving) === 'undefined') {
+            throw new Error(`not receiving file with id: ${id}`)
+        }
+
+        const {writer} = receiving;
+        writer.write(new Uint8Array(buffer).slice(0, n));
+
+        if (done) {
+            pending.resolve();
+            delete this.receiving[id];
+            delete this.pending[id];
+            writer.close();
+        }
     }
 
     private _handleSendFile({id, code}: ActionMessage): void {
         const {resolve} = this.pending[id];
         resolve({
             code,
-            result: new Promise((resolve, reject) => {
-                this.pending[id].result = {resolve, reject};
-            })
+            result:
+                {
+                    cancel: () => {
+                        this.port.postMessage({
+                            action: SEND_FILE_CANCEL,
+                            id,
+                        })
+                    },
+                    done: new Promise((resolve, reject) => {
+                        this.pending[id].result = {resolve, reject};
+                    })
+                }
         });
     }
 
@@ -162,22 +178,6 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     private _handleSendFileResultError({id, error}: ActionMessage): void {
         const {result: {reject}} = this.pending[id];
         reject(error);
-    }
-
-    private _handleRecvFileData({id, n, done, buffer}: ActionMessage): void {
-        const receiving = this.receiving[id];
-        if (typeof (receiving) === 'undefined') {
-            throw new Error(`not receiving file with id: ${id}`)
-        }
-
-        const {writer} = receiving;
-        writer.write(new Uint8Array(buffer).slice(0, n));
-
-        if (done) {
-            delete this.receiving[id];
-            delete this.pending[id];
-            writer.close();
-        }
     }
 
     private _handleFileProgress({id, sentBytes, totalBytes}: ActionMessage): void {

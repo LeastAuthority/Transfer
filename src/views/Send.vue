@@ -5,7 +5,7 @@
             <ion-toolbar>
                 <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
             </ion-toolbar>
-            <ion-grid v-if="!done">
+            <ion-grid v-if="!progress.done">
                 <ion-row>
                     <ion-col class="ion-text-center">
                         <ion-text color="medium">
@@ -65,7 +65,7 @@
             </ion-grid>
         </ion-content>
         <ion-modal
-                :is-open="isOpenRef"
+                :is-open="open"
                 css-class="modal"
                 @onDidDismiss="setOpen(false)"
         >
@@ -123,13 +123,13 @@
     import VersionFooter from "@/components/VersionFooter.vue";
     import router from '@/router/index.ts'
     import {sizeToClosestUnit} from "@/util";
+    import {mapActions, mapState} from 'vuex';
 
     // TODO: use proper state management.
     const isOpenRef = ref(false);
 
     interface SendData {
         file: File | null;
-        done: boolean;
     }
 
     export default defineComponent({
@@ -137,8 +137,11 @@
         data(): SendData {
             return {
                 file: null,
-                done: false,
+                // done: false,
             };
+        },
+        computed: {
+            ...mapState('send', ['open', 'progress']),
         },
         components: {
             IonToolbar,
@@ -164,14 +167,9 @@
             }
         },
         methods: {
+            ...mapActions('send', ['setOpen', 'setDone']),
             select() {
                 (this.$refs.fileInput as HTMLInputElement).click();
-            },
-            setOpen(state: boolean) {
-                isOpenRef.value = state;
-            },
-            setDone(done: boolean) {
-                this.done = done;
             },
             fileChanged() {
                 const fileInput = this.$refs.fileInput as HTMLInputElement;
@@ -184,7 +182,7 @@
                 return sizeToClosestUnit(this.file!.size);
             },
             sendMore() {
-                this.done = false;
+                this.setDone(false);
                 this.select();
             },
         },

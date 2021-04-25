@@ -12,7 +12,7 @@ import {
     RECV_FILE_OFFER_REJECT,
     RECV_FILE_PROGRESS, RECV_FILE_READ_ERROR,
     RECV_TEXT,
-    SEND_FILE,
+    SEND_FILE, SEND_FILE_CANCEL,
     SEND_FILE_ERROR,
     SEND_FILE_PROGRESS,
     SEND_FILE_RESULT_ERROR,
@@ -79,6 +79,11 @@ function handleSendFile({id, name, buffer}: ActionMessage): void {
         });
 }
 
+function handleSendFileCancel({id}: ActionMessage): void {
+    const {reader} = receiving[id];
+    reader.close()
+}
+
 function handleReceiveFile({id, code}: ActionMessage): void {
     const recvProgressCb = (sentBytes: number, totalBytes: number): void => {
         port.postMessage({
@@ -141,10 +146,7 @@ function handleReceiveOfferAccept({id}: ActionMessage): void {
     const {offer: {accept}} = _receiving;
     // TODO: handle error
     accept().then(() => {
-        port.postMessage({
-            action: RECV_FILE,
-            id,
-        });
+        handleReceiveFileData({id} as ActionMessage);
     });
 }
 
@@ -159,7 +161,7 @@ function handleReceiveOfferReject({id}: ActionMessage): void {
     reject();
 }
 
-async function handleReceiveFileData({id, done}: ActionMessage): Promise<void> {
+async function handleReceiveFileData({id}: ActionMessage): Promise<void> {
     const _receiving = receiving[id];
     if (typeof (_receiving) === 'undefined') {
         throw new Error(`not currently receiving file with id ${id}`);
@@ -235,6 +237,9 @@ onmessage = async function (event) {
                 break;
             case SEND_FILE:
                 handleSendFile(event.data);
+                break;
+            case SEND_FILE_CANCEL:
+                handleSendFileCancel(event.data)
                 break;
             case RECV_FILE:
                 handleReceiveFile(event.data);

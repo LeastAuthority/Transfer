@@ -34,20 +34,34 @@ describe('Sending', () => {
         });
     });
 
-    it.skip('should show send progress when the receiver connects', (done) => {
+    // TODO: actually assert things.
+    it('should show send progress when the receiver connects', (done) => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('/send')
 
-        UIGetCode(filename).then(sendCode => {
-            mockClientReceive(sendCode).then(receivedData => {
-                console.log(receivedData);
-                largeUint8ArrToString(receivedData).then(receivedText => {
-                    // TODO: add assertions!
-                    console.log('text: ' + receivedText);
-                    done();
-                });
-            });
-        });
+        cy.fixture(filename).then(fileContent => {
+            cy.contains('ion-button', 'select')
+                // TODO: doesn't test button triggers file dialog
+                // TODO: can't set / test file size?
+                .get('input[type="file"]')
+                .attachFile({
+                    fileName: 'large-file.txt',
+                    fileContent,
+                })
+                .get('.send-code-input>input')
+                .should('not.have.value', '')
+                .then(el => {
+                    const sendCode = (el[0] as HTMLInputElement).value;
+                    mockClientReceive(sendCode).then(receivedData => {
+                        largeUint8ArrToString(receivedData).then(receivedText => {
+                            // TODO: why?
+                            // expect(receivedText).equal(fileContent);
+
+                            done();
+                        });
+                    });
+                })
+        })
     })
 })
 
