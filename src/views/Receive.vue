@@ -83,7 +83,7 @@
         },
         methods: {
             navigate(code: string) {
-                router.push(`/receive/${code}`);
+                router.replace(`/receive/${code}`);
             },
             paste() {
                 console.log('paste clicked.')

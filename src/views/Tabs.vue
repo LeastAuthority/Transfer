@@ -25,9 +25,10 @@
         IonIcon,
         IonPage,
     } from '@ionic/vue';
+    import {defineComponent} from 'vue';
     import {exit, enterOutline} from 'ionicons/icons';
 
-    export default {
+    export default defineComponent({
         name: 'Tabs',
         components: {
             IonLabel,
@@ -43,5 +44,5 @@
                 enterOutline
             }
         }
-    }
+    });
 </script>

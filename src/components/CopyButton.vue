@@ -26,7 +26,7 @@
         },
         methods: {
             copyLink() {
-                const url = `${this.host}/receive/${this.code}`;
+                const url = `${this.host}/#/receive/${this.code}`;
                 navigator.clipboard.writeText(url);
             },
         },

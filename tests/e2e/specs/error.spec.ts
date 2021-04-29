@@ -24,7 +24,7 @@ describe('Sending', () => {
     // TODO: be more specific
     it('should show a specific error when unable to connect to the mailbox', () => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit('/send')
+        cy.visit('/#/send')
 
         cy.window().then(window => {
             window.postMessage({
@@ -56,12 +56,12 @@ describe('Sending', () => {
 
     it('should show a specific error when unable to connect to the relay', () => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit('/send')
+        cy.visit('/#/send')
 
         cy.window().then(window => {
             window.postMessage({
                 // TODO: reference constant.
-                action: 'test/set_config',
+                action: SET_CONFIG,
                 config: {
                     transitRelayURL: 'ws://localhost:10000',
                 }
@@ -88,12 +88,12 @@ describe('Receiving', () => {
     it('should show a specific error when unable to connect to the mailbox', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
-            cy.visit('/receive');
+            cy.visit('/#/receive');
 
             cy.window().then(window => {
                 window.postMessage({
                     // TODO: reference constant.
-                    action: 'test/set_config',
+                    action: SET_CONFIG,
                     config: {
                         rendezvousURL: 'ws://localhost:10000',
                     }
@@ -125,7 +125,7 @@ describe('Receiving', () => {
             // NB: ignore send-side relay error
             result.catch(() => {})
 
-            cy.visit(`/receive`)
+            cy.visit(`/#/receive`)
                 .wait(500)
                 .then(() => {
                     cy.window().then(window => {
@@ -164,7 +164,7 @@ describe('Receiving', () => {
         cy.fixture(filename).then(async (file: string) => {
             const {code, result} = await mockClientSend(filename, file)
 
-            cy.visit(`/receive/${code}`)
+            cy.visit(`/#/receive/${code}`)
 
             cy.get('.download-button').wait(500)
                 .click()

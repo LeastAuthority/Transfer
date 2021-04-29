@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import Tabs from '../views/Tabs.vue'
 
@@ -16,15 +16,15 @@ const routes: Array<RouteRecordRaw> = [
         redirect: '/send'
       },
       {
-        path: 'send',
+        path: '/send',
         component: () => import('@/views/Send.vue')
       },
       {
-        path: 'receive',
+        path: '/receive',
         component: () => import('@/views/Receive.vue')
       },
       {
-        path: 'receive/:code',
+        path: '/receive/:code',
         component: () => import('@/components/ReceiveConfirm.vue')
       },
     ]
@@ -32,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes
 })
 

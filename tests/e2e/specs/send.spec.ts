@@ -6,7 +6,7 @@ describe('Sending', () => {
 
     it('should get a code when a file is selected', (done) => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit('/send')
+        cy.visit('/#/send')
 
         UIGetCode(filename).then(sendCode => {
             const codeParts = sendCode.split('-');
@@ -28,7 +28,7 @@ describe('Sending', () => {
                 // .should('not.be.enabled')
                 .click()
                 .task('readClipboard').then(actual => {
-                expect(actual).to.eq(`${TEST_HOST}/receive/${code}`);
+                expect(actual).to.eq(`${TEST_HOST}/#/receive/${code}`);
                 done();
             })
         });
@@ -37,7 +37,7 @@ describe('Sending', () => {
     // TODO: actually assert things.
     it('should show send progress when the receiver connects', (done) => {
         cy.viewport('samsung-note9', 'portrait')
-        cy.visit('/send')
+        cy.visit('/#/send')
 
         cy.fixture(filename).then(fileContent => {
             cy.contains('ion-button', 'select')
