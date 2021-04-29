@@ -26,6 +26,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import {RouteLocationNormalized} from "vue-router";
 
 // TODO: move
 if (process.env['NODE_ENV'] !== 'production') {
@@ -34,11 +35,30 @@ if (process.env['NODE_ENV'] !== 'production') {
             const {action, config} = data;
             switch (action) {
                 case SET_CONFIG:
+                    console.log(`setting config: ${JSON.stringify(config, null, '  ')}`)
                     store.dispatch('setConfig', config)
             }
         }
     })
 }
+
+router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+    let action = '';
+    switch (from.path.split('/').slice(0,2).join('/')) {
+        case "/send":
+            action = 'send/setDone'
+            break;
+        case "/receive":
+            action = 'receive/setDone'
+            break;
+        default:
+            return;
+    }
+        // NB: allow time for navigation
+        window.setTimeout(() => {
+            store.dispatch(action, false);
+        }, 250);
+})
 
 const app = createApp(App)
     .use(IonicVue)

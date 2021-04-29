@@ -70,8 +70,6 @@
                 @onDidDismiss="setOpen(false)"
         >
             <SendModal
-                    :setOpen="setOpen"
-                    :setDone="setDone"
                     :selectFile="select"
                     :file="file"
             ></SendModal>
@@ -100,7 +98,7 @@
     }
 </style>
 
-<script lang="ts">
+<script>
     import {
         IonPage,
         IonToolbar,
@@ -128,16 +126,11 @@
     // TODO: use proper state management.
     const isOpenRef = ref(false);
 
-    interface SendData {
-        file: File | null;
-    }
-
     export default defineComponent({
         name: 'Send',
-        data(): SendData {
+        data() {
             return {
-                file: null,
-                // done: false,
+                file: {},
             };
         },
         computed: {
@@ -169,17 +162,17 @@
         methods: {
             ...mapActions('send', ['setOpen', 'setDone']),
             select() {
-                (this.$refs.fileInput as HTMLInputElement).click();
+                this.$refs.fileInput.click();
             },
             fileChanged() {
-                const fileInput = this.$refs.fileInput as HTMLInputElement;
-                if (fileInput!.files!.length > 0) {
-                    this.file = fileInput!.files![0];
+                const fileInput = this.$refs.fileInput;
+                if (fileInput.files.length > 0) {
+                    this.file = fileInput.files[0];
                     this.setOpen(true);
                 }
             },
-            fileSize(): string {
-                return sizeToClosestUnit(this.file!.size);
+            fileSize() {
+                return sizeToClosestUnit(this.file.size);
             },
             sendMore() {
                 this.setDone(false);

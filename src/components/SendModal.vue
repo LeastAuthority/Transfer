@@ -99,10 +99,10 @@
 
     export default defineComponent({
         name: "SendModal.vue",
-        props: ['setOpen', 'setDone', 'selectFile', 'file'],
+        props: ['selectFile', 'file'],
         data() {
             return {
-                client: new ClientWorker({...this.$store.state.config}),
+                client: this.newClient(),
             }
         },
         computed: {
@@ -121,6 +121,7 @@
                     .then(() => {
                         this.setDone(true)
                         this.setOpen(false);
+                        this.reset();
                     })
                     .catch(error => {
                         // NB: error during transfer>
@@ -134,7 +135,13 @@
             }
         },
         methods: {
-            ...mapActions('send', ['setCode', 'setProgress', 'setDone']),
+            ...mapActions('send', ['setCode', 'setOpen', 'setProgress', 'setDone']),
+            newClient() {
+                // NB: state proxy can't be cloned.
+                const config = Object.assign({}, this.$store.state.config);
+                return new ClientWorker(config)
+
+            },
             async presentAlert(error) {
                 const alert = await alertController
                     .create({
@@ -165,8 +172,13 @@
                 }, 300);
             },
             reset() {
-                this.client = new ClientWorker();
+                this.setProgress(-1)
+                this.client = this.newClient();
             },
+        },
+        beforeRouteLeave(to, _from, next) {
+            this.setopen(false);
+            this.reset();
         },
         setup() {
             return {

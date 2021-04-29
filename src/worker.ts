@@ -137,30 +137,6 @@ function handleReceiveFile({id, code}: ActionMessage): void {
         });
 }
 
-function handleReceiveOfferAccept({id}: ActionMessage): void {
-    const _receiving = receiving[id]
-    if (typeof (_receiving) === 'undefined') {
-        throw new Error(`not currently receiving file with id ${id}`);
-    }
-
-    const {offer: {accept}} = _receiving;
-    // TODO: handle error
-    accept().then(() => {
-        handleReceiveFileData({id} as ActionMessage);
-    });
-}
-
-function handleReceiveOfferReject({id}: ActionMessage): void {
-    const _receiving = receiving[id]
-    if (typeof (_receiving) === 'undefined') {
-        throw new Error(`not currently receiving file with id ${id}`);
-    }
-
-    const {offer: {reject}} = _receiving;
-    // TODO: currently ignoring error.
-    reject();
-}
-
 async function handleReceiveFileData({id}: ActionMessage): Promise<void> {
     const _receiving = receiving[id];
     if (typeof (_receiving) === 'undefined') {
@@ -189,17 +165,40 @@ async function handleReceiveFileData({id}: ActionMessage): Promise<void> {
     }
 }
 
+function handleReceiveOfferAccept({id}: ActionMessage): void {
+    const _receiving = receiving[id]
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const {offer: {accept}} = _receiving;
+    // TODO: handle error
+    accept().then(() => {
+        handleReceiveFileData({id} as ActionMessage);
+    });
+}
+
+function handleReceiveOfferReject({id}: ActionMessage): void {
+    const _receiving = receiving[id]
+    if (typeof (_receiving) === 'undefined') {
+        throw new Error(`not currently receiving file with id ${id}`);
+    }
+
+    const {offer: {reject}} = _receiving;
+    // TODO: currently ignoring error.
+    reject();
+}
+
 onmessage = async function (event) {
+    if (!isAction(event.data)) {
+        throw new Error(`unexpected event: ${JSON.stringify(event, null, '  ')}`);
+    }
+
     // NB: unregister worker message handler.
     //  (use message channel port instead)
     onmessage = () => {
         // NB: noop
     };
-    // console.log(event)
-
-    if (!isAction(event.data)) {
-        throw new Error(`unexpected event: ${JSON.stringify(event, null, '  ')}`);
-    }
 
     const go = new Go();
     await WebAssembly.instantiateStreaming(wasmPromise, go.importObject).then((result) => {

@@ -3,17 +3,14 @@ import {ClientConfig} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG, Offer} from "@/go/wormhole/client";
 
 let defaultConfig: ClientConfig | undefined;
+let host = 'http://localhost:8080';
+console.log(`index.ts:6| process.env['NODE_ENV']: ${process.env['NODE_ENV']}`);
 if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-}
-
-// TODO: refactor
-let host = 'http://localhost:8080';
-if (process.env.NODE_ENV === 'production') {
     host = 'https://wormhole.bryanchriswhite.com';
 }
 
-declare interface PeerState {
+declare interface SideState {
     open: boolean;
     code: string;
     progress: {
@@ -24,50 +21,64 @@ declare interface PeerState {
 }
 
 /* --- ACTIONS --- */
-function setOpenAction(this: Store<PeerState>, {commit}: ActionContext<PeerState, any>, open: boolean): any {
+function setOpenAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, open: boolean): any {
     commit('setOpen', open);
 }
 
-function setCodeAction(this: Store<PeerState>, {commit}: ActionContext<PeerState, any>, code: string): any {
+function setCodeAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, code: string): any {
     commit('setCode', code);
 }
 
-function setOfferAction(this: Store<PeerState>, {commit}: ActionContext<PeerState, any>, offer: Offer) {
+function setOfferAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, offer: Offer) {
     commit('setOffer', offer);
 }
 
-function setProgressAction(this: Store<PeerState>, {commit}: ActionContext<PeerState, any>, payload?: Record<string, any>): any {
+function setProgressAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, payload?: Record<string, any>): any {
     commit('setProgress', payload);
 }
 
-function setDoneAction(this: Store<PeerState>, {commit}: ActionContext<PeerState, any>, done: boolean): any {
+function setDoneAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, done: boolean): any {
     commit('setDone', done);
 }
 
 /* --- MUTATIONS --- */
-function setOpenMutation(state: PeerState, open: boolean) {
+function setOpenMutation(state: SideState, open: boolean) {
     state.open = open;
 }
 
-function setCodeMutation(state: PeerState, code: string) {
+function setCodeMutation(state: SideState, code: string) {
     state.code = code;
 }
 
-function setOfferMutation(state: PeerState, offer: Offer) {
+function setOfferMutation(state: SideState, offer: Offer) {
     state.offer = offer;
 }
 
-function setProgressMutation(state: PeerState, percent: any) {
+function setProgressMutation(state: SideState, percent: any) {
     state.progress.value = percent;
 }
 
-function setDoneMutation(state: PeerState, done: boolean) {
+function setDoneMutation(state: SideState, done: boolean) {
+    console.log(`index.ts:62| setting done: ${done}`);
     state.progress.done = done;
 }
 
 
 /* --- STATES --- */
-const peerState = {
+const sendState = {
+    open: false,
+    code: '',
+    progress: {
+        value: -1,
+        done: false,
+    },
+    offer: {
+        name: '',
+        size: 0,
+    },
+};
+
+const recvState = {
     open: false,
     code: '',
     progress: {
@@ -81,9 +92,9 @@ const peerState = {
 };
 
 /* --- MODULES --- */
-const peerModule: Module<any, any> = {
+const sendModule: Module<any, any> = {
     namespaced: true,
-    state: () => peerState,
+    state: () => sendState,
     mutations: {
         setOpen: setOpenMutation,
         setCode: setCodeMutation,
@@ -98,7 +109,26 @@ const peerModule: Module<any, any> = {
         setProgress: setProgressAction,
         setDone: setDoneAction,
     },
-}
+};
+
+const recvModule: Module<any, any> = {
+    namespaced: true,
+    state: () => recvState,
+    mutations: {
+        setOpen: setOpenMutation,
+        setCode: setCodeMutation,
+        setOffer: setOfferMutation,
+        setProgress: setProgressMutation,
+        setDone: setDoneMutation,
+    },
+    actions: {
+        setOpen: setOpenAction,
+        setCode: setCodeAction,
+        setOffer: setOfferAction,
+        setProgress: setProgressAction,
+        setDone: setDoneAction,
+    },
+};
 
 export default createStore({
     devtools: process.env['NODE_ENV'] !== 'production',
@@ -111,7 +141,7 @@ export default createStore({
     mutations: {
         setConfig(state, config: ClientConfig) {
             (state as any).config = config;
-        }
+        },
     },
     actions: {
         setConfig({commit}, config) {
@@ -119,7 +149,7 @@ export default createStore({
         },
     },
     modules: {
-        send: peerModule,
-        receive: peerModule,
+        send: sendModule,
+        receive: recvModule,
     }
 })

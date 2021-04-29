@@ -109,12 +109,9 @@
     export default defineComponent({
         name: "ReceiveConfirm",
         data() {
-            // NB: state proxy can't be cloned.
-            const config = Object.assign({},this.$store.state.config);
-
             return {
-                client: new ClientWorker(config),
-            }
+                client: this.newClient(),
+            };
         },
         computed: {
             ...mapState('receive', ['offer', 'progress']),
@@ -122,19 +119,11 @@
                 return sizeToClosestUnit(this.offer.size);
             },
         },
+        beforeRouteUpdate(to, from, next) {
+            this.wait();
+        },
         async mounted() {
-            const code = this.$route.params.code;
-            try {
-                await this.client.saveFile(code, {
-                    name,
-                    progressFunc: this.onProgress,
-                    offerCondition: this.offerCondition,
-                });
-                this.setDone(true);
-            } catch (error) {
-                console.log(error);
-                await this.presentAlert(error);
-            }
+            this.wait();
         },
         components: {
             IonPage,
@@ -153,6 +142,27 @@
         },
         methods: {
             ...mapActions('receive', ['setOffer', 'setProgress', 'setDone']),
+            async wait() {
+                const code = this.$route.params.code;
+                try {
+                    await this.client.saveFile(code, {
+                        name,
+                        progressFunc: this.onProgress,
+                        offerCondition: this.offerCondition,
+                    });
+                    this.setDone(true);
+                    this.reset();
+                } catch (error) {
+                    console.log(error);
+                    await this.presentAlert(error);
+                }
+            },
+            newClient() {
+                // NB: state proxy can't be cloned.
+                const config = Object.assign({}, this.$store.state.config);
+                return new ClientWorker(config)
+
+            },
             async presentAlert(error) {
                 const alert = await alertController
                     .create({
@@ -181,9 +191,15 @@
                     this.offer.reject();
                 }
                 router.push('/receive');
+                this.reset();
             },
             sendFile() {
                 router.push('/send?select');
+                this.reset();
+            },
+            reset() {
+                this.setProgress(-1);
+                this.client = this.newClient();
             },
         },
         setup() {
