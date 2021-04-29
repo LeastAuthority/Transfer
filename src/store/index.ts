@@ -1,6 +1,6 @@
-import {Action, ActionContext, ActionHandler, createStore, Module, Store} from 'vuex'
-import {ClientConfig} from "@/go/wormhole/types";
-import {DEFAULT_PROD_CLIENT_CONFIG, Offer} from "@/go/wormhole/client";
+import {ActionContext, createStore, Module, Store} from 'vuex'
+import {ClientConfig, Offer} from "@/go/wormhole/types";
+import Client, {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 
 let defaultConfig: ClientConfig | undefined;
 let host = 'http://localhost:8080';

@@ -1,6 +1,52 @@
 // TODO: declare local interface instead of import?
 import {Reader} from "@/go/wormhole/streaming";
-import {SendResult, TransferOptions} from "@/go/wormhole/client";
+
+export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
+
+export interface Offer {
+    name: string;
+    size: number;
+    accept?: () => Promise<Error>;
+    reject?: () => Promise<Error>;
+}
+
+export type OfferCondition = (offer: Offer) => void
+
+export interface TransferOptions {
+    progressFunc?: ProgressFunc;
+    offerCondition?: OfferCondition;
+    code?: string;
+
+    // TODO: keep?
+    bufferSizeBytes?: number;
+
+    // TODO: refactor
+    name?: string;
+    size?: number;
+}
+
+export interface SendResult {
+    code: string;
+    result: Promise<void>;
+
+    cancel(): void;
+}
+
+export interface ClientInterface {
+    // TODO: readonly or at least protected.
+    goClient: number;
+
+    sendText(msg: string): Promise<string>;
+
+    recvText(code: string): Promise<string>;
+
+    sendFile(file: File, opts?: TransferOptions): Promise<SendResult>;
+
+    recvFile(code: string, opts?: TransferOptions): Promise<Reader>;
+
+    free(): void;
+}
+
 
 export interface WindowWormhole {
     Client: WindowClient;

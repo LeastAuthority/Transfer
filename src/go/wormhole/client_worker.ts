@@ -1,6 +1,5 @@
 import streamSaver from 'streamsaver';
 
-import {ClientConfig} from "@/go/wormhole/types";
 import {
     ActionMessage,
     FREE,
@@ -21,7 +20,7 @@ import {
     WASM_READY
 } from "@/go/wormhole/actions";
 import {Reader} from "@/go/wormhole/streaming";
-import {ClientInterface, SendResult, TransferOptions} from "@/go/wormhole/client";
+import {ClientConfig, ClientInterface, SendResult, TransferOptions} from "@/go/wormhole/types";
 
 export default class ClientWorker implements ClientInterface {
     public goClient = -1;

@@ -1,4 +1,4 @@
-import {ClientConfig, wormhole} from "@/go/wormhole/types";
+import {ClientConfig, ClientInterface, SendResult, TransferOptions, wormhole} from "@/go/wormhole/types";
 import {Reader} from '@/go/wormhole/streaming';
 import Send from "@/views/Send.vue";
 
@@ -11,52 +11,6 @@ export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
 }
 
 // TODO: move to own client wrapper lib
-
-export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
-
-export interface Offer {
-    name: string;
-    size: number;
-    accept?: () => Promise<Error>;
-    reject?: () => Promise<Error>;
-}
-
-export type OfferCondition = (offer: Offer) => void
-
-export interface TransferOptions {
-    progressFunc?: ProgressFunc;
-    offerCondition?: OfferCondition;
-    code?: string;
-
-    // TODO: keep?
-    bufferSizeBytes?: number;
-
-    // TODO: refactor
-    name?: string;
-    size?: number;
-}
-
-export interface SendResult {
-    code: string;
-    result: Promise<void>;
-
-    cancel(): void;
-}
-
-export interface ClientInterface {
-    // TODO: readonly or at least protected.
-    goClient: number;
-
-    sendText(msg: string): Promise<string>;
-
-    recvText(code: string): Promise<string>;
-
-    sendFile(file: File, opts?: TransferOptions): Promise<SendResult>;
-
-    recvFile(code: string, opts?: TransferOptions): Promise<Reader>;
-
-    free(): void;
-}
 
 
 export default class Client implements ClientInterface {

@@ -1,5 +1,6 @@
 import Go from "./go";
-import Client, {Offer, SendResult} from "./go/wormhole/client";
+import Client from "./go/wormhole/client";
+import {Offer, SendResult} from "./go/wormhole/types";
 import {
     ActionMessage,
     FREE,
