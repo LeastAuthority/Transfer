@@ -27,7 +27,7 @@ export interface TransferOptions {
 
 export interface SendResult {
     code: string;
-    result: Promise<void>;
+    done: Promise<void>;
 
     cancel(): void;
 }

@@ -10,15 +10,18 @@ import {
     RECV_FILE_OFFER,
     RECV_FILE_OFFER_ACCEPT,
     RECV_FILE_OFFER_REJECT,
-    RECV_FILE_PROGRESS, RECV_FILE_READ_ERROR,
+    RECV_FILE_PROGRESS,
+    RECV_FILE_READ_ERROR,
     RECV_TEXT,
-    SEND_FILE, SEND_FILE_CANCEL,
+    SEND_FILE,
+    SEND_FILE_CANCEL,
     SEND_FILE_ERROR,
-    SEND_FILE_PROGRESS, SEND_FILE_RESULT_ERROR,
+    SEND_FILE_PROGRESS,
+    SEND_FILE_RESULT_ERROR,
     SEND_FILE_RESULT_OK,
     SEND_TEXT,
     WASM_READY
-} from "@/go/wormhole/actions";
+} from "@/store/actions";
 import {Reader} from "@/go/wormhole/streaming";
 import {ClientConfig, ClientInterface, SendResult, TransferOptions} from "@/go/wormhole/types";
 
@@ -45,11 +48,6 @@ export default class ClientWorker implements ClientInterface {
 
         // NB: wait for wasm module to be ready before listening to all events.
         this.ready = new Promise((resolve, reject) => {
-            // TODO: remove?
-            // const timeoutID = setTimeout(() => {
-            //     reject(new Error('timed out waiting for wasm to be ready!'))
-            // }, 1000);
-
             this.port.onmessage = (event: MessageEvent) => {
                 if (!isAction(event.data)) {
                     reject(new Error(
@@ -71,7 +69,6 @@ export default class ClientWorker implements ClientInterface {
 
     protected async _onMessage(event: MessageEvent): Promise<void> {
         await this.ready;
-        // console.log(`client_worker:70| _onMessage called with msg: ${JSON.stringify(event, null, '  ')}`)
 
         if (!isAction(event.data)) {
             throw new Error(`unexpected error: ${JSON.stringify(event, null, '  ')}`);
@@ -154,18 +151,15 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         const {resolve} = this.pending[id];
         resolve({
             code,
-            result:
-                {
-                    cancel: () => {
-                        this.port.postMessage({
-                            action: SEND_FILE_CANCEL,
-                            id,
-                        })
-                    },
-                    done: new Promise((resolve, reject) => {
-                        this.pending[id].result = {resolve, reject};
-                    })
-                }
+            cancel: () => {
+                this.port.postMessage({
+                    action: SEND_FILE_CANCEL,
+                    id,
+                })
+            },
+            done: new Promise((resolve, reject) => {
+                this.pending[id].result = {resolve, reject};
+            })
         });
     }
 

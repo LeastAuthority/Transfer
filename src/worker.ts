@@ -20,7 +20,7 @@ import {
     SEND_FILE_RESULT_OK,
     SEND_TEXT,
     WASM_READY
-} from "@/go/wormhole/actions";
+} from "@/store/actions";
 
 const wasmPromise = fetch("/assets/wormhole.wasm");
 
@@ -49,14 +49,14 @@ function handleSendFile({id, name, buffer}: ActionMessage): void {
 
     // TODO: change signature to expect array buffer or Uint8Array?
     client.sendFile(_file as File, {progressFunc: sendProgressCb})
-        .then(({code, result}: SendResult) => {
+        .then(({code, done}: SendResult) => {
             port.postMessage({
                 action: SEND_FILE,
                 id,
                 code,
             });
 
-            result
+            done
                 .then(() => {
                     port.postMessage({
                         action: SEND_FILE_RESULT_OK,

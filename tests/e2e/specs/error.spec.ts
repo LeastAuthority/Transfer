@@ -120,10 +120,10 @@ describe('Receiving', () => {
     it('should show a specific error when unable to connect to the relay', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
-            const {code, result} = await mockClientSend(filename, file)
+            const {code, done} = await mockClientSend(filename, file)
 
             // NB: ignore send-side relay error
-            result.catch(() => {})
+            done.catch(() => {})
 
             cy.visit(`/#/receive`)
                 .wait(500)
@@ -162,7 +162,7 @@ describe('Receiving', () => {
     it.skip('should show a specific error when the transfer is interrupted on the send-side', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
-            const {code, result} = await mockClientSend(filename, file)
+            const {code, cancel} = await mockClientSend(filename, file)
 
             cy.visit(`/#/receive/${code}`)
 
@@ -171,7 +171,7 @@ describe('Receiving', () => {
                 // TODO: use cli flag or something
                 // .wait(250)
                 // .then(() => {
-                //     result.cancel();
+                //     cancel();
                 // })
 
             cy.get('.alert-wrapper').should('exist')

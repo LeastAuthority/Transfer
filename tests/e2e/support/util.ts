@@ -1,5 +1,6 @@
 import Chainable = Cypress.Chainable;
-import Client, {Offer, SendResult, TransferOptions} from "@/go/wormhole/client";
+import Client from "@/go/wormhole/client";
+import {Offer, SendResult, TransferOptions} from "@/go/wormhole/types";
 import Go from "../../../src/go";
 import {Reader} from "@/go/wormhole/streaming";
 
@@ -13,8 +14,10 @@ export function mobileViewport() {
 }
 
 export function expectFileDownloaded(filename: string, expected: string): Chainable<undefined> {
-    // TODO: get rid of wait.
-    return cy.get('.download-button').wait(500).click().then(() => {
+    cy.get('ion-text.filename').should('have.text', filename);
+    cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
+
+    return cy.get('.download-button').click().then(() => {
         const path = `${downloadDir}/${filename}`
         return cy.readFile(path, 'utf-8', {timeout: 3000})
             .should((actual) => {
@@ -45,18 +48,6 @@ export async function mockClientSend(name: string, data: string, opts?: Transfer
     } as File;
     return sender.sendFile(file, opts);
 }
-
-// TODO: use cypress-promise?
-// (see: https://github.com/cypress-io/cypress/issues/1417)
-// (see: https://www.npmjs.com/package/cypress-promise)
-// NB: cypress chainables **are not** promises!
-// export async function withFile(filename: string): Promise<string> {
-//     return new Promise((resolve, reject) => {
-//         cy.fixture(filename).then(async (file: string) => {
-//             resolve(file);
-//         });
-//     });
-// }
 
 export function largeUint8ArrToString(uint8arr: Uint8Array) {
     return new Promise((resolve, reject) => {

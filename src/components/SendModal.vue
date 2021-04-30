@@ -89,25 +89,20 @@
     import {mapState, mapActions} from 'vuex';
     import {add} from 'ionicons/icons';
 
-    import ClientWorker from '@/go/wormhole/client_worker';
     import {sizeToClosestUnit} from '@/util';
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
     import VersionFooter from "@/components/VersionFooter";
     import CopyButton from "@/components/CopyButton";
+    import {NEW_CLIENT, SEND_FILE} from "@/store/actions";
 
     export default defineComponent({
         name: "SendModal.vue",
         props: ['selectFile', 'file'],
-        data() {
-            return {
-                client: this.newClient(),
-            }
-        },
         computed: {
-            ...mapState(['host']),
-            ...mapState('send', ['code', 'progress']),
+            ...mapState(['host', 'code']),
+            ...mapState('send', ['progress']),
             fileSize() {
                 return sizeToClosestUnit(this.file.size);
             },
@@ -115,18 +110,11 @@
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
             try {
-                const {code, result} = await this.client.sendFile(this.file, opts);
-                this.setCode(code);
-                result.done
-                    .then(() => {
-                        this.setDone(true)
-                        this.setOpen(false);
-                        this.reset();
-                    })
-                    .catch(error => {
+                await this[SEND_FILE](this.file, opts)
+                    .catch(async (error) => {
                         // NB: error during transfer>
                         console.log(error);
-                        this.presentAlert(error);
+                        await this.presentAlert(error);
                     })
             } catch (error) {
                 // NB: error during setup.
@@ -135,13 +123,8 @@
             }
         },
         methods: {
-            ...mapActions('send', ['setCode', 'setOpen', 'setProgress', 'setDone']),
-            newClient() {
-                // NB: state proxy can't be cloned.
-                const config = Object.assign({}, this.$store.state.config);
-                return new ClientWorker(config)
-
-            },
+            ...mapActions([NEW_CLIENT, SEND_FILE]),
+            ...mapActions('send', ['setOpen', 'setProgress', 'setDone']),
             async presentAlert(error) {
                 const alert = await alertController
                     .create({
@@ -172,8 +155,7 @@
                 }, 300);
             },
             reset() {
-                this.setProgress(-1)
-                this.client = this.newClient();
+                this[NEW_CLIENT]();
             },
         },
         beforeRouteLeave(to, _from, next) {
