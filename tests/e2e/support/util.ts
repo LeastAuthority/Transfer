@@ -4,10 +4,11 @@ import {Offer, SendResult, TransferOptions} from "@/go/wormhole/types";
 import Go from "../../../src/go";
 import {Reader} from "@/go/wormhole/streaming";
 
-const downloadDir = 'cypress/downloads'
+export const TEST_DOWNLOAD_DIR = 'cypress/downloads'
 
 // TODO: move / automate
 export const TEST_HOST = 'http://localhost:8080'
+const TEST_BUFFER_SIZE = 1024 * 4 // 4 KiB
 
 export function mobileViewport() {
     cy.viewport('samsung-note9', 'portrait')
@@ -17,8 +18,9 @@ export function expectFileDownloaded(filename: string, expected: string): Chaina
     cy.get('ion-text.filename').should('have.text', filename);
     cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
 
-    return cy.get('.download-button').click().then(() => {
-        const path = `${downloadDir}/${filename}`
+    // TODO: get rid of wait.
+    return cy.get('.download-button').wait(500).click().then(() => {
+        const path = `${TEST_DOWNLOAD_DIR}/${filename}`
         return cy.readFile(path, 'utf-8', {timeout: 3000})
             .should((actual) => {
                 expect(actual).to.eq(expected, 'file contents are not equal')
@@ -113,17 +115,52 @@ export async function mockClientReceive(code: string): Promise<Uint8Array> {
     });
 
     // TODO: fix
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         setTimeout(async () => {
             // @ts-ignore
             const result = new Uint8Array(size)
-            for (let n = 0, accBytes = 0, done = false; !done;) {
-                const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
-                [n, done] = await reader.read(buffer);
-                result.set(buffer.slice(0, n), accBytes);
-                accBytes += n - 1;
-            }
+            await reader.readAll(result);
             resolve(result);
         }, 100)
     });
+}
+
+export function NewTestFile(name: string, fileSizeBytes: number): TestFile {
+    const data = new DataView(new ArrayBuffer(fileSizeBytes));
+    data.buffer
+    for (let i = 0; i < data.byteLength; i++) {
+        data.setUint8(i, i);
+    }
+
+    return {
+        name,
+        size: fileSizeBytes,
+        data,
+        arrayBuffer(): ArrayBuffer {
+            return data.buffer;
+        },
+    }
+}
+
+export interface TestFile {
+    name: string;
+    size: number;
+    data: DataView;
+
+    arrayBuffer(): ArrayBuffer;
+}
+
+export function mockReadFn (file: TestFile, bufSizeBytes: number) {
+    let counter = 0;
+    return jest.fn().mockImplementation((buf) => {
+        const dataView = new DataView(buf);
+        for (let i = 0; i <  bufSizeBytes; i++) {
+            dataView.setUint8(i, file.data.getUint8(( bufSizeBytes * counter) + i));
+            if (( bufSizeBytes * counter) + i === file.data.byteLength - 1) {
+                return Promise.resolve([i + 1, true]);
+            }
+        }
+        counter++;
+        return Promise.resolve([ bufSizeBytes, false]);
+    })
 }

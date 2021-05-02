@@ -1,26 +1,32 @@
 import Client from '@/go/wormhole/client'
 import {initGo, newTestFile} from './util';
+import {NewTestFile} from "../e2e/support/util";
+
+const testFileSize = (1024 ** 2) // 1MiB
 
 describe('Send progress', () => {
     beforeAll(initGo)
 
     it('increments from 0 to total size', async () => {
         const sender = new Client()
-        const sizeBytes = 1024 ** 2 // 1MiB
-        const file = newTestFile('test-file', sizeBytes)
+        const file = NewTestFile('test-file', testFileSize)
 
         const progressCb = jest.fn()
-        const code = await sender.sendFile(file, progressCb)
+        const {code} = await sender.sendFile(file as unknown as File, {progressFunc: progressCb})
 
         const receiver = new Client();
-        await receiver.recvFile(code);
+        const reader = await receiver.recvFile(code);
+
+        const result = new Uint8Array(testFileSize)
+        await reader.readAll(result)
+
         expect(progressCb).toHaveBeenCalled();
         expect(progressCb.mock.calls.length).toBeGreaterThan(10);
 
         progressCb.mock.calls.reduce((prevSentBytes, curr, i, arr) => {
             const [sentBytes, totalBytes] = curr;
             expect(sentBytes).toBeGreaterThan(prevSentBytes)
-            expect(totalBytes).toEqual(sizeBytes)
+            expect(totalBytes).toEqual(testFileSize)
 
             return sentBytes;
         }, 0)

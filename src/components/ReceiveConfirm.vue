@@ -8,9 +8,9 @@
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text v-if="!progress.done && progress.value <= 0">Ready to download:</ion-text>
-                        <ion-text v-else-if="!progress.done && progress.value > 0">Downloading:</ion-text>
-                        <ion-text v-else-if="progress.done">Downloaded!</ion-text>
+                        <ion-text v-if="!done && progress <= 0">Ready to download:</ion-text>
+                        <ion-text v-else-if="!done && progress > 0">Downloading:</ion-text>
+                        <ion-text v-else-if="done">Downloaded!</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -23,15 +23,15 @@
                         <ion-text class="size">({{ fileSize }})</ion-text>
                     </ion-col>
                 </ion-row>
-                <ion-row v-show="!progress.done">
+                <ion-row v-show="!done">
                     <ion-col>
                         <ion-progress-bar color="primary"
-                                          v-show="progress.value >= 0"
-                                          :value="progress.value"
+                                          v-show="progress >= 0"
+                                          :value="progress"
                         ></ion-progress-bar>
                     </ion-col>
                 </ion-row>
-                <ion-row v-if="!progress.done">
+                <ion-row v-if="!done">
                     <ion-col class="ion-text-center">
                         <ion-button class="download-button"
                                     color="light">
@@ -52,7 +52,7 @@
                         </ion-text>
                     </ion-col>
                 </ion-row>
-                <ion-row v-if="!progress.done">
+                <ion-row v-if="!done">
                     <ion-col class="ion-text-center">
                         <ion-button color="danger" @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
@@ -103,18 +103,13 @@
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
     import VersionFooter from '@/components/VersionFooter.vue';
-    import ClientWorker from '@/go/wormhole/client_worker.ts';
     import {sizeToClosestUnit} from "@/util";
+    import {NEW_CLIENT, SAVE_FILE} from "../store/actions";
 
     export default defineComponent({
         name: "ReceiveConfirm",
-        data() {
-            return {
-                client: this.newClient(),
-            };
-        },
         computed: {
-            ...mapState('receive', ['offer', 'progress']),
+            ...mapState(['offer', 'progress', 'done']),
             fileSize() {
                 return sizeToClosestUnit(this.offer.size);
             },
@@ -141,27 +136,25 @@
             VersionFooter,
         },
         methods: {
-            ...mapActions('receive', ['setOffer', 'setProgress', 'setDone']),
+            ...mapActions([NEW_CLIENT, SAVE_FILE, 'setDone', 'setOffer', 'setProgress']),
             async wait() {
                 const code = this.$route.params.code;
                 try {
-                    await this.client.saveFile(code, {
+                    const opts = {
                         name,
                         progressFunc: this.onProgress,
-                        offerCondition: this.offerCondition,
-                    });
+                        offerCondition: (offer) => {
+                            this.setOffer(offer)
+                        }
+                    };
+                    await this[SAVE_FILE]({code, opts});
                     this.setDone(true);
-                    this.reset();
                 } catch (error) {
                     console.log(error);
                     await this.presentAlert(error);
+                } finally {
+                    this.reset();
                 }
-            },
-            newClient() {
-                // NB: state proxy can't be cloned.
-                const config = Object.assign({}, this.$store.state.config);
-                return new ClientWorker(config)
-
             },
             async presentAlert(error) {
                 const alert = await alertController
@@ -183,9 +176,6 @@
             onProgress(sentBytes, totalBytes) {
                 this.setProgress(sentBytes / totalBytes);
             },
-            offerCondition(offer) {
-                this.setOffer(offer);
-            },
             cancel() {
                 if (typeof (this.offer.reject) !== 'undefined') {
                     this.offer.reject();
@@ -199,7 +189,6 @@
             },
             reset() {
                 this.setProgress(-1);
-                this.client = this.newClient();
             },
         },
         setup() {

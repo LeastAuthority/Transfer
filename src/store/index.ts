@@ -1,8 +1,7 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, Offer, TransferOptions} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
-import {NEW_CLIENT, RECV_FILE, SEND_FILE} from "@/store/actions";
-import {Reader} from "@/go/wormhole/streaming";
+import {NEW_CLIENT, SAVE_FILE, SEND_FILE} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
 
 let host = 'http://localhost:8080';
@@ -27,35 +26,36 @@ declare interface SideState {
 }
 
 /* --- ACTIONS --- */
-function setOpenAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, open: boolean): any {
+function setOpenAction(this: Store<any>, {commit}: ActionContext<any, any>, open: boolean): any {
     commit('setOpen', open);
 }
 
-function setCodeAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, code: string): any {
-    commit('setCode', code);
-}
 
-function setOfferAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, offer: Offer) {
+function setOfferAction(this: Store<any>, {commit}: ActionContext<any, any>, offer: Offer) {
     commit('setOffer', offer);
 }
 
-function setProgressAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, payload?: Record<string, any>): any {
-    commit('setProgress', payload);
+function setProgressAction(this: Store<any>, {commit}: ActionContext<any, any>, value: number): any {
+    commit('setProgress', value);
 }
 
-function setDoneAction(this: Store<SideState>, {commit}: ActionContext<SideState, any>, done: boolean): any {
+// TODO: more specific types.
+function setDoneAction(this: Store<any>, {commit}: ActionContext<any, any>, done: boolean): any {
     commit('setDone', done);
 }
 
 function newClientAction(this: Store<any>, {commit}: ActionContext<any, any>, config?: ClientConfig): void {
     // TODO: something better.
-    commit('receive/setProgress', -1);
-    commit('send/setProgress', -1);
+    commit('setProgress', -1);
     commit(NEW_CLIENT, config);
 }
 
+declare interface SendFilePayload {
+    file: File;
+    opts?: TransferOptions;
+}
 
-async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, file: File, opts?: TransferOptions): Promise<void> {
+async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<void> {
     try {
         const {code, cancel, done} = await client.sendFile(file, opts);
 
@@ -75,31 +75,39 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
 }
 
 // TODO: be more specific with types.
-async function recvFileAction(this: Store<any>, {commit}: ActionContext<any, any>, payload: any): Promise<Reader> {
+async function saveFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, payload: any): Promise<void> {
     const {code, opts} = payload;
-    return client.recvFile(code, opts);
+    return client.saveFile(code, opts);
+}
+
+function acceptOfferAction(this: Store<any>, {state, commit}: ActionContext<any, any>): void {
+    if (typeof (state.offer.accept) === 'function') {
+        // TODO: handle error returned by accept.
+        state.offer.accept();
+    }
 }
 
 /* --- MUTATIONS --- */
-function setOpenMutation(state: SideState, open: boolean): void {
+
+// TODO: more specific types
+function setOpenMutation(state: any, open: boolean): void {
     state.open = open;
 }
 
-function setCodeMutation(state: SideState, code: string): void {
-    state.code = code;
-}
-
-function setOfferMutation(state: SideState, offer: Offer): void {
+// TODO: more specific types
+function setOfferMutation(state: any, offer: Offer): void {
     state.offer = offer;
 }
 
-function setProgressMutation(state: SideState, percent: any): void {
-    state.progress.value = percent;
+// TODO: more specific types
+function setProgressMutation(state: any, percent: any): void {
+    state.progress = percent;
 }
 
-function setDoneMutation(state: SideState, done: boolean): void {
+// TODO: more specific types
+function setDoneMutation(state: any, done: boolean): void {
     console.log(`index.ts:62| setting done: ${done}`);
-    state.progress.done = done;
+    state.done = done;
 }
 
 // TODO: be more specific with types.
@@ -113,77 +121,11 @@ function sendFileMutation(state: any, {code, done, cancel}: any): void {
 function newClientMutation(state: any, config?: ClientConfig): void {
     let _config = config;
     if (typeof (config) === 'undefined') {
-        _config = state.config;
+        _config = {...state.config};
     }
     client = new ClientWorker(_config)
 }
 
-
-/* --- STATES --- */
-const sendState = {
-    open: false,
-    // code: '',
-    progress: {
-        value: -1,
-        done: false,
-    },
-    offer: {
-        name: '',
-        size: 0,
-    },
-};
-
-const recvState = {
-    open: false,
-    code: '',
-    progress: {
-        value: -1,
-        done: false,
-    },
-    offer: {
-        name: '',
-        size: 0,
-    },
-};
-
-/* --- MODULES --- */
-const sendModule: Module<any, any> = {
-    namespaced: true,
-    state: () => sendState,
-    mutations: {
-        setOpen: setOpenMutation,
-        // setCode: setCodeMutation,
-        setOffer: setOfferMutation,
-        setProgress: setProgressMutation,
-        setDone: setDoneMutation,
-    },
-    actions: {
-        setOpen: setOpenAction,
-        // setCode: setCodeAction,
-        setOffer: setOfferAction,
-        setProgress: setProgressAction,
-        setDone: setDoneAction,
-    },
-};
-
-const recvModule: Module<any, any> = {
-    namespaced: true,
-    state: () => recvState,
-    mutations: {
-        setOpen: setOpenMutation,
-        setCode: setCodeMutation,
-        setOffer: setOfferMutation,
-        setProgress: setProgressMutation,
-        setDone: setDoneMutation,
-    },
-    actions: {
-        setOpen: setOpenAction,
-        setCode: setCodeAction,
-        setOffer: setOfferAction,
-        setProgress: setProgressAction,
-        setDone: setDoneAction,
-    },
-};
 
 export default createStore({
     devtools: process.env['NODE_ENV'] !== 'production',
@@ -192,14 +134,20 @@ export default createStore({
             host,
             config: defaultConfig || {},
             code: '',
-            done: null,
+            done: false,
             cancel: null,
+            offer: {},
+            progress: -1,
         }
     },
     mutations: {
         setConfig(state, config: ClientConfig) {
-            (state as any).config = config;
+            state.config = config;
         },
+        setOpen: setOpenMutation,
+        setDone: setDoneMutation,
+        setOffer: setOfferMutation,
+        setProgress: setProgressMutation,
         [NEW_CLIENT]: newClientMutation,
         [SEND_FILE]: sendFileMutation,
     },
@@ -208,12 +156,13 @@ export default createStore({
             commit('setConfig', config);
             dispatch(NEW_CLIENT, config);
         },
+        setOpen: setOpenAction,
+        setDone: setDoneAction,
+        setOffer: setOfferAction,
+        acceptOffer: acceptOfferAction,
+        setProgress: setProgressAction,
         [NEW_CLIENT]: newClientAction,
         [SEND_FILE]: sendFileAction,
-        [RECV_FILE]: recvFileAction,
+        [SAVE_FILE]: saveFileAction,
     },
-    modules: {
-        send: sendModule,
-        receive: recvModule,
-    }
 })

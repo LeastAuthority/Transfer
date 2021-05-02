@@ -5,7 +5,7 @@
             <ion-toolbar>
                 <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
             </ion-toolbar>
-            <ion-grid v-if="!progress.done">
+            <ion-grid v-if="!done">
                 <ion-row>
                     <ion-col class="ion-text-center">
                         <ion-text color="medium">
@@ -134,7 +134,7 @@
             };
         },
         computed: {
-            ...mapState('send', ['open', 'progress']),
+            ...mapState(['open', 'done']),
         },
         components: {
             IonToolbar,
@@ -160,7 +160,7 @@
             }
         },
         methods: {
-            ...mapActions('send', ['setOpen', 'setDone']),
+            ...mapActions(['setOpen', 'setDone']),
             select() {
                 this.$refs.fileInput.click();
             },

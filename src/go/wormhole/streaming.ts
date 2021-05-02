@@ -8,4 +8,15 @@ export class Reader {
         this.bufferSizeBytes = bufferSizeBytes;
         this.read = read;
     }
+
+    async readAll(result: Uint8Array): Promise<number> {
+        let readByteCount = 0;
+        for (let n = 0, done = false; !done;) {
+            const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
+            [n, done] = await this.read(buffer);
+            result.set(buffer.slice(0, n), readByteCount);
+            readByteCount += n;
+        }
+        return readByteCount;
+    }
 }

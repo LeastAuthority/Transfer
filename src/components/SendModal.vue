@@ -37,9 +37,8 @@
                 <ion-row>
                     <ion-col>
                         <ion-progress-bar color="primary"
-                                          v-show="progress.value >= 0"
-                                          :type="progress.type"
-                                          :value="progress.value"
+                                          v-show="progress >= 0"
+                                          :value="progress"
                         ></ion-progress-bar>
                     </ion-col>
                 </ion-row>
@@ -101,16 +100,16 @@
         name: "SendModal.vue",
         props: ['selectFile', 'file'],
         computed: {
-            ...mapState(['host', 'code']),
-            ...mapState('send', ['progress']),
+            ...mapState(['host', 'code', 'progress']),
             fileSize() {
                 return sizeToClosestUnit(this.file.size);
             },
         },
         async beforeMount() {
             const opts = {progressFunc: this.onProgress};
+            const payload = {file: this.file, opts};
             try {
-                await this[SEND_FILE](this.file, opts)
+                await this[SEND_FILE](payload)
                     .catch(async (error) => {
                         // NB: error during transfer>
                         console.log(error);
@@ -123,8 +122,7 @@
             }
         },
         methods: {
-            ...mapActions([NEW_CLIENT, SEND_FILE]),
-            ...mapActions('send', ['setOpen', 'setProgress', 'setDone']),
+            ...mapActions([NEW_CLIENT, SEND_FILE, 'setProgress', 'setOpen', 'setDone']),
             async presentAlert(error) {
                 const alert = await alertController
                     .create({

@@ -1,12 +1,15 @@
 import Go from '../../../src/go'
 
 import {
+    TEST_DOWNLOAD_DIR,
+    expectFileDownloaded,
     mockClientSend,
     mockGetReceiveReader,
     TEST_HOST,
-    UIGetCode
+    UIGetCode, NewTestFile, largeUint8ArrToString
 } from "../support/util";
 import {SET_CONFIG} from "../support/const";
+import Client from "@/go/wormhole/client";
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
@@ -20,170 +23,198 @@ async function initGo() {
 
 const filename = 'large-file.txt';
 
-describe('Sending', () => {
-    // TODO: be more specific
-    it('should show a specific error when unable to connect to the mailbox', () => {
-        cy.viewport('samsung-note9', 'portrait')
-        cy.visit('/#/send')
-
-        cy.window().then(window => {
-            window.postMessage({
-                // TODO: reference constant.
-                action: 'test/set_config',
-                config: {
-                    rendezvousURL: 'ws://localhost:10000',
-                }
-            }, '*')
-            cy.wait(100)
-            UISend(filename)
-                .then(() => {
-                    // TODO: expect error message.
-                    cy.get('.alert-wrapper').should('exist')
-                        .get('.alert-title').should('contain.text', 'Error')
-                        // TODO: use cli flag or something
-                        // .wait(250)
-                        // .then(() => {
-                        //     cy.screenshot()
-                        // })
-                    // .get('.alert-message').should('contain.text', 'unable to connect to the mailbox server')
-                    // .alert-wrapper
-                    // & .alert-title
-                    // & .alert-message
-                    // & .alert-button
-                })
-        });
-    });
-
-    it('should show a specific error when unable to connect to the relay', () => {
-        cy.viewport('samsung-note9', 'portrait')
-        cy.visit('/#/send')
-
-        cy.window().then(window => {
-            window.postMessage({
-                // TODO: reference constant.
-                action: SET_CONFIG,
-                config: {
-                    transitRelayURL: 'ws://localhost:10000',
-                }
-            }, '*')
-            cy.wait(100)
-            UIGetCode(filename)
-                .then((code) => {
-                    mockGetReceiveReader(code)
-                    cy.wait(100)
-
-                    cy.get('.alert-wrapper').should('exist')
-                        .get('.alert-title').should('contain.text', 'Mailbox Error')
-                        // TODO: use cli flag or something
-                        // .wait(250)
-                        // .then(() => {
-                        //     cy.screenshot()
-                        // })
-                })
-        })
-    });
-})
-
-describe('Receiving', () => {
-    it('should show a specific error when unable to connect to the mailbox', () => {
-        cy.viewport('samsung-note9', 'portrait')
-        cy.fixture(filename).then(async (file: string) => {
-            cy.visit('/#/receive');
+describe('Error messaging', () => {
+    describe('Sending', () => {
+        // TODO: be more specific
+        it('should show a specific error when unable to connect to the mailbox', () => {
+            cy.viewport('samsung-note9', 'portrait')
+            cy.visit('/#/send')
 
             cy.window().then(window => {
                 window.postMessage({
-                    // TODO: reference constant.
                     action: SET_CONFIG,
                     config: {
                         rendezvousURL: 'ws://localhost:10000',
                     }
                 }, '*')
                 cy.wait(100)
+                UISend(filename)
+                    .then(() => {
+                        // TODO: expect error message.
+                        cy.get('.alert-wrapper').should('exist')
+                            .get('.alert-title').should('contain.text', 'Error')
+                        // TODO: use cli flag or something
+                        // .wait(250)
+                        // .then(() => {
+                        //     cy.screenshot()
+                        // })
+                        // .get('.alert-message').should('contain.text', 'unable to connect to the mailbox server')
+                        // .alert-wrapper
+                        // & .alert-title
+                        // & .alert-message
+                        // & .alert-button
+                    })
+            });
+        });
 
-                cy.get('input[type="text"]')
-                    .type('12-not-real');
+        it('should show a specific error when unable to connect to the relay', () => {
+            cy.viewport('samsung-note9', 'portrait')
+            cy.visit('/#/send')
 
-                cy.get('.receive-next')
-                    .click()
+            cy.window().then(window => {
+                window.postMessage({
+                    action: SET_CONFIG,
+                    config: {
+                        transitRelayURL: 'ws://localhost:10000',
+                    }
+                }, '*')
+                cy.wait(100)
+                UIGetCode(filename)
+                    .then((code) => {
+                        mockGetReceiveReader(code)
+                        cy.wait(100)
 
-                cy.get('.alert-wrapper').should('exist')
-                    .get('.alert-title').should('contain.text', 'Error')
+                        cy.get('.alert-wrapper').should('exist')
+                            .get('.alert-title').should('contain.text', 'Mailbox Error')
+                        // TODO: use cli flag or something
+                        // .wait(250)
+                        // .then(() => {
+                        //     cy.screenshot()
+                        // })
+                    })
+            })
+        });
+    })
+
+    describe('Receiving', () => {
+        it('should show a specific error when unable to connect to the mailbox', () => {
+            cy.viewport('samsung-note9', 'portrait')
+            cy.fixture(filename).then(async (file: string) => {
+                cy.visit('/#/receive');
+
+                cy.window().then(window => {
+                    window.postMessage({
+                        action: SET_CONFIG,
+                        config: {
+                            rendezvousURL: 'ws://localhost:10000',
+                        }
+                    }, '*')
+                    cy.wait(100)
+
+                    cy.get('input[type="text"]')
+                        .type('12-not-real');
+
+                    cy.get('.receive-next')
+                        .click()
+
+                    cy.get('.alert-wrapper').should('exist')
+                        .get('.alert-title').should('contain.text', 'Error')
                     // TODO: use cli flag or something
                     // .wait(250)
                     // .then(() => {
                     //     cy.screenshot()
                     // })
+                });
             });
         });
-    });
 
-    it('should show a specific error when unable to connect to the relay', () => {
-        cy.viewport('samsung-note9', 'portrait')
-        cy.fixture(filename).then(async (file: string) => {
-            const {code, done} = await mockClientSend(filename, file)
+        it('should show a specific error when unable to connect to the relay', () => {
+            cy.viewport('samsung-note9', 'portrait')
+            cy.fixture(filename).then(async (file: string) => {
+                const {code, done} = await mockClientSend(filename, file)
 
-            // NB: ignore send-side relay error
-            done.catch(() => {})
+                // NB: ignore send-side relay error
+                done.catch(() => {
+                })
 
-            cy.visit(`/#/receive`)
-                .wait(500)
-                .then(() => {
-                    cy.window().then(window => {
-                        window.postMessage({
-                            // TODO: reference constant.
-                            action: SET_CONFIG,
-                            config: {
-                                transitRelayURL: 'ws://localhost:1',
-                            }
-                        }, '*')
-                        cy.wait(100)
+                cy.visit(`/#/receive`)
+                    .wait(500)
+                    .then(() => {
+                        cy.window().then(window => {
+                            window.postMessage({
+                                action: SET_CONFIG,
+                                config: {
+                                    transitRelayURL: 'ws://localhost:1',
+                                }
+                            }, '*')
+                            cy.wait(100)
 
-                        cy.get('input[type="text"]')
-                            .type(code);
+                            cy.get('input[type="text"]')
+                                .type(code);
 
-                        cy.get('.receive-next')
-                            .click().wait(500)
+                            cy.get('.receive-next')
+                                .click().wait(500)
 
-                        cy.get('.download-button').wait(500)
-                            .click()
+                            cy.get('ion-text.filename').should('have.text', filename);
+                            cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
+                            cy.get('.download-button').click()
 
-                        cy.get('.alert-wrapper').should('exist')
-                            .get('.alert-title').should('contain.text', 'Error')
+                            cy.get('.alert-wrapper').should('exist')
+                                .get('.alert-title').should('contain.text', 'Error')
                             // TODO: use cli flag or something
                             // .wait(250)
                             // .then(() => {
                             //     cy.screenshot()
                             // })
+                        });
                     });
-                });
+            });
         });
-    });
 
-    it.skip('should show a specific error when the transfer is interrupted on the send-side', () => {
-        cy.viewport('samsung-note9', 'portrait')
-        cy.fixture(filename).then(async (file: string) => {
-            const {code, cancel} = await mockClientSend(filename, file)
+        const testFileSize = (1024 ** 2) * 25;
+        // const testFileSize = 140;
+        it.skip('should show a specific error when the transfer is interrupted on the send-side', async (testDone) => {
+            cy.viewport('samsung-note9', 'portrait')
 
+            const sender = new Client();
+            const file = NewTestFile(filename, testFileSize);
+            const expected = await largeUint8ArrToString(new Uint8Array(file.arrayBuffer()));
+            const {code, cancel, done} = await sender.sendFile(file as unknown as File)
+            done.catch(err => {
+                console.error(err);
+            })
             cy.visit(`/#/receive/${code}`)
 
-            cy.get('.download-button').wait(500)
-                .click()
-                // TODO: use cli flag or something
-                // .wait(250)
+            cy.get('ion-text.filename').should('have.text', filename);
+            // cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
+
+            cy.get('.download-button')
+                .wait(500)
                 // .then(() => {
                 //     cancel();
                 // })
-
-            cy.get('.alert-wrapper').should('exist')
-                .get('.alert-title').should('contain.text', 'Error')
-                // TODO: use cli flag or something
-                // .wait(250)
-                // .then(() => {
-                //     cy.screenshot()
-                // })
+                .click()
+                // .wait(0)
+                .then(() => {
+                    cancel();
+                })
+                .then(() => {
+                    const path = `${TEST_DOWNLOAD_DIR}/${filename}`
+                    cy.readFile(path, 'utf-8', {timeout: 5000})
+                        .should(async (actual) => {
+                            // console.log("ACTUAL:");
+                            // console.log(actual);
+                            // console.log("EXPECTED:")
+                            // console.log(expected)
+                            // expect(actual).to.eq(expected);
+                            // NB: *not* a reliable test.
+                            expect(actual == expected).to.be.false;
+                        })
+                        .then(() => testDone());
+                })
+                // .get('.alert-wrapper')
+                // .should('exist')
+                // .get('.alert-title')
+                // .should('contain.text', 'Error')
+                // .then(() => testDone())
+            // TODO: use cli flag or something
+            // .wait(250)
+            // .then(() => {
+            //     cy.screenshot()
+            // })
 
         });
-    });
+    })
 })
 
 async function UISend(filename: string): Promise<string> {

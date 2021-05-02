@@ -55,7 +55,7 @@ describe('Sending', () => {
                     mockClientReceive(sendCode).then(receivedData => {
                         largeUint8ArrToString(receivedData).then(receivedText => {
                             // TODO: why?
-                            // expect(receivedText).equal(fileContent);
+                            expect(receivedText).equal(fileContent);
 
                             done();
                         });

@@ -43,20 +43,9 @@ if (process.env['NODE_ENV'] !== 'production') {
 }
 
 router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-    let action = '';
-    switch (from.path.split('/').slice(0,2).join('/')) {
-        case "/send":
-            action = 'send/setDone'
-            break;
-        case "/receive":
-            action = 'receive/setDone'
-            break;
-        default:
-            return;
-    }
         // NB: allow time for navigation
         window.setTimeout(() => {
-            store.dispatch(action, false);
+            store.dispatch('setDone', false);
         }, 250);
 })
 
