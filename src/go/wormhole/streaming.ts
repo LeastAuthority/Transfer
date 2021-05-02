@@ -2,11 +2,13 @@ export type ReadFn = (buf: ArrayBuffer) => Promise<[number, boolean]>;
 
 export class Reader {
     readonly read: ReadFn;
+    readonly cancel?: () => void;
     readonly bufferSizeBytes: number;
 
-    constructor(bufferSizeBytes: number, read: ReadFn) {
+    constructor(bufferSizeBytes: number, read: ReadFn, cancel?: () => void) {
         this.bufferSizeBytes = bufferSizeBytes;
         this.read = read;
+        this.cancel = cancel;
     }
 
     async readAll(result: Uint8Array): Promise<number> {

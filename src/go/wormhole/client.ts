@@ -34,13 +34,12 @@ export default class Client implements ClientInterface {
     }
 
     public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
-        // console.log(`opts.offerCondition: ${opts!.offerCondition}`);
-            const reader = await wormhole.Client.recvFile(this.goClient, code, opts);
-            let bufferSizeBytes = reader.bufferSizeBytes;
+            const readerObj = await wormhole.Client.recvFile(this.goClient, code, opts);
+            let bufferSizeBytes = readerObj.bufferSizeBytes;
             if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
                 bufferSizeBytes = opts.bufferSizeBytes;
             }
-            return new Reader(bufferSizeBytes, reader.read);
+            return new Reader(bufferSizeBytes, readerObj.read, readerObj.cancel);
     }
 
     public free() {
