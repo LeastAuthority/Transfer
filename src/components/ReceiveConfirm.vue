@@ -156,6 +156,7 @@
                     this.reset();
                 }
             },
+            // TODO: can this error handling / alertController call be moved into an action?
             async presentAlert(error) {
                 const alert = await alertController
                     .create({
