@@ -1,39 +1,43 @@
 version: "3.3"
 services:
-#  traefik:
-#    image: "traefik:v2.3"
-#    container_name: "traefik"
-#    command:
-#      #- "--log.level=DEBUG"
-#      #      - "--api.insecure=true"
-#      - "--providers.docker=true"
-#      - "--providers.docker.exposedbydefault=false"
-#      - "--entrypoints.web.address=:80"
-#      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-#      - "--entrypoints.websecure.address=:443"
-#      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
-#      - "--certificatesresolvers.mytlschallenge.acme.email=admin@bryanchriswhite.com"
-#      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#      - "8080:8080"
-#    volumes:
-#      - "./letsencrypt:/letsencrypt"
-#      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  traefik:
+    image: "traefik:v2.3"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      #- "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.relay_tcp.address=:4001"
+      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
+      - "--certificatesresolvers.mytlschallenge.acme.email=admin@bryanchriswhite.com"
+      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      - "4001:4001"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   mailbox:
     build:
       context: ./mailbox
     expose:
-      - "4000"
+      - 4000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
-      - "traefik.http.routers.mailbox.entrypoints=websecure"
       - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
-#    depends_on:
-#      - traefik
+      - "traefik.http.routers.mailbox.entrypoints=websecure"
+      - "traefik.http.routers.mailbox.service=mailbox"
+      - "traefik.http.services.mailbox.loadbalaner.server.port=4000"
+    depends_on:
+      - traefik
 
   relay:
     build:
@@ -41,12 +45,17 @@ services:
     volumes:
       - "../magic-wormhole-transit-relay:/app"
     expose:
-#      - "4001"
-      - "4002"
+      - 4001
+      - 4002
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.relay.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
-      - "traefik.http.routers.relay.entrypoints=websecure"
-      - "traefik.http.routers.relay.tls.certresolver=mytlschallenge"
-#    depends_on:
-#      - traefik
+      - "traefik.http.routers.relay_http.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.relay_http.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
+      - "traefik.http.routers.relay_http.entrypoints=websecure"
+      - "traefik.http.routers.relay_http.service=relay_http"
+      - "traefik.http.services.relay_http.loadbalancer.server.port=4002"
+      - "traefik.tcp.routers.relay_tcp.entrypoints=relay_tcp"
+      - "traefik.tcp.routers.relay_tcp.service=relay_tcp"
+      - "traefik.tcp.services.relay_tcp.loadbalancer.server.port=4001"
+    depends_on:
+      - traefik
