@@ -59,10 +59,11 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
     try {
         const {code, cancel, done} = await client.sendFile(file, opts);
 
-        commit(SEND_FILE, {code, done, cancel});
+        commit(SEND_FILE, {code, cancel});
         done.then(() => {
             commit('setDone', true);
             commit('setOpen', false);
+            // TODO: remove!
             dispatch(NEW_CLIENT);
         }).catch(error => {
             return Promise.reject(error);
@@ -111,9 +112,8 @@ function setDoneMutation(state: any, done: boolean): void {
 }
 
 // TODO: be more specific with types.
-function sendFileMutation(state: any, {code, done, cancel}: any): void {
+function sendFileMutation(state: any, {code, cancel}: any): void {
     state.code = code;
-    state.done = done;
     state.cancel = cancel;
 }
 
