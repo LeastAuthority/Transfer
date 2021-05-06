@@ -34,11 +34,11 @@
                 <ion-row v-if="!done">
                     <ion-col class="ion-text-center">
                         <ion-button class="download-button"
-                                    color="light">
+                                    color="light"
+                                    @click="download">
                             <ion-icon :icon="cloudDownloadOutline"></ion-icon>
-                            <ion-text class="ion-padding-start"
-                                      @click="download"
-                            >Download
+                            <ion-text class="ion-padding-start">
+                                Download
                             </ion-text>
                         </ion-button>
                     </ion-col>
