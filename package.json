@@ -17,7 +17,10 @@
     "deploy:s3:production": "aws s3 sync ./dist s3://transfer.leastauthority.com ",
     "compose": "bash scripts/docker-compose.sh",
     "compose:logs": "bash scripts/docker-compose.sh logs -f",
-    "compose:up": "bash scripts/docker-compose.sh up"
+    "compose:logs:0": "bash scripts/docker-compose.sh logs -f --tail 0",
+    "compose:up": "bash scripts/docker-compose.sh up",
+    "compose:down": "bash scripts/docker-compose.sh down",
+    "compose:restart": "bash scripts/docker-compose.sh restart"
   },
   "dependencies": {
     "@capacitor/android": "^2.4.5",
