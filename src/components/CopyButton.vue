@@ -3,7 +3,7 @@
                 color="light"
                 @click="copyLink"
                 :disabled="disabled">
-        <ion-icon :icon="clipboardOutline"></ion-icon>
+        <ion-icon :icon="linkOutline"></ion-icon>
     </ion-button>
 </template>
 
@@ -14,7 +14,7 @@
         IonIcon,
         IonButton,
     } from '@ionic/vue';
-    import {clipboardOutline} from 'ionicons/icons';
+    import {linkOutline} from 'ionicons/icons';
 
     export default defineComponent({
         name: 'CopyButton.vue',
@@ -32,7 +32,7 @@
         },
         setup() {
             return {
-                clipboardOutline,
+                linkOutline,
             }
         },
         components: {
