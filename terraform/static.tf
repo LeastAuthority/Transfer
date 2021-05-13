@@ -153,6 +153,14 @@ resource "aws_route53_record" "mw4all_production_relay" {
   records = ["152.228.133.151"]
 }
 
+resource "aws_route53_record" "mw4all_hooks_endpoint" {
+  zone_id = aws_route53_zone.root.zone_id
+  name    = "hooks.winden.la.bryanchriswhite.com."
+  type    = "A"
+  ttl     = "300"
+  records = ["152.228.133.151"]
+}
+
 // S3 Bucket (public)
 resource "aws_s3_bucket" "mw4all_website_test" {
   bucket = "test.winden.la.bryanchriswhite.com"
