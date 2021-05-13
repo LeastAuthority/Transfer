@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -xe
+
 secret=$(cat ./secrets/github_webhooks.key)
 release_ref=$1
 signature=$2
@@ -23,10 +25,14 @@ calculated_signature() {
 }
 
 check_signature() {
+  echo "signature: $signature"
+  echo "calculated_signature: $(calculated_signature)"
+
   if [[ $signature == calculated_signature ]]; then
-    # Pull (& update submodules)
     git fetch origin
-    git checkout $release_ref
+#    git clean -df
+    git checkout -f $release_ref
+    git submodule update
     cold_restart
   fi
 }

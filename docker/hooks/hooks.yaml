@@ -1,5 +1,5 @@
 - id: redeploy-webhook
-  execute-command: "./scripts/redeploy.sh"
+  execute-command: "./scripts/deploy.sh"
   command-working-directory: "/etc/webhook"
   pass-arguments-to-command:
     - source: payload
