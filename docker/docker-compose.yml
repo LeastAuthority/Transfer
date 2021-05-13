@@ -25,7 +25,9 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   hooks:
-    image: almir/webhook:2.8.0
+    build:
+      context:
+        ./hooks
     command: "-verbose -hooks=/etc/webhook/hooks.yaml"
     expose:
       - 9000
