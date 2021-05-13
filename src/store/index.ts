@@ -10,7 +10,8 @@ let defaultConfig: ClientConfig | undefined;
 console.log(`index.ts:6| process.env['NODE_ENV']: ${process.env['NODE_ENV']}`);
 if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-    host = 'https://wormhole.bryanchriswhite.com';
+    // host = 'https://wormhole.bryanchriswhite.com';
+    host = 'https://test.winden.la.bryanchriswhite.com';
 }
 
 let client = new ClientWorker(defaultConfig);
