@@ -1,0 +1,9 @@
+- id: redeploy-webhook
+  execute-command: "./scripts/redeploy.sh"
+  command-working-directory: "/etc/webhook"
+  pass-arguments-to-command:
+    - source: payload
+      name: "release.tag_name"
+    - source: header
+      name: "X-Hub-Signature-256"
+    - source: entire-payload

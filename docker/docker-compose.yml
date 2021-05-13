@@ -24,6 +24,23 @@ services:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
+  hooks:
+    image: almir/webhook:2.8.0
+    command: "-verbose -hooks=/etc/webhook/hooks.yaml"
+    expose:
+      - 9000
+    volumes:
+      - "./hooks:/etc/webhook"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hooks.rule=Host(`hooks.winden.la.bryanchriswhite.com`)"
+      - "traefik.http.routers.hooks.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.hooks.entrypoints=websecure"
+      - "traefik.http.routers.hooks.service=hooks"
+      - "traefik.http.services.hooks.loadbalancer.server.port=9000"
+    depends_on:
+      - traefik
+
   mailbox:
     build:
       context: ./mailbox
@@ -31,26 +48,26 @@ services:
       - 4000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
+      - "traefik.http.routers.mailbox.rule=Host(`mailbox.winden.la.bryanchriswhite.com`)"
       - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
       - "traefik.http.routers.mailbox.entrypoints=websecure"
       - "traefik.http.routers.mailbox.service=mailbox"
-      - "traefik.http.services.mailbox.loadbalaner.server.port=4000"
+      - "traefik.http.services.mailbox.loadbalancer.server.port=4000"
     depends_on:
       - traefik
 
   relay:
     build:
       context: ./relay
-    volumes:
-      - "../magic-wormhole-transit-relay:/app"
     expose:
       - 4001
       - 4002
+    volumes:
+      - "../magic-wormhole-transit-relay:/app"
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.relay_http.rule=Host(`relay.winden.la.bryanchriswhite.com`)"
       - "traefik.http.routers.relay_http.tls.certresolver=mytlschallenge"
-      - "traefik.http.routers.relay_http.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.relay_http.entrypoints=websecure"
       - "traefik.http.routers.relay_http.service=relay_http"
       - "traefik.http.services.relay_http.loadbalancer.server.port=4002"
