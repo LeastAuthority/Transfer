@@ -1,9 +1,46 @@
-- id: redeploy-webhook
+- id: release
+  execute-command: "/bin/ash"
+  command-working-directory: "/etc/webhook"
+  pass-arguments-to-command:
+    - source: string
+      name: "./scripts/deploy.sh"
+    - source: payload
+      name: "release.tag_name"
+  trigger-rule:
+    and:
+      - match:
+        type: payload-hmac-sha256
+        secret: "{{ getenv "GITHUB_WEBHOOK_KEY" | js }}"
+        parameter:
+          source: header
+          name: "X-Hub-Signature-256"
+      - match:
+        type: value
+        value: published
+        parameter:
+          source: payload
+          name: action
+- id: master
   execute-command: "./scripts/deploy.sh"
   command-working-directory: "/etc/webhook"
   pass-arguments-to-command:
     - source: payload
       name: "release.tag_name"
-    - source: header
-      name: "X-Hub-Signature-256"
-    - source: entire-payload
+    - source: string
+      name: "s3://test.winden.la.bryanchriswhite.com"
+    - source: string
+      name: "E37U3141WQ4OZX"
+  trigger-rule:
+    and:
+      - match:
+        type: payload-hmac-sha256
+        secret: "{{ getenv "GITHUB_WEBHOOK_KEY" | js }}"
+        parameter:
+          source: header
+          name: "X-Hub-Signature-256"
+      - match:
+        type: value
+        value: published
+        parameter:
+          source: payload
+          name: action

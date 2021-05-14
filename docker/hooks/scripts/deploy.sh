@@ -1,14 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ash
 
-set -xe
-
-secret=$(cat ./secrets/github_webhooks.key)
-release_ref=$1
-signature=$2
-payload=$3
+set -e
+release_ref="$1"
+bucket_name="$2"
+cloudfront_dist_id="$3"
 
 dc() {
-  docker-compose -p myfiletransfer $@
+  docker-compose -p myfiletransfer "$@"
 }
 
 cold_restart() {
@@ -20,23 +18,21 @@ cold_restart() {
 #  dc restart
 #}
 
-calculated_signature() {
-  echo $payload | openssl sha256 -hex -mac HMAC -macopt hexkey:$secret | cut -d ' ' -f 2
-}
-
-check_signature() {
-  echo "signature: $signature"
-  echo "calculated_signature: $(calculated_signature)"
-
-  if [[ $signature == calculated_signature ]]; then
-    git fetch origin
-#    git clean -df
-    git checkout -f $release_ref
-    git submodule update
-    cold_restart
-  fi
-}
-
 if [[ $release_ref != "" ]]; then
-  check_signature $@
+  git fetch origin
+#  git clean -df
+  git checkout -f "$release_ref"
+  git submodule update
+
+  # Deploy frontend (should already be built)
+  # yarn deploy:s3:test
+  aws s3 sync ./dist "$bucket_name"
+
+  # Invalidate cache
+  aws cloudfront create-invalidation \
+    --distribution-id "$cloudfront_dist_id" \
+    --paths /index.html /worker/index.umd.js /assets/wormhole.wasm
+
+  # Restart backend
+  cold_restart
 fi
