@@ -78,6 +78,12 @@ resource "aws_iam_group_policy_attachment" "mw4all_website_cloudfront" {
   policy_arn = "arn:aws:iam::aws:policy/CloudFrontFullAccess"
 }
 
+// Manage S3 bucket
+resource "aws_iam_group_policy" "mw4all_website_s3" {
+  group = aws_iam_group.mw4all_website.name
+  policy = file("mw4all_website_group_policy.json")
+}
+
 // Manage certificates
 resource "aws_iam_group_policy_attachment" "mw4all_website_certificates" {
   group = aws_iam_group.mw4all_website.name
