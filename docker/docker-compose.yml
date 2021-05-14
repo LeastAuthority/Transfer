@@ -32,7 +32,7 @@ services:
     expose:
       - 9000
     volumes:
-      - "./hooks:/etc/webhook"
+      - "..:/etc/webhook"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hooks.rule=Host(`hooks.winden.la.bryanchriswhite.com`)"
