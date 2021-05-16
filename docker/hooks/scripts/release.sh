@@ -5,29 +5,19 @@ release_ref="$1"
 bucket_name="$2"
 cloudfront_dist_id="$3"
 
-dc() {
-  docker-compose -p myfiletransfer "$@"
-}
-
-cold_restart() {
-  # TODO: something much more robust!
-  dc down && dc up
-}
-
-# TODO: can save time if we know the docker composition and services haven't changed.
-#restart() {
-#  dc restart
-#}
-
 if [[ $release_ref != "" ]]; then
   git clone --shallow-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer
+  rm -rf /etc/webhook/repo/*
+  cp -r ./myfiletransfer/* ./repo/
 
+  # TODO: do this somewhere else.
   # Deploy frontend (should already be built)
   # yarn deploy:s3:test
   if [[ $bucket_name != "" ]]; then
     aws s3 sync ./dist "$bucket_name"
   fi
 
+  # TODO: do this somewhere else.
   # Invalidate cache
   if [[ $cloudfront_dist_id != "" ]]; then
     aws cloudfront create-invalidation \
@@ -36,5 +26,5 @@ if [[ $release_ref != "" ]]; then
   fi
 
   # Restart backend
-  cold_restart
+  date > /run/restart
 fi

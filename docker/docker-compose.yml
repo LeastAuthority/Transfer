@@ -33,6 +33,9 @@ services:
       - 9000
     volumes:
       - "./hooks:/etc/webhook"
+      - "..:/etc/webhook/repo"
+      # NB: watched by wormhole.path systemd unit.
+      - "/home/wormhole/restart:/run/restart"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hooks.rule=Host(`hooks.winden.la.bryanchriswhite.com`)"
