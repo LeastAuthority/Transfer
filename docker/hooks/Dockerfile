@@ -1,6 +1,7 @@
 FROM almir/webhook
 RUN apk --no-cache add \
     bash \
+    git \
     binutils \
     curl \
     && GLIBC_VER=$(curl -s https://api.github.com/repos/sgerrand/alpine-pkg-glibc/releases/latest | grep tag_name | cut -d : -f 2,3 | tr -d \",' ') \
