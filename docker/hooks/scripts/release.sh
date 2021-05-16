@@ -5,16 +5,20 @@ release_ref="$1"
 bucket_name="$2"
 cloudfront_dist_id="$3"
 
+restore_docker_compose_override() {
+  cp ./override.yml ./repo/docker/docker-compose.override.yml
+}
+
 if [[ $release_ref != "" ]]; then
-  git clone --shallow-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer
+  git clone --shallow-submodules --recurse-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer
   rm -rf /etc/webhook/repo/*
   cp -r ./myfiletransfer/* ./repo/
+  restore_docker_compose_overrides
 
   # TODO: do this somewhere else.
-  # Deploy frontend (should already be built)
-  # yarn deploy:s3:test
   if [[ $bucket_name != "" ]]; then
-    aws s3 sync ./dist "$bucket_name"
+    (cd ./repo && yarn install && yarn build && \
+      aws s3 sync ./repo/dist "$bucket_name")
   fi
 
   # TODO: do this somewhere else.

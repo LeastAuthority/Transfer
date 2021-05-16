@@ -34,11 +34,12 @@ services:
     volumes:
       - "./hooks:/etc/webhook"
       - "..:/etc/webhook/repo"
+      - "./docker-compose.override.yml:/etc/webhook/override.yml"
       # NB: watched by wormhole.path systemd unit.
       - "/home/wormhole/restart:/run/restart"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hooks.rule=Host(`hooks.winden.la.bryanchriswhite.com`)"
+      - "traefik.http.routers.hooks.rule=Host(`hooks.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.hooks.tls.certresolver=mytlschallenge"
       - "traefik.http.routers.hooks.entrypoints=websecure"
       - "traefik.http.routers.hooks.service=hooks"
@@ -71,7 +72,7 @@ services:
       - "../magic-wormhole-transit-relay:/app"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.relay_http.rule=Host(`relay.winden.la.bryanchriswhite.com`)"
+      - "traefik.http.routers.relay_http.rule=Host(`relay.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.relay_http.tls.certresolver=mytlschallenge"
       - "traefik.http.routers.relay_http.entrypoints=websecure"
       - "traefik.http.routers.relay_http.service=relay_http"

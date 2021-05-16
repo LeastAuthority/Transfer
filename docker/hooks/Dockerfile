@@ -1,7 +1,5 @@
 FROM almir/webhook
 RUN apk --no-cache add \
-    bash \
-    git \
     binutils \
     curl \
     && GLIBC_VER=$(curl -s https://api.github.com/repos/sgerrand/alpine-pkg-glibc/releases/latest | grep tag_name | cut -d : -f 2,3 | tr -d \",' ') \
@@ -26,5 +24,8 @@ RUN apk --no-cache add \
     && rm glibc-${GLIBC_VER}.apk \
     && rm glibc-bin-${GLIBC_VER}.apk \
     && rm -rf /var/cache/apk/*
+
+RUN apk add bash git npm
+RUN npm install -g yarn
 
 
