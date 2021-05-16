@@ -10,6 +10,7 @@ dc() {
 }
 
 cold_restart() {
+  # TODO: something much more robust!
   dc down && dc up
 }
 
@@ -26,12 +27,16 @@ if [[ $release_ref != "" ]]; then
 
   # Deploy frontend (should already be built)
   # yarn deploy:s3:test
-  aws s3 sync ./dist "$bucket_name"
+  if [[ $bucket_name != "" ]]; then
+    aws s3 sync ./dist "$bucket_name"
+  fi
 
   # Invalidate cache
-  aws cloudfront create-invalidation \
-    --distribution-id "$cloudfront_dist_id" \
-    --paths /index.html /worker/index.umd.js /assets/wormhole.wasm
+  if [[ $cloudfront_dist_id != "" ]]; then
+    aws cloudfront create-invalidation \
+      --distribution-id "$cloudfront_dist_id" \
+      --paths /index.html /worker/index.umd.js /assets/wormhole.wasm
+  fi
 
   # Restart backend
   cold_restart
