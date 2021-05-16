@@ -54,7 +54,7 @@ services:
       - 4000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mailbox.rule=Host(`mailbox.winden.la.bryanchriswhite.com`)"
+      - "traefik.http.routers.mailbox.rule=Host(`mailbox.wormhole.bryanchriswhite.com`)"
       - "traefik.http.routers.mailbox.tls.certresolver=mytlschallenge"
       - "traefik.http.routers.mailbox.entrypoints=websecure"
       - "traefik.http.routers.mailbox.service=mailbox"
