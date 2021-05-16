@@ -20,10 +20,7 @@ cold_restart() {
 #}
 
 if [[ $release_ref != "" ]]; then
-  git fetch origin
-#  git clean -df
-  git checkout -f "$release_ref"
-  git submodule update
+  git clone --shallow-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer
 
   # Deploy frontend (should already be built)
   # yarn deploy:s3:test

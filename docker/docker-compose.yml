@@ -28,11 +28,11 @@ services:
     build:
       context:
         ./hooks
-    command: "-verbose -template -hooks=/etc/webhook/docker/hooks/hooks.json.tmpl"
+    command: "-verbose -template -hooks=/etc/webhook/hooks.json.tmpl"
     expose:
       - 9000
     volumes:
-      - "..:/etc/webhook"
+      - "./hooks:/etc/webhook"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hooks.rule=Host(`hooks.winden.la.bryanchriswhite.com`)"
