@@ -28,7 +28,7 @@ services:
     build:
       context:
         ./hooks
-    command: "-verbose -template -hooks=/etc/webhook/hooks.json.tmpl"
+    command: "-verbose -template -hooks=/etc/webhook/hooks.yml"
     expose:
       - 9000
     volumes:
