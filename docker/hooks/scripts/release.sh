@@ -10,16 +10,15 @@ restore_docker_compose_override() {
   cp ./override.yml ./repo/docker/docker-compose.override.yml
 }
 
-cleanup() {
-  echo "cleanup: git_output_dir: $1"
-#  rm -rf $1
-}
-
 if [[ $release_ref != "" ]]; then
   git_output_dir=$(mktemp -d)
   echo "if: git_output_dir: $1"
 
   trap 'cleanup $git_output_dir $?' EXIT
+  cleanup() {
+    rm -rf $1
+  }
+
   git clone --recurse-submodules \
             --shallow-submodules \
             --single-branch \
@@ -27,7 +26,7 @@ if [[ $release_ref != "" ]]; then
             --depth 1 \
             "$repo_url" "$git_output_dir"
   rm -rf /repo/*
-  cp -r /tmp/myfiletransfer/* /repo/
+  cp -r $git_output_dir/* /repo/
   restore_docker_compose_overrides
 
   # TODO: do this somewhere else.
