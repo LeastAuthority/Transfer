@@ -32,7 +32,7 @@ services:
     expose:
       - 9000
     volumes:
-      - "./docker/hooks:/hooks"
+      - "./hooks:/hooks"
       - "..:/repo"
       - "/home/wormhole/run:/run/wormhole"
     labels:
