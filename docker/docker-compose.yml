@@ -32,7 +32,7 @@ services:
     expose:
       - 9000
     volumes:
-      - "./hooks:/hooks"
+      - "./docker/hooks:/hooks"
       - "..:/repo"
       - "/home/wormhole/overrides:/overrides"
       # NB: watched by wormhole.path systemd unit.
