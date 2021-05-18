@@ -26,7 +26,7 @@
               "name": "X-Hub-Signature-256"
             },
             "type": "payload-hmac-sha256",
-            "secret": "{{ getenv 'GITHUB_RELEASE_KEY' | js }}"
+            "secret": "{{ getenv "GITHUB_RELEASE_KEY" | js }}"
           }
         },
         {
@@ -69,7 +69,7 @@
               "name": "X-Hub-Signature-256"
             },
             "type": "payload-hmac-sha256",
-            "secret": "{{ getenv 'GITHUB_MASTER_KEY' | js }}"
+            "secret": "{{ getenv "GITHUB_MASTER_KEY" | js }}"
           }
         },
         {
