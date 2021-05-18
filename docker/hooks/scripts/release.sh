@@ -1,16 +1,31 @@
 #!/usr/bin/env ash
-
 set -e
+
 release_ref="$1"
 bucket_name="$2"
 cloudfront_dist_id="$3"
+repo_url="https://github.com/leastauthority/myfiletransfer"
 
 restore_docker_compose_override() {
   cp ./override.yml ./repo/docker/docker-compose.override.yml
 }
 
+cleanup() {
+  echo "cleanup: git_output_dir: $1"
+#  rm -rf $1
+}
+
 if [[ $release_ref != "" ]]; then
-  git clone --shallow-submodules --recurse-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer /tmp/myfiletransfer
+  git_output_dir=$(mktemp -d)
+  echo "if: git_output_dir: $1"
+
+  trap 'cleanup $git_output_dir $?' EXIT
+  git clone --recurse-submodules \
+            --shallow-submodules \
+            --single-branch \
+            --branch "$release_ref" \
+            --depth 1 \
+            "$repo_url" "$git_output_dir"
   rm -rf /etc/webhook/repo/*
   cp -r /tmp/myfiletransfer/* ./repo/
   restore_docker_compose_overrides
