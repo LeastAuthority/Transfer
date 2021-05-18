@@ -28,7 +28,7 @@ if [[ $release_ref != "" ]]; then
   # TODO: do this somewhere else.
   if [[ $bucket_name != "" ]]; then
     (cd /repo && yarn install && yarn build && \
-      aws s3 sync /repo/dist "$bucket_name")
+      aws s3 sync --region eu-central-1 /repo/dist "$bucket_name")
   fi
 
   # TODO: do this somewhere else.
