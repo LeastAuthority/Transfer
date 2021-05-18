@@ -1,6 +1,6 @@
 - id: release
   execute-command: ./scripts/release.sh
-  command-working-directory: /etc/webook
+  command-working-directory: /hooks
   pass-arguments-to-command:
     - source: payload
       name: release.tag_name
@@ -24,11 +24,11 @@
           value: "published"
 
 - id: master
-  execute-command: ./docker/hooks/scripts/release.sh
-  command-working-directory: /etc/webhook
+  execute-command: ./scripts/release.sh
+  command-working-directory: /hooks
   pass-arguments-to-command:
     - source: payload
-      name: "release.tag_name"
+      name: "master"
     - source: string
       name: "s3://wormhole.bryanchriswhite.com"
     - source: string

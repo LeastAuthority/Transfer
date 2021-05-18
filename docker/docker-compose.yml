@@ -28,13 +28,13 @@ services:
     build:
       context:
         ./hooks
-    command: "-verbose -template -hooks=/etc/webhook/hooks.yml"
+    command: "-verbose -template -hooks=/hooks/hooks.yml"
     expose:
       - 9000
     volumes:
-      - "./hooks:/etc/webhook"
-      - "..:/etc/webhook/repo"
-      - "./docker-compose.override.yml:/etc/webhook/override.yml"
+      - "./hooks:/hooks"
+      - "..:/repo"
+      - "./docker-compose.override.yml:/hooks/docker-compose.override.yml"
       # NB: watched by wormhole.path systemd unit.
       - "/home/wormhole/restart:/run/restart"
     labels:

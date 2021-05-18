@@ -26,8 +26,8 @@ if [[ $release_ref != "" ]]; then
             --branch "$release_ref" \
             --depth 1 \
             "$repo_url" "$git_output_dir"
-  rm -rf /etc/webhook/repo/*
-  cp -r /tmp/myfiletransfer/* ./repo/
+  rm -rf /repo/*
+  cp -r /tmp/myfiletransfer/* /repo/
   restore_docker_compose_overrides
 
   # TODO: do this somewhere else.
