@@ -23,7 +23,7 @@ if [[ $release_ref != "" ]]; then
             "$repo_url" "$git_output_dir"
   rm -rf /repo/*
   cp -r $git_output_dir/* /repo/
-  cp /overrides/docker-compose.override.yml /repo/docker/docker-compose.override.yml
+  cp /run/wormhole/docker-compose.override.yml /repo/docker/docker-compose.override.yml
 
   # TODO: do this somewhere else.
   if [[ $bucket_name != "" ]]; then
@@ -40,5 +40,5 @@ if [[ $release_ref != "" ]]; then
   fi
 
   # Restart backend
-  date > /run/restart
+  date > /run/wormhole/restart
 fi

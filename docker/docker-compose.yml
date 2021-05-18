@@ -34,9 +34,7 @@ services:
     volumes:
       - "./docker/hooks:/hooks"
       - "..:/repo"
-      - "/home/wormhole/overrides:/overrides"
-      # NB: watched by wormhole.path systemd unit.
-      - "/home/wormhole/restart:/run/restart"
+      - "/home/wormhole/run:/run/wormhole"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hooks.rule=Host(`hooks.wormhole.bryanchriswhite.com`)"
