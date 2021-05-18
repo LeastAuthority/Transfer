@@ -1,36 +1,36 @@
-  [
-    {
-      "id": "release",
-      "execute-command": "./scripts/release.sh",
-      "command-working-directory": "/hooks",
-      "pass-arguments-to-command": [
-        {
-          "source": "payload",
-          "name": "release.tag_name"
-        },
-        {
-          "source": "string",
-          "name": "s3://test.winden.la.bryanchriswhite.com"
-        },
-        {
-          "source": "string",
-          "name": "E37U3141WQ4OZX"
-        },
-      ],
-      "trigger-rule": {
-        "and": [
-          {
-            "match": {
-              "parameter": {
-                "source": "header",
-                "name": "X-Hub-Signature-256"
-              },
-              "type": "payload-hmac-sha256",
-              "secret": "{{ getenv "GITHUB_RELEASE_KEY" | js }}"
-        }
+[
+  {
+    "id": "release",
+    "execute-command": "./scripts/release.sh",
+    "command-working-directory": "/hooks",
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "release.tag_name"
       },
       {
-        "match": {
+        "source": "string",
+        "name": "s3://test.winden.la.bryanchriswhite.com"
+      },
+      {
+        "source": "string",
+        "name": "E37U3141WQ4OZX"
+      }
+    ],
+    "trigger-rule": {
+      "and": [
+        {
+          "match": {
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature-256"
+            },
+            "type": "payload-hmac-sha256",
+            "secret": "{{ getenv 'GITHUB_RELEASE_KEY' | js }}"
+          }
+        },
+        {
+          "match": {
             "parameter": {
               "source": "payload",
               "name": "action"
@@ -38,41 +38,42 @@
             "type": "value",
             "value": "published"
           }
-          }]
-      }
-    },
-    {
-      "id": "master",
-      "execute-command": "./scripts/release.sh",
-      "command-working-directory": "/hooks",
-      "pass-arguments-to-command": [
-        {
-          "source": "string",
-          "name": "master"
-        },
-        {
-          "source": "string",
-          "name": "s3://wormhole.bryanchriswhite.com"
-        },
-        {
-          "source": "string",
-          "name": "E3P9UZZLSC8YLD"
-        },
-      ],
-      "trigger-rule": {
-        "and": [
-          {
-            "match": {
-              "parameter": {
-                "source": "header",
-                "name": "X-Hub-Signature-256"
-              },
-              "type": "payload-hmac-sha256",
-              "secret": "{{ getenv "GITHUB_MASTER_KEY" | js }}"
         }
+      ]
+    }
+  },
+  {
+    "id": "master",
+    "execute-command": "./scripts/release.sh",
+    "command-working-directory": "/hooks",
+    "pass-arguments-to-command": [
+      {
+        "source": "string",
+        "name": "master"
       },
       {
-        "match": {
+        "source": "string",
+        "name": "s3://wormhole.bryanchriswhite.com"
+      },
+      {
+        "source": "string",
+        "name": "E3P9UZZLSC8YLD"
+      }
+    ],
+    "trigger-rule": {
+      "and": [
+        {
+          "match": {
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature-256"
+            },
+            "type": "payload-hmac-sha256",
+            "secret": "{{ getenv 'GITHUB_MASTER_KEY' | js }}"
+          }
+        },
+        {
+          "match": {
             "parameter": {
               "source": "payload",
               "name": "ref"
@@ -80,7 +81,8 @@
             "type": "value",
             "value": "refs/heads/master"
           }
-          }]
-      }
+        }
+      ]
     }
-  ]
+  }
+]

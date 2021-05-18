@@ -1,14 +1,10 @@
-#!/usr/bin/env ash
+#!/usr/bin/env bash
 set -e
 
 release_ref="$1"
 bucket_name="$2"
 cloudfront_dist_id="$3"
 repo_url="https://github.com/leastauthority/myfiletransfer"
-
-restore_docker_compose_override() {
-  cp /overrides/docker-compose.override.yml ./repo/docker/docker-compose.override.yml
-}
 
 if [[ $release_ref != "" ]]; then
   git_output_dir=$(mktemp -d)
@@ -27,7 +23,7 @@ if [[ $release_ref != "" ]]; then
             "$repo_url" "$git_output_dir"
   rm -rf /repo/*
   cp -r $git_output_dir/* /repo/
-  restore_docker_compose_overrides
+  cp /overrides/docker-compose.override.yml /repo/docker/docker-compose.override.yml
 
   # TODO: do this somewhere else.
   if [[ $bucket_name != "" ]]; then
