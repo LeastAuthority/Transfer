@@ -7,7 +7,7 @@ cloudfront_dist_id="$3"
 repo_url="https://github.com/leastauthority/myfiletransfer"
 
 restore_docker_compose_override() {
-  cp ./override.yml ./repo/docker/docker-compose.override.yml
+  cp /overrides/docker-compose.override.yml ./repo/docker/docker-compose.override.yml
 }
 
 if [[ $release_ref != "" ]]; then

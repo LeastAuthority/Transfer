@@ -34,7 +34,7 @@ services:
     volumes:
       - "./hooks:/hooks"
       - "..:/repo"
-      - "./docker-compose.override.yml:/hooks/docker-compose.override.yml"
+      - "/home/wormhole/overrides:/overrides"
       # NB: watched by wormhole.path systemd unit.
       - "/home/wormhole/restart:/run/restart"
     labels:
