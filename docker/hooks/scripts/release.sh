@@ -10,9 +10,9 @@ restore_docker_compose_override() {
 }
 
 if [[ $release_ref != "" ]]; then
-  git clone --shallow-submodules --recurse-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer
+  git clone --shallow-submodules --recurse-submodules --single-branch --depth 1 --branch "$release_ref" https://github.com/leastauthority/myfiletransfer /tmp/myfiletransfer
   rm -rf /etc/webhook/repo/*
-  cp -r ./myfiletransfer/* ./repo/
+  cp -r /tmp/myfiletransfer/* ./repo/
   restore_docker_compose_overrides
 
   # TODO: do this somewhere else.
