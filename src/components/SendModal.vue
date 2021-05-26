@@ -67,7 +67,7 @@
     }
 </style>
 
-<script>
+<script lang="ts">
     import {
         IonButton,
         IonCol,
@@ -111,31 +111,30 @@
             try {
                 await this[SEND_FILE](payload)
                     .catch(async (error) => {
-                        // NB: error during transfer>
-                        console.log(error);
-                        await this.presentAlert(error);
+                        // NB: error during transfer.
+                        console.error(error);
+                        const opts = {
+                            buttons: ['OK'],
+                        };
+                        await this.alert(error, opts);
+                        this.cancel();
                     })
             } catch (error) {
                 // NB: error during setup.
-                console.log(error);
-                await this.presentAlert(error);
+                console.error(error);
+                const opts = {
+                    // cssClass: 'my-custom-class',
+                    // header: 'Error',
+                    // subHeader: 'error type',
+                    // message: error,
+                    buttons: ['OK'],
+                };
+                await this.alert(error, opts)
+                this.cancel();
             }
         },
         methods: {
-            ...mapActions([NEW_CLIENT, SEND_FILE, 'setProgress', 'setOpen', 'setDone']),
-            async presentAlert(error) {
-                const alert = await alertController
-                    .create({
-                        // cssClass: 'my-custom-class',
-                        header: 'Mailbox Error',
-                        // subHeader: 'error type',
-                        message: error,
-                        buttons: ['OK'],
-                    });
-                await alert.present();
-                await alert.onWillDismiss();
-                this.cancel();
-            },
+            ...mapActions([NEW_CLIENT, SEND_FILE, 'alert', 'setProgress', 'setOpen', 'setDone']),
             // TODO: refactor
             onProgress(sentBytes, totalBytes) {
                 this.setProgress(sentBytes / totalBytes)

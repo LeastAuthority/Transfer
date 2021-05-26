@@ -1,6 +1,6 @@
 import Go from "./go";
 import Client from "./go/wormhole/client";
-import {Offer, SendResult} from "./go/wormhole/types";
+import {Offer, TransferProgress} from "./go/wormhole/types";
 import {
     ActionMessage,
     FREE,
@@ -51,7 +51,7 @@ function handleSendFile({id, name, buffer}: ActionMessage): void {
 
     // TODO: change signature to expect array buffer or Uint8Array?
     client.sendFile(_file as File, {progressFunc: sendProgressCb})
-        .then(({code, done}: SendResult) => {
+        .then(({code, done}: TransferProgress) => {
             port.postMessage({
                 action: SEND_FILE,
                 id,
@@ -130,6 +130,12 @@ function handleReceiveFile({id, code}: ActionMessage): void {
                 ...receiving[id],
                 reader,
             };
+
+            port.postMessage({
+                action: RECV_FILE,
+                id,
+                bufferSize: reader.bufferSizeBytes,
+            })
         })
         .catch(error => {
             port.postMessage({

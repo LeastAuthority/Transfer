@@ -13,6 +13,7 @@ export const RECV_FILE_PROGRESS = 'client/recv_file/progress';
 export const RECV_FILE_OFFER = 'client/recv_file/offer';
 export const RECV_FILE_OFFER_ACCEPT = 'client/recv_file/offer/accept';
 export const RECV_FILE_OFFER_REJECT = 'client/recv_file/offer/reject';
+export const RECV_FILE_READ = 'client/recv_file/read';
 export const RECV_FILE_DATA = 'client/recv_file/data';
 export const RECV_FILE_ERROR = 'client/recv_file/error';
 export const RECV_FILE_READ_ERROR = 'client/recv_file/read/error';

@@ -1,8 +1,11 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
-import {ClientConfig, Offer, TransferOptions} from "@/go/wormhole/types";
+import {ClientConfig, Offer, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {NEW_CLIENT, SAVE_FILE, SEND_FILE} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
+import {alertController} from "@ionic/vue";
+import {AlertOptions} from "@ionic/core";
+import {errRelay, errMailbox, errReceiveNoSender} from "@/errors";
 
 let host = 'http://localhost:8080';
 
@@ -56,7 +59,10 @@ declare interface SendFilePayload {
     opts?: TransferOptions;
 }
 
-async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<void> {
+async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, {
+    file,
+    opts
+}: SendFilePayload): Promise<void> {
     try {
         const {code, cancel, done} = await client.sendFile(file, opts);
 
@@ -77,7 +83,10 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
 }
 
 // TODO: be more specific with types.
-async function saveFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, payload: any): Promise<void> {
+async function saveFileAction(this: Store<any>, {
+    commit,
+    dispatch
+}: ActionContext<any, any>, payload: any): Promise<TransferProgress> {
     const {code, opts} = payload;
     return client.saveFile(code, opts);
 }
@@ -87,6 +96,32 @@ function acceptOfferAction(this: Store<any>, {state, commit}: ActionContext<any,
         // TODO: handle error returned by accept.
         state.offer.accept();
     }
+}
+
+declare interface AlertPayload {
+    error: Error;
+    opts: AlertOptions;
+}
+
+async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
+    const {error, opts} = payload;
+
+    if (errMailbox.matches(error, state.config)) {
+        opts.header = errMailbox.name
+        opts.message = errMailbox.message
+    } else if (errRelay.matches(error, state.config)) {
+        opts.header = errRelay.name
+        opts.message = errRelay.message
+    } else {
+        opts.header = error.name;
+        opts.message = error.message;
+    }
+
+
+    const alert = await alertController
+        .create(opts);
+    await alert.present();
+    await alert.onWillDismiss();
 }
 
 /* --- MUTATIONS --- */
@@ -165,5 +200,6 @@ export default createStore({
         [NEW_CLIENT]: newClientAction,
         [SEND_FILE]: sendFileAction,
         [SAVE_FILE]: saveFileAction,
+        alert,
     },
 })

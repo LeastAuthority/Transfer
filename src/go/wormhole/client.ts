@@ -1,4 +1,4 @@
-import {ClientConfig, ClientInterface, SendResult, TransferOptions, wormhole} from "@/go/wormhole/types";
+import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
 import {Reader} from '@/go/wormhole/streaming';
 import Send from "@/views/Send.vue";
 
@@ -26,7 +26,7 @@ export default class Client implements ClientInterface {
         return wormhole.Client.sendText(this.goClient, message);
     }
 
-    public async sendFile(file: File, opts?: TransferOptions): Promise<SendResult> {
+    public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
         const data = new Uint8Array(await file.arrayBuffer());
         return wormhole.Client.sendFile(this.goClient, file.name, data, opts);
     }

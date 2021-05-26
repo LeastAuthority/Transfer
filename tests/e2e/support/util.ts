@@ -1,6 +1,6 @@
 import Chainable = Cypress.Chainable;
 import Client from "@/go/wormhole/client";
-import {Offer, SendResult, TransferOptions} from "@/go/wormhole/types";
+import {Offer, TransferProgress, TransferOptions} from "@/go/wormhole/types";
 import Go from "../../../src/go";
 import {Reader} from "@/go/wormhole/streaming";
 
@@ -39,7 +39,7 @@ export function expectReceiveConfirm(code: string): Chainable<string> {
     });
 }
 
-export async function mockClientSend(name: string, data: string, opts?: TransferOptions): Promise<SendResult> {
+export async function mockClientSend(name: string, data: string, opts?: TransferOptions): Promise<TransferProgress> {
     const sender = new Client();
     const file = {
         name,

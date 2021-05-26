@@ -10,7 +10,7 @@ import {
     RECV_FILE_OFFER,
     RECV_FILE_OFFER_ACCEPT,
     RECV_FILE_OFFER_REJECT,
-    RECV_FILE_PROGRESS,
+    RECV_FILE_PROGRESS, RECV_FILE_READ,
     RECV_FILE_READ_ERROR,
     RECV_TEXT,
     SEND_FILE,
@@ -23,7 +23,8 @@ import {
     WASM_READY
 } from "@/store/actions";
 import {Reader} from "@/go/wormhole/streaming";
-import {ClientConfig, ClientInterface, SendResult, TransferOptions} from "@/go/wormhole/types";
+import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
+import {errReceiveNoSender} from "@/errors";
 
 export default class ClientWorker implements ClientInterface {
     public goClient = -1;
@@ -58,7 +59,6 @@ export default class ClientWorker implements ClientInterface {
                 if (event.data.action === WASM_READY) {
                     this.goClient = event.data.goClient;
                     this.port.onmessage = (...args) => this._onMessage(...args)
-                    // clearTimeout(timeoutID);
                     resolve();
                     return;
                 }
@@ -111,6 +111,9 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
             case SEND_FILE_RESULT_ERROR:
                 this._handleSendFileResultError(event.data)
                 break;
+            case RECV_FILE:
+                this._handleRecvFile(event.data);
+                break;
             case RECV_FILE_PROGRESS:
                 this._handleFileProgress(event.data);
                 break;
@@ -129,18 +132,18 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     }
 
     private _handleRecvFileData({id, n, done, buffer}: ActionMessage): void {
-        // TODO: combine?
-        const pending = this.pending[id];
+        // TODO: combine receiving and pending?
         const receiving = this.receiving[id];
         if (typeof (receiving) === 'undefined') {
             throw new Error(`not receiving file with id: ${id}`)
         }
+        const {done: {resolve, reject}} = this.pending[id];
 
         const {writer} = receiving;
         writer.write(new Uint8Array(buffer).slice(0, n));
 
         if (done) {
-            pending.resolve();
+            resolve();
             delete this.receiving[id];
             delete this.pending[id];
             writer.close();
@@ -213,13 +216,18 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
     }
 
     private _handleRecvFileReadError({id, error}: ActionMessage) {
-        const {reject} = this.pending[id];
+        const {reject} = this.pending[id].done;
         reject(error);
     }
 
     private _handleSendFileError({id, error}: ActionMessage) {
         const {reject} = this.pending[id];
         reject(error);
+    }
+
+    private _handleRecvFile({id, bufferSize}: ActionMessage) {
+        const {resolve} = this.pending[id];
+        resolve()
     }
 
     public async sendText(text: string): Promise<string> {
@@ -250,7 +258,7 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         })
     }
 
-    public async sendFile(file: File, opts?: TransferOptions): Promise<SendResult> {
+    public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
         await this.ready;
         return new Promise((resolve, reject) => {
             file.arrayBuffer().then(buffer => {
@@ -281,8 +289,36 @@ action: ${JSON.stringify(event.data, null, '  ')}`);
         })
     }
 
-    public async saveFile(code: string, opts?: TransferOptions): Promise<void> {
-        await this.recvFile(code, opts)
+    public async saveFile(code: string, opts?: TransferOptions): Promise<TransferProgress> {
+        await this.ready;
+
+        const id = Date.now()
+        await new Promise((resolve, reject) => {
+            const timeoutID = window.setTimeout(() => {
+                reject(errReceiveNoSender);
+            }, 2000)
+            const _resolve = (...args: any[]) => {
+                window.clearTimeout(timeoutID);
+                resolve(...args)
+            }
+
+            const message = {
+                action: RECV_FILE,
+                id,
+                code,
+            }
+            this.pending[id] = {message, opts, resolve, reject};
+            this.port.postMessage(message)
+        });
+
+        const done: Promise<void> = new Promise((resolve, reject) => {
+            this.pending[id].done = {resolve, reject};
+        });
+        return {
+            cancel: () => {
+                console.log('cancel')
+            }, done
+        }
     }
 
     public free(): void {

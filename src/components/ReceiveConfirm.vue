@@ -94,7 +94,7 @@
         IonToolbar,
         IonTitle,
         IonIcon,
-        IonProgressBar, alertController,
+        IonProgressBar,
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
     import {mapState, mapActions} from 'vuex';
@@ -109,7 +109,7 @@
     export default defineComponent({
         name: "ReceiveConfirm",
         computed: {
-            ...mapState(['offer', 'progress', 'done']),
+            ...mapState(['config', 'offer', 'progress', 'done']),
             fileSize() {
                 return sizeToClosestUnit(this.offer.size);
             },
@@ -136,9 +136,12 @@
             VersionFooter,
         },
         methods: {
-            ...mapActions([NEW_CLIENT, SAVE_FILE, 'setDone', 'setOffer', 'setProgress']),
+            ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setOffer', 'setProgress']),
             async wait() {
                 const code = this.$route.params.code;
+                const alertOpts = {
+                    buttons: ['OK'],
+                };
                 try {
                     const opts = {
                         name,
@@ -147,28 +150,23 @@
                             this.setOffer(offer)
                         }
                     };
-                    await this[SAVE_FILE]({code, opts});
-                    this.setDone(true);
+                    // TODO: this[SAVE_FILE] should return a cancel func and done promise.
+                    const {done} = await this[SAVE_FILE]({code, opts});
+                    // this.cancelSave = cancel;
+                    done.then(() =>{
+                        this.setDone(true);
+                        this.reset();
+                    }).catch(async (error) => {
+                        await this.alert({error, opts: alertOpts});
+                        this.cancel();
+                        this.reset();
+                    })
                 } catch (error) {
                     console.log(error);
-                    await this.presentAlert(error);
-                } finally {
+                    await this.alert({error, opts: alertOpts});
+                    this.cancel();
                     this.reset();
                 }
-            },
-            // TODO: can this error handling / alertController call be moved into an action?
-            async presentAlert(error) {
-                const alert = await alertController
-                    .create({
-                        // cssClass: 'my-custom-class',
-                        header: 'Error',
-                        // subHeader: 'error type',
-                        message: error,
-                        buttons: ['OK'],
-                    });
-                await alert.present();
-                await alert.onWillDismiss();
-                this.cancel();
             },
             async download() {
                 console.log('Download clicked!');
