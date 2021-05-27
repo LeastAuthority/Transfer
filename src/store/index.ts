@@ -64,9 +64,9 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
     opts
 }: SendFilePayload): Promise<void> {
     try {
-        const {code, cancel, done} = await client.sendFile(file, opts);
+        const {code, done} = await client.sendFile(file, opts);
 
-        commit(SEND_FILE, {code, cancel});
+        commit(SEND_FILE, {code});
         done.then(() => {
             commit('setDone', true);
             commit('setOpen', false);
@@ -172,7 +172,10 @@ export default createStore({
             code: '',
             done: false,
             cancel: null,
-            offer: {},
+            offer: {
+                name: '',
+                size: 0,
+            },
             progress: -1,
         }
     },

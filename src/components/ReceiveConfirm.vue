@@ -108,6 +108,11 @@
 
     export default defineComponent({
         name: "ReceiveConfirm",
+        data() {
+          return {
+              accept: undefined,
+          }
+        },
         computed: {
             ...mapState(['config', 'offer', 'progress', 'done']),
             fileSize() {
@@ -144,14 +149,16 @@
                 };
                 try {
                     const opts = {
-                        name,
+                        // name,
                         progressFunc: this.onProgress,
-                        offerCondition: (offer) => {
-                            this.setOffer(offer)
-                        }
+                        // offerCondition: (offer) => {
+                        //     this.setOffer(offer)
+                        // }
                     };
                     // TODO: this[SAVE_FILE] should return a cancel func and done promise.
-                    const {done} = await this[SAVE_FILE]({code, opts});
+                    const {name, size, accept, done} = await this[SAVE_FILE]({code, opts});
+                    this.accept = accept;
+                    this.setOffer({name, size});
                     // this.cancelSave = cancel;
                     done.then(() =>{
                         this.setDone(true);
@@ -170,7 +177,7 @@
             },
             async download() {
                 console.log('Download clicked!');
-                this.offer.accept();
+                this.accept();
             },
             onProgress(sentBytes, totalBytes) {
                 this.setProgress(sentBytes / totalBytes);

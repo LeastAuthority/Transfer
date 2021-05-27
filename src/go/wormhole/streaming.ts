@@ -1,14 +1,24 @@
 export type ReadFn = (buf: ArrayBuffer) => Promise<[number, boolean]>;
 
-export class Reader {
+export interface FileReaderOpts {
+    name: string;
+    size: number;
+    read: ReadFn;
+}
+
+export class FileReader {
+    readonly name: string;
+    readonly size: number;
     readonly read: ReadFn;
-    readonly cancel: () => void;
     readonly bufferSizeBytes: number;
 
-    constructor(bufferSizeBytes: number, read: ReadFn, cancel: () => void) {
+    constructor(bufferSizeBytes: number, opts: FileReaderOpts) {
+        const {name, size, read} = opts;
+
         this.bufferSizeBytes = bufferSizeBytes;
+        this.name = name
         this.read = read;
-        this.cancel = cancel;
+        this.size = size;
     }
 
     async readAll(result: Uint8Array): Promise<number> {

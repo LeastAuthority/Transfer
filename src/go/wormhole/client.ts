@@ -1,5 +1,5 @@
 import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
-import {Reader} from '@/go/wormhole/streaming';
+import {FileReader} from '@/go/wormhole/streaming';
 import Send from "@/views/Send.vue";
 
 export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
@@ -35,13 +35,13 @@ export default class Client implements ClientInterface {
         return wormhole.Client.recvText(this.goClient, code)
     }
 
-    public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
+    public async recvFile(code: string, opts?: TransferOptions): Promise<FileReader> {
             const readerObj = await wormhole.Client.recvFile(this.goClient, code, opts);
             let bufferSizeBytes = readerObj.bufferSizeBytes;
             if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
                 bufferSizeBytes = opts.bufferSizeBytes;
             }
-            return new Reader(bufferSizeBytes, readerObj.read, readerObj.cancel);
+            return new FileReader(bufferSizeBytes, readerObj);
     }
 
     public free() {

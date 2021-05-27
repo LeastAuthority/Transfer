@@ -21,7 +21,7 @@ export const FREE = 'client/free';
 export const SAVE_FILE = 'client/save_file';
 export const SET_CODE = 'client/set_code';
 
-export interface ActionMessage {
+export interface RPCMessage {
     id: number;
     action: string;
     error?: Error;
@@ -30,6 +30,6 @@ export interface ActionMessage {
     [name: string]: any;
 }
 
-export function isAction(data: any): data is ActionMessage {
-    return (data as ActionMessage) !== undefined;
+export function isAction(data: any): data is RPCMessage {
+    return (data as RPCMessage) !== undefined;
 }
