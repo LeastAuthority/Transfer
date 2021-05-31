@@ -33,7 +33,8 @@
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0",
-    "web-streams-polyfill": "^3.0.2"
+    "web-streams-polyfill": "^3.0.2",
+    "worker-rpc": "^0.2.0"
   },
   "devDependencies": {
     "@capacitor/cli": "2.4.5",
