@@ -1,5 +1,5 @@
 import Client from '@/go/wormhole/client'
-import {Reader} from "@/go/wormhole/streaming";
+import {FileReader} from "@/go/wormhole/streaming";
 import {initGo, newTestFile} from './util';
 import {mockReadFn, NewTestFile} from "../e2e/support/util";
 
@@ -72,10 +72,16 @@ describe('Client', () => {
 describe('Reader', () => {
     describe('#read', () => {
         it('should call the read function passed to the constructor', async () => {
-            const file = NewTestFile('testfile', testFileSize);
+            const testFileName = 'testfile'
+            const file = NewTestFile(testFileName, testFileSize);
 
             const readFn = mockReadFn(file, testBufferSize);
-            const reader = new Reader(testBufferSize, readFn);
+            const opts = {
+                name: testFileName,
+                size: testFileSize,
+                read: readFn,
+            };
+            const reader = new FileReader(testBufferSize, opts);
             const buf = new ArrayBuffer(testBufferSize);
             let readBytes = 0;
             for (let n = 0, done = false; !done;) {

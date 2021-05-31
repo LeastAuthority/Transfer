@@ -35,7 +35,7 @@ describe('Sending', () => {
     });
 
     // TODO: actually assert things.
-    it('should show send progress when the receiver connects', (done) => {
+    it.skip('should show send progress when the receiver connects', (done) => {
         cy.viewport('samsung-note9', 'portrait')
         cy.visit('/#/send')
 

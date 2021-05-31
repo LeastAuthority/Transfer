@@ -2,7 +2,7 @@ import Chainable = Cypress.Chainable;
 import Client from "@/go/wormhole/client";
 import {Offer, TransferProgress, TransferOptions} from "@/go/wormhole/types";
 import Go from "../../../src/go";
-import {Reader} from "@/go/wormhole/streaming";
+import {FileReader} from "@/go/wormhole/streaming";
 
 export const TEST_DOWNLOAD_DIR = 'cypress/downloads'
 
@@ -84,7 +84,7 @@ export async function UIGetCode(filename: string): Promise<string> {
     });
 }
 
-export async function mockGetReceiveReader(code: string): Promise<Reader> {
+export async function mockGetReceiveReader(code: string): Promise<FileReader> {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
@@ -103,16 +103,7 @@ export async function mockClientReceive(code: string): Promise<Uint8Array> {
     const receiver = new Client();
     // TODO: cleanup
     let size: number;
-    const offerCondition = (offer: Offer): void => {
-        // NB: save for assertion later
-        size = offer.size;
-        if (typeof (offer.accept) !== 'undefined') {
-            offer.accept();
-        }
-    }
-    const reader = await receiver.recvFile(code, {
-        offerCondition,
-    });
+    const reader = await receiver.recvFile(code);
 
     // TODO: fix
     return new Promise(async (resolve, reject) => {

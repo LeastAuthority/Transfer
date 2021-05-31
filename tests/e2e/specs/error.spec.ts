@@ -10,6 +10,7 @@ import {
 } from "../support/util";
 import {SET_CONFIG} from "../support/const";
 import Client from "@/go/wormhole/client";
+import {errMailbox, errRelay} from "@/errors";
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
@@ -26,7 +27,7 @@ const filename = 'large-file.txt';
 describe('Error messaging', () => {
     describe('Sending', () => {
         // TODO: be more specific
-        it('should show a specific error when unable to connect to the mailbox', () => {
+        it('should show `errMailbox` when unable to connect to the mailbox server', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.visit('/#/send')
 
@@ -35,24 +36,21 @@ describe('Error messaging', () => {
                     action: SET_CONFIG,
                     config: {
                         rendezvousURL: 'ws://localhost:10000',
+                        transitRelayURL: 'ws://localhost:4002',
                     }
                 }, '*')
                 cy.wait(100)
                 UISend(filename)
                     .then(() => {
-                        // TODO: expect error message.
-                        cy.get('.alert-wrapper').should('exist')
-                            .get('.alert-title').should('contain.text', 'Error')
+                        const alert = cy.get('.alert-wrapper').should('exist');
+                        alert.get('.alert-title').should('contain.text', errMailbox.name);
+                        alert.get('.alert-message').should('contain.text', errMailbox.message);
+                        alert.get('.alert-button').should('contain.text', 'OK');
                         // TODO: use cli flag or something
                         // .wait(250)
                         // .then(() => {
                         //     cy.screenshot()
                         // })
-                        // .get('.alert-message').should('contain.text', 'unable to connect to the mailbox server')
-                        // .alert-wrapper
-                        // & .alert-title
-                        // & .alert-message
-                        // & .alert-button
                     })
             });
         });
@@ -65,6 +63,7 @@ describe('Error messaging', () => {
                 window.postMessage({
                     action: SET_CONFIG,
                     config: {
+                        rendezvousURL: 'ws://localhost:4000/v1',
                         transitRelayURL: 'ws://localhost:10000',
                     }
                 }, '*')
@@ -74,8 +73,10 @@ describe('Error messaging', () => {
                         mockGetReceiveReader(code)
                         cy.wait(100)
 
-                        cy.get('.alert-wrapper').should('exist')
-                            .get('.alert-title').should('contain.text', 'Mailbox Error')
+                        const alert = cy.get('.alert-wrapper').should('exist');
+                        alert.get('.alert-title').should('contain.text', errRelay.name);
+                        alert.get('.alert-message').should('contain.text', errRelay.message);
+                        alert.get('.alert-button').should('contain.text', 'OK');
                         // TODO: use cli flag or something
                         // .wait(250)
                         // .then(() => {
@@ -96,7 +97,7 @@ describe('Error messaging', () => {
                     window.postMessage({
                         action: SET_CONFIG,
                         config: {
-                            rendezvousURL: 'ws://localhost:10000',
+                            rendezvousURL: 'ws://localhost:10000/v1',
                         }
                     }, '*')
                     cy.wait(100)
@@ -107,8 +108,10 @@ describe('Error messaging', () => {
                     cy.get('.receive-next')
                         .click()
 
-                    cy.get('.alert-wrapper').should('exist')
-                        .get('.alert-title').should('contain.text', 'Error')
+                    const alert = cy.get('.alert-wrapper').should('exist');
+                    alert.get('.alert-title').should('contain.text', errMailbox.name);
+                    alert.get('.alert-message').should('contain.text', errMailbox.message);
+                    alert.get('.alert-button').should('contain.text', 'OK');
                     // TODO: use cli flag or something
                     // .wait(250)
                     // .then(() => {
@@ -128,19 +131,18 @@ describe('Error messaging', () => {
                 })
 
                 cy.visit(`/#/receive`)
-                    .wait(500)
-                    .then(() => {
                         cy.window().then(window => {
                             window.postMessage({
                                 action: SET_CONFIG,
                                 config: {
-                                    transitRelayURL: 'ws://localhost:1',
+                                    rendezvousURL: 'ws://localhost:4000/v1',
+                                    transitRelayURL: 'ws://localhost:10000',
                                 }
                             }, '*')
                             cy.wait(100)
 
                             cy.get('input[type="text"]')
-                                .type(code);
+                                .type(code as string);
 
                             cy.get('.receive-next')
                                 .click().wait(500)
@@ -149,14 +151,15 @@ describe('Error messaging', () => {
                             cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
                             cy.get('.download-button').click()
 
-                            cy.get('.alert-wrapper').should('exist')
-                                .get('.alert-title').should('contain.text', 'Error')
+                            const alert = cy.get('.alert-wrapper').should('exist');
+                            alert.get('.alert-title').should('contain.text', errRelay.name);
+                            alert.get('.alert-message').should('contain.text', errRelay.message);
+                            alert.get('.alert-button').should('contain.text', 'OK');
                             // TODO: use cli flag or something
                             // .wait(250)
                             // .then(() => {
                             //     cy.screenshot()
                             // })
-                        });
                     });
             });
         });
@@ -202,11 +205,6 @@ describe('Error messaging', () => {
                         })
                         .then(() => testDone());
                 })
-                // .get('.alert-wrapper')
-                // .should('exist')
-                // .get('.alert-title')
-                // .should('contain.text', 'Error')
-                // .then(() => testDone())
             // TODO: use cli flag or something
             // .wait(250)
             // .then(() => {
