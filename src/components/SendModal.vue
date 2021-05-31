@@ -92,8 +92,8 @@
 
     import router from '@/router/index.ts'
     import MyHeader from '@/components/MyHeader.vue';
-    import VersionFooter from "@/components/VersionFooter";
-    import CopyButton from "@/components/CopyButton";
+    import VersionFooter from "@/components/VersionFooter.vue";
+    import CopyButton from "@/components/CopyButton.vue";
     import {NEW_CLIENT, SEND_FILE} from "@/store/actions";
 
     export default defineComponent({
@@ -101,7 +101,7 @@
         props: ['selectFile', 'file'],
         computed: {
             ...mapState(['host', 'code', 'progress']),
-            fileSize() {
+            fileSize(): string {
                 return sizeToClosestUnit(this.file.size);
             },
         },
@@ -116,7 +116,7 @@
                         const opts = {
                             buttons: ['OK'],
                         };
-                        await this.alert(error, opts);
+                        await this.alert({error, opts});
                         this.cancel();
                     })
             } catch (error) {
@@ -129,14 +129,14 @@
                     // message: error,
                     buttons: ['OK'],
                 };
-                await this.alert(error, opts)
+                await this.alert({error, opts})
                 this.cancel();
             }
         },
         methods: {
             ...mapActions([NEW_CLIENT, SEND_FILE, 'alert', 'setProgress', 'setOpen', 'setDone']),
             // TODO: refactor
-            onProgress(sentBytes, totalBytes) {
+            onProgress(sentBytes: number, totalBytes: number) {
                 this.setProgress(sentBytes / totalBytes)
             },
             cancel() {
@@ -156,7 +156,7 @@
             },
         },
         beforeRouteLeave(to, _from, next) {
-            this.setopen(false);
+            this.setOpen(false);
             this.reset();
         },
         setup() {

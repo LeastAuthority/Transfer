@@ -106,6 +106,10 @@
     import {sizeToClosestUnit} from "@/util";
     import {NEW_CLIENT, SAVE_FILE} from "../store/actions";
 
+    const alertOpts = {
+        buttons: ['OK'],
+    };
+
     export default defineComponent({
         name: "ReceiveConfirm",
         data() {
@@ -144,9 +148,6 @@
             ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setOffer', 'setProgress']),
             async wait() {
                 const code = this.$route.params.code;
-                const alertOpts = {
-                    buttons: ['OK'],
-                };
                 try {
                     const opts = {
                         // name,
@@ -177,7 +178,11 @@
             },
             async download() {
                 console.log('Download clicked!');
-                this.accept();
+                try {
+                    await this.accept();
+                } catch (error) {
+                    this.alert({error, opts: alertOpts})
+                }
             },
             onProgress(sentBytes, totalBytes) {
                 this.setProgress(sentBytes / totalBytes);

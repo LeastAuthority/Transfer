@@ -4,7 +4,7 @@
 import {AlertOptions} from "@ionic/core";
 import {ClientConfig} from "@/go/wormhole/types";
 
-export abstract class AlertError extends Error {
+export class AlertError extends Error {
     public opts: AlertOptions;
 
     constructor(opts: AlertOptions) {
@@ -23,18 +23,21 @@ class ErrMailbox extends AlertError {
         return new RegExp(`.*${config.rendezvousURL}.*`)
     }
 
-    public matches(err: Error, config: ClientConfig): boolean {
-        return this.pattern(config).test(err.message)
+    public matches(errorMsg: string, config: ClientConfig): boolean {
+        return this.pattern(config).test(errorMsg)
     }
 }
 
 class ErrRelay extends AlertError {
+    name = 'Relay Error'
+
     public pattern(config: ClientConfig): RegExp {
-        return new RegExp(`.*${config.transitRelayURL}.*`)
+        // TODO: improve error messaging.
+        return new RegExp(`(^websocket.Dial failed$)|(.*${config.transitRelayURL}.*)`);
     }
 
-    public matches(err: Error, config: ClientConfig): boolean {
-        return this.pattern(config).test(err.message)
+    public matches(errorMsg: string, config: ClientConfig): boolean {
+        return this.pattern(config).test(errorMsg)
     }
 }
 

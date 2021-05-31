@@ -23,13 +23,11 @@ export const SET_CODE = 'client/set_code';
 
 export interface RPCMessage {
     id: number;
-    action: string;
-    error?: Error;
 
     // TODO: be more specific (i.e. message types w/ union)
     [name: string]: any;
 }
 
-export function isAction(data: any): data is RPCMessage {
+export function isRPCMessage(data: any): data is RPCMessage {
     return (data as RPCMessage) !== undefined;
 }

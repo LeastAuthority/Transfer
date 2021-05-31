@@ -5,12 +5,11 @@ import {NEW_CLIENT, SAVE_FILE, SEND_FILE} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
-import {errRelay, errMailbox, errReceiveNoSender} from "@/errors";
+import {errRelay, errMailbox} from "@/errors";
 
 let host = 'http://localhost:8080';
 
 let defaultConfig: ClientConfig | undefined;
-console.log(`index.ts:6| process.env['NODE_ENV']: ${process.env['NODE_ENV']}`);
 if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
     // host = 'https://wormhole.bryanchriswhite.com';
@@ -18,16 +17,6 @@ if (process.env['NODE_ENV'] === 'production') {
 }
 
 let client = new ClientWorker(defaultConfig);
-
-declare interface SideState {
-    open: boolean;
-    code: string;
-    progress: {
-        value: number;
-        done: boolean;
-    };
-    offer: Offer;
-}
 
 /* --- ACTIONS --- */
 function setOpenAction(this: Store<any>, {commit}: ActionContext<any, any>, open: boolean): any {
@@ -99,11 +88,13 @@ function acceptOfferAction(this: Store<any>, {state, commit}: ActionContext<any,
 }
 
 declare interface AlertPayload {
-    error: Error;
+    error: string;
     opts: AlertOptions;
 }
 
 async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
+    // TODO: types!
+    // NB: error is a string
     const {error, opts} = payload;
 
     if (errMailbox.matches(error, state.config)) {
@@ -113,8 +104,8 @@ async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload
         opts.header = errRelay.name
         opts.message = errRelay.message
     } else {
-        opts.header = error.name;
-        opts.message = error.message;
+        opts.header = 'Error';
+        opts.message = (error);
     }
 
 
