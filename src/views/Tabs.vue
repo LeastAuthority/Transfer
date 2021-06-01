@@ -2,12 +2,12 @@
     <ion-page>
         <ion-tabs>
             <ion-tab-bar slot="bottom">
-                <ion-tab-button tab="send" href="/send">
+                <ion-tab-button tab="send" href="/s">
                     <ion-icon :icon="exit"/>
                     <ion-label>Send</ion-label>
                 </ion-tab-button>
 
-                <ion-tab-button tab="receive" href="/receive">
+                <ion-tab-button tab="receive" href="/r">
                     <ion-icon :icon="enterOutline"/>
                     <ion-label>Receive</ion-label>
                 </ion-tab-button>

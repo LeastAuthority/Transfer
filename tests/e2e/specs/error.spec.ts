@@ -29,7 +29,7 @@ describe('Error messaging', () => {
         // TODO: be more specific
         it('should show `errMailbox` when unable to connect to the mailbox server', () => {
             cy.viewport('samsung-note9', 'portrait')
-            cy.visit('/#/send')
+            cy.visit('/#/s')
 
             cy.window().then(window => {
                 window.postMessage({
@@ -57,7 +57,7 @@ describe('Error messaging', () => {
 
         it('should show a specific error when unable to connect to the relay', () => {
             cy.viewport('samsung-note9', 'portrait')
-            cy.visit('/#/send')
+            cy.visit('/#/s')
 
             cy.window().then(window => {
                 window.postMessage({
@@ -91,7 +91,7 @@ describe('Error messaging', () => {
         it('should show a specific error when unable to connect to the mailbox', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.fixture(filename).then(async (file: string) => {
-                cy.visit('/#/receive');
+                cy.visit('/#/r');
 
                 cy.window().then(window => {
                     window.postMessage({
@@ -130,7 +130,7 @@ describe('Error messaging', () => {
                 done.catch(() => {
                 })
 
-                cy.visit(`/#/receive`)
+                cy.visit(`/#/r`)
                         cy.window().then(window => {
                             window.postMessage({
                                 action: SET_CONFIG,
@@ -176,7 +176,7 @@ describe('Error messaging', () => {
             done.catch(err => {
                 console.error(err);
             })
-            cy.visit(`/#/receive/${code}`)
+            cy.visit(`/#/r/${code}`)
 
             cy.get('ion-text.filename').should('have.text', filename);
             // cy.get('ion-text.size').should('have.text', '(1022.6 kB)');

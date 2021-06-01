@@ -31,7 +31,7 @@ export function expectFileDownloaded(filename: string, expected: string): Chaina
 export function expectReceiveConfirm(code: string): Chainable<string> {
     return cy.url().then(url => {
         const _url = new URL(url);
-        expect(_url.hash).to.eq(`#/receive/${code}`)
+        expect(_url.hash).to.eq(`#/r/${code}`)
 
         cy.contains('ion-text', 'download')
         cy.contains('ion-text', 'cancel')

@@ -5,7 +5,7 @@ import Tabs from '../views/Tabs.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/send'
+    redirect: '/s'
   },
   {
     path: '/',
@@ -13,18 +13,18 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        redirect: '/send'
+        redirect: '/s'
       },
       {
-        path: '/send',
+        path: '/s',
         component: () => import('@/views/Send.vue')
       },
       {
-        path: '/receive',
+        path: '/r',
         component: () => import('@/views/Receive.vue')
       },
       {
-        path: '/receive/:code',
+        path: '/r/:code',
         component: () => import('@/components/ReceiveConfirm.vue')
       },
     ]

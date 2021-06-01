@@ -19,7 +19,7 @@ describe('Receive', () => {
     it('via typed code', (done) => {
         mobileViewport();
 
-        cy.visit('/#/receive')
+        cy.visit('/#/r')
         cy.fixture(filename).then(async (file: string) => {
             const {code} = await mockClientSend(filename, file)
             UIEnterCode(code).then(() => {
@@ -38,7 +38,7 @@ describe('Receive', () => {
         cy.fixture(filename).then(async (file: string) => {
             const {code} = await mockClientSend(filename, file);
             console.log(code);
-            cy.visit(`/#/receive/${code}`)
+            cy.visit(`/#/r/${code}`)
             expectReceiveConfirm(code).then(() => {
                 expectFileDownloaded(filename, file).then(() => {
                     done();

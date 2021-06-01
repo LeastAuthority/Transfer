@@ -70,7 +70,7 @@
                     </ion-col>
                     <ion-col>
                         <ion-button color="light"
-                                    @click="router.push('/receive')">
+                                    @click="router.push('/r')">
                             <ion-icon :icon="enterOutline"></ion-icon>
                             <ion-text class="ion-padding-start">Receive more</ion-text>
                         </ion-button>
@@ -190,11 +190,11 @@
                 if (typeof (this.offer.reject) !== 'undefined') {
                     this.offer.reject();
                 }
-                router.push('/receive');
+                router.push('/r');
                 this.reset();
             },
             sendFile() {
-                router.push('/send?select');
+                router.push('/s?select');
                 this.reset();
             },
             reset() {

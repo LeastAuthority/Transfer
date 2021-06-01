@@ -108,7 +108,7 @@
                     return;
                 }
 
-                router.replace(`/receive/${this.code}`);
+                router.replace(`/r/${this.code}`);
             },
             paste() {
                 console.log('paste clicked.')
