@@ -1,5 +1,5 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
-import {ClientConfig, Offer, TransferOptions, TransferProgress} from "@/go/wormhole/types";
+import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {NEW_CLIENT, SAVE_FILE, SEND_FILE} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
@@ -21,11 +21,6 @@ let client = new ClientWorker(defaultConfig);
 /* --- ACTIONS --- */
 function setOpenAction(this: Store<any>, {commit}: ActionContext<any, any>, open: boolean): any {
     commit('setOpen', open);
-}
-
-
-function setOfferAction(this: Store<any>, {commit}: ActionContext<any, any>, offer: Offer) {
-    commit('setOffer', offer);
 }
 
 function setProgressAction(this: Store<any>, {commit}: ActionContext<any, any>, value: number): any {
@@ -77,15 +72,13 @@ async function saveFileAction(this: Store<any>, {
     dispatch
 }: ActionContext<any, any>, payload: any): Promise<TransferProgress> {
     const {code, opts} = payload;
-    return client.saveFile(code, opts);
+    const promise = client.saveFile(code, opts);
+    promise.then(({name, size}) => {
+        commit('setFileMeta', {name, size});
+    });
+    return promise;
 }
 
-function acceptOfferAction(this: Store<any>, {state, commit}: ActionContext<any, any>): void {
-    if (typeof (state.offer.accept) === 'function') {
-        // TODO: handle error returned by accept.
-        state.offer.accept();
-    }
-}
 
 declare interface AlertPayload {
     error: string;
@@ -123,8 +116,8 @@ function setOpenMutation(state: any, open: boolean): void {
 }
 
 // TODO: more specific types
-function setOfferMutation(state: any, offer: Offer): void {
-    state.offer = offer;
+function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
+    state.fileMeta = fileMeta;
 }
 
 // TODO: more specific types
@@ -162,8 +155,8 @@ export default createStore({
             config: defaultConfig || {},
             code: '',
             done: false,
-            cancel: null,
-            offer: {
+            // cancel: null,
+            fileMeta: {
                 name: '',
                 size: 0,
             },
@@ -176,7 +169,7 @@ export default createStore({
         },
         setOpen: setOpenMutation,
         setDone: setDoneMutation,
-        setOffer: setOfferMutation,
+        setFileMeta: setFileMetaMutation,
         setProgress: setProgressMutation,
         [NEW_CLIENT]: newClientMutation,
         [SEND_FILE]: sendFileMutation,
@@ -188,8 +181,6 @@ export default createStore({
         },
         setOpen: setOpenAction,
         setDone: setDoneAction,
-        setOffer: setOfferAction,
-        acceptOffer: acceptOfferAction,
         setProgress: setProgressAction,
         [NEW_CLIENT]: newClientAction,
         [SEND_FILE]: sendFileAction,

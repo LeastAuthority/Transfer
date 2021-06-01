@@ -12,18 +12,10 @@ export interface TransferProgress {
 
 export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
 
-export interface Offer {
-    name: string;
-    size: number;
-    accept?: () => Promise<Error>;
-    reject?: () => Promise<Error>;
-}
 
-export type OfferCondition = (offer: Offer) => void
 
 export interface TransferOptions {
     progressFunc?: ProgressFunc;
-    offerCondition?: OfferCondition;
     code?: string;
 
     // TODO: keep?

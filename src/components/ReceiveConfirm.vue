@@ -15,7 +15,7 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text class="filename">{{ offer.name }}</ion-text>
+                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
@@ -118,9 +118,9 @@
           }
         },
         computed: {
-            ...mapState(['config', 'offer', 'progress', 'done']),
+            ...mapState(['config', 'fileMeta', 'progress', 'done']),
             fileSize() {
-                return sizeToClosestUnit(this.offer.size);
+                return sizeToClosestUnit(this.fileMeta.size);
             },
         },
         beforeRouteUpdate(to, from, next) {
@@ -145,7 +145,7 @@
             VersionFooter,
         },
         methods: {
-            ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setOffer', 'setProgress']),
+            ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setProgress']),
             async wait() {
                 const code = this.$route.params.code;
                 try {
@@ -157,9 +157,8 @@
                         // }
                     };
                     // TODO: this[SAVE_FILE] should return a cancel func and done promise.
-                    const {name, size, accept, done} = await this[SAVE_FILE]({code, opts});
+                    const {accept, done} = await this[SAVE_FILE]({code, opts});
                     this.accept = accept;
-                    this.setOffer({name, size});
                     // this.cancelSave = cancel;
                     done.then(() =>{
                         this.setDone(true);
