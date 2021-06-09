@@ -1,190 +1,153 @@
 <template>
-    <ion-page>
-        <my-header></my-header>
-        <ion-content :fullscreen="true">
-            <ion-toolbar>
-                <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>
-            </ion-toolbar>
-            <ion-grid v-if="!done">
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-text color="medium">
-                            <h4>
-                                Send files securely, easily, and fast.
-                            </h4>
-                        </ion-text>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-button class="select-button"
-                                    color="light"
-                                    size="large"
-                                    @click="select">
-                            <ion-icon :icon="add"></ion-icon>
-                            <ion-label class="ion-text-lowercase">select</ion-label>
-                        </ion-button>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
-
-            <ion-grid v-else>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-text>Sent!</ion-text>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-text class="filename">{{ file.name }}</ion-text>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-text class="size">({{ fileSize() }})</ion-text>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col>
-                        <ion-text class="ion-text-center">
-                            <h1>
-                                &#x1f389; <!-- party popper -->
-                            </h1>
-                        </ion-text>
-                    </ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-button color="light"
-                                    @click="sendMore()">
-                            <ion-icon :icon="add"></ion-icon>
-                            <ion-text class="ion-padding-start">Send more</ion-text>
-                        </ion-button>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
-        </ion-content>
-        <ion-modal
-                :is-open="open"
-                css-class="modal"
-                @onDidDismiss="setOpen(false)"
-        >
-            <SendModal
-                    :selectFile="select"
-                    :file="file"
-            ></SendModal>
-        </ion-modal>
-        <input ref="fileInput"
-               type="file"
-               class="ion-hide"
-               @change="fileChanged"
-        />
-        <version-footer></version-footer>
-    </ion-page>
+    <CardModal
+            :is-open="onStep(Step.Default)"
+            css-class="modal"
+            @onDidDismiss="setOpen(false)"
+    >
+        <SendDefault
+                :select="select"
+        ></SendDefault>
+    </CardModal>
+<!--    <CardModal-->
+<!--            :is-open="onStep(Step.SendInstructions)"-->
+<!--            css-class="modal"-->
+<!--            @onDidDismiss="setOpen(false)"-->
+<!--    >-->
+<!--        <SendInstructions-->
+<!--        ></SendInstructions>-->
+<!--    </CardModal>-->
+<!--    <CardModal-->
+<!--            :is-open="onStep(Step.SendProgress)"-->
+<!--            css-class="modal"-->
+<!--            @onDidDismiss="setOpen(false)"-->
+<!--    >-->
+<!--        <SendProgress-->
+<!--        ></SendProgress>-->
+<!--    </CardModal>-->
+<!--    <CardModal-->
+<!--            :is-open="onStep(Step.SendSuccess)"-->
+<!--            css-class="modal"-->
+<!--            @onDidDismiss="setOpen(false)"-->
+<!--    >-->
+<!--        <SendSuccess-->
+<!--        ></SendSuccess>-->
+<!--    </CardModal>-->
+    <input ref="fileInput"
+           type="file"
+           class="ion-hide"
+           @change="fileChanged"
+    />
+    <!--        <version-footer></version-footer>-->
+    <!--    </ion-page>-->
 </template>
 
 <style lang="css">
-    .modal {
-        --min-width: 100vw;
-        --min-height: 100vh;
-    }
+.modal {
+    //--min-width: 100vw;
+    //--min-height: 100vh;
+    max-height: 500px;
+    max-width: 700px;
+}
 
-    .size {
-        font-size: small;
-    }
+.size {
+    font-size: small;
+}
 
-    .filename {
-        font-weight: bold;
-    }
+.filename {
+    font-weight: bold;
+}
 </style>
 
-<script>
-    import {
-        IonPage,
-        IonToolbar,
-        IonTitle,
-        IonContent,
-        IonButton,
-        IonLabel,
-        IonText,
-        IonIcon,
-        IonGrid,
-        IonRow,
-        IonCol,
-        IonModal,
-    } from '@ionic/vue';
-    import {ref, defineComponent} from 'vue';
-    import {add} from 'ionicons/icons';
+<style scoped>
+.italic {
+    font-style: italic;
+}
 
-    import MyHeader from '@/components/MyHeader.vue';
-    import SendModal from '@/components/SendModal.vue';
-    import VersionFooter from "@/components/VersionFooter.vue";
-    import router from '@/router/index.ts'
-    import {sizeToClosestUnit} from "@/util";
-    import {mapActions, mapState} from 'vuex';
+.bold {
+    font-weight: bold;
+}
 
-    // TODO: use proper state management.
-    const isOpenRef = ref(false);
+.drag-n-drop {
+    background-color: #f2f2f2;
+    border-style: dashed;
+    border-width: 3px;
+}
+</style>
 
-    export default defineComponent({
-        name: 'Send',
-        data() {
-            return {
-                file: {},
-            };
+<script lang="ts">
+import {defineComponent, ref} from 'vue';
+import {add} from 'ionicons/icons';
+import router from '@/router/index.ts'
+import {sizeToClosestUnit} from "@/util";
+import {mapActions, mapState} from 'vuex';
+import SendDefault from '@/components/SendDefault.vue';
+import CardModal from '@/components/CardModal.vue';
+import {SendStep} from "@/types";
+// import {Step} from "@/go/wormhole/types";
+
+// TODO: use proper state management.
+const isOpenRef = ref(false);
+
+declare interface SendData {
+    step: SendStep;
+    file?: File;
+}
+
+export default defineComponent({
+    name: 'Send',
+    data(): SendData {
+        return {
+            step: SendStep.Default,
+            file: undefined,
+        };
+    },
+    // props: ['title', 'subtitle'],
+    computed: {
+        ...mapState(['open', 'done', 'step']),
+    },
+    components: {
+        // IonModal,
+        CardModal,
+        SendDefault,
+        // SendInstructions,
+    },
+    mounted() {
+        if (typeof (this.$route.query.select) !== 'undefined') {
+            this.select();
+            this.router.replace(this.$route.path)
+        }
+    },
+    methods: {
+        ...mapActions(['setOpen', 'setDone', 'nextStep']),
+        onStep(checkStep: SendStep): boolean {
+            return this.step === checkStep;
         },
-        computed: {
-            ...mapState(['open', 'done']),
+        select() {
+            (this.$refs.fileInput as HTMLInputElement).click();
         },
-        components: {
-            IonToolbar,
-            IonTitle,
-            IonContent,
-            IonPage,
-            IonButton,
-            IonLabel,
-            IonText,
-            IonIcon,
-            IonGrid,
-            IonRow,
-            IonCol,
-            IonModal,
-            MyHeader,
-            SendModal,
-            VersionFooter,
-        },
-        mounted() {
-            if (typeof (this.$route.query.select) !== 'undefined') {
-                this.select();
-                this.router.replace(this.$route.path)
+        fileChanged() {
+            const fileInput = this.$refs.fileInput as HTMLInputElement;
+            if (fileInput.files!.length > 0) {
+                this.file = fileInput.files![0] as File;
+                this.setOpen(true);
             }
         },
-        methods: {
-            ...mapActions(['setOpen', 'setDone']),
-            select() {
-                this.$refs.fileInput.click();
-            },
-            fileChanged() {
-                const fileInput = this.$refs.fileInput;
-                if (fileInput.files.length > 0) {
-                    this.file = fileInput.files[0];
-                    this.setOpen(true);
-                }
-            },
-            fileSize() {
-                return sizeToClosestUnit(this.file.size);
-            },
-            sendMore() {
-                this.setDone(false);
-                this.select();
-            },
+        fileSize() {
+            return typeof (this.file) !== 'undefined' ?
+                    sizeToClosestUnit(this.file.size) : '';
         },
-        setup() {
-            return {
-                add,
-                isOpenRef,
-                router,
-            };
-        }
-    });
+        sendMore() {
+            this.setDone(false);
+            this.select();
+        },
+    },
+    setup() {
+        return {
+            add,
+            isOpenRef,
+            router,
+            Step: SendStep,
+        };
+    }
+});
 </script>

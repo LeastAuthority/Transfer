@@ -21,6 +21,8 @@ export const FREE = 'client/free';
 export const SAVE_FILE = 'client/save_file';
 export const SET_CODE = 'client/set_code';
 
+export const NEXT_STEP = 'next_step';
+
 export interface RPCMessage {
     id: number;
 

@@ -1,6 +1,6 @@
 import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
 import {FileReader} from '@/go/wormhole/streaming';
-import Send from "@/views/Send.vue";
+import Send from "@/views/SendDefault.vue";
 
 export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
     // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",

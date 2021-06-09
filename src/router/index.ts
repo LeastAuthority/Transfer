@@ -1,32 +1,37 @@
 import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import Tabs from '../views/Tabs.vue'
+import Main from "@/views/Main.vue";
+import Send from "@/views/Send.vue";
+import SendContainer from "@/views/SendContainer.vue";
+import Receive from "@/views/Receive.vue";
+import ReceiveConfirm from "@/views/ReceiveConfirm.vue";
 
 const routes: Array<RouteRecordRaw> = [
+  // {
+  //   path: '/',
+  //   redirect: '/s'
+  // },
   {
     path: '/',
-    redirect: '/s'
-  },
-  {
-    path: '/',
-    component: Tabs,
+    component: Main,
     children: [
       {
         path: '',
-        redirect: '/s'
+        redirect: 's'
       },
       {
-        path: '/s',
-        component: () => import('@/views/Send.vue')
+        path: 's',
+        component: Send,
       },
       {
-        path: '/r',
-        component: () => import('@/views/Receive.vue')
+        path: 'r',
+        component: Receive,
       },
-      {
-        path: '/r/:code',
-        component: () => import('@/components/ReceiveConfirm.vue')
-      },
+      // {
+      //   path: 'r/:code',
+      //   component: ReceiveConfirm,
+      // },
     ]
   }
 ]

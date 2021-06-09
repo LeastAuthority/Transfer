@@ -97,7 +97,7 @@
     import {NEW_CLIENT, SEND_FILE} from "@/store/actions";
 
     export default defineComponent({
-        name: "SendModal.vue",
+        name: "SendInstructions",
         props: ['selectFile', 'file'],
         computed: {
             ...mapState(['host', 'code', 'progress']),
