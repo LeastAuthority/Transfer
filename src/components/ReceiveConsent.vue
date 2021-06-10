@@ -6,15 +6,25 @@
                     <ion-row class="ion-justify-content-center ion-align-items-center">
                         <ion-col>
                             <ion-text class="bold">
-                                {{fileMeta.name}}
+                                {{ fileMeta.name }}
                             </ion-text>
                             <ion-text>
-                                ({{fileSize}})
+                                ({{ fileSize }})
                             </ion-text>
-                            <ion-button>
+                            <ion-button
+                                    @click="download"
+                            >
                                 <ion-icon src="/assets/icon/download.svg"></ion-icon>
                                 <ion-label>Download</ion-label>
                             </ion-button>
+                        </ion-col>
+                    </ion-row>
+                    <ion-row>
+                        <ion-col>
+                            <ion-progress-bar color="primary"
+                                              v-show="progress >= 0"
+                                              :value="progress"
+                            ></ion-progress-bar>
                         </ion-col>
                     </ion-row>
                 </ion-grid>
@@ -156,17 +166,17 @@ export default defineComponent({
         IonCardContent,
         IonRow,
         IonCol,
-    //     IonPage,
-    //     IonContent,
-    //     IonGrid,
-    //     IonText,
-    //     IonButton,
-    //     IonToolbar,
-    //     IonTitle,
-    //     IonIcon,
-    //     IonProgressBar,
-    //     MyHeader,
-    //     VersionFooter,
+        //     IonPage,
+        //     IonContent,
+        //     IonGrid,
+        //     IonText,
+        //     IonButton,
+        //     IonToolbar,
+        //     IonTitle,
+        //     IonIcon,
+        //     IonProgressBar,
+        //     MyHeader,
+        //     VersionFooter,
     },
     methods: {
         ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setProgress']),
@@ -185,7 +195,7 @@ export default defineComponent({
                 const {accept, done} = await this[SAVE_FILE]({code: this.code, opts});
                 this.accept = accept;
                 // this.cancelSave = cancel;
-                done.then(() =>{
+                done.then(() => {
                     this.setDone(true);
                     this.reset();
                 }).catch(async (error) => {
