@@ -21,7 +21,7 @@
                                        style="border: 1px solid #424242; border-radius: 5px;"
                                        type="text"
                                        placeholder="Enter code here"
-                                       @change="(evt) => setCode(evt.target.value)"
+                                       @change="_setCode"
                             ></ion-input>
                         </ion-col>
                         <ion-col size="1">
@@ -54,6 +54,17 @@ import {
 export default {
     name: "ReceiveDefault",
     props: ['next', 'setCode'],
+    data() {
+        return {
+            code: '',
+        }
+    },
+    methods: {
+        _setCode(event) {
+            this.code = event.target.value;
+            this.setCode(this.code);
+        },
+    },
     computed: {
         nextButtonContents() {
             return 'Next';

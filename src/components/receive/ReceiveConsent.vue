@@ -116,27 +116,23 @@
 
 <script>
 import {
-    IonPage,
-    IonContent,
     IonGrid,
     IonRow,
     IonCol,
     IonText,
     IonButton,
-    IonToolbar,
-    IonTitle,
     IonIcon,
-    IonProgressBar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent,
+    IonProgressBar,
+    IonCardContent,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
 import {mapState, mapActions} from 'vuex';
 import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
 import router from '@/router/index.ts'
-import MyHeader from '@/components/MyHeader.vue';
-import VersionFooter from '@/components/VersionFooter.vue';
+// import VersionFooter from '@/components/VersionFooter.vue';
 import {sizeToClosestUnit} from "@/util";
-import {NEW_CLIENT, SAVE_FILE} from "../store/actions";
+import {NEW_CLIENT, SAVE_FILE} from "../../store/actions";
 
 const alertOpts = {
     buttons: ['OK'],
@@ -164,19 +160,14 @@ export default defineComponent({
     },
     components: {
         IonCardContent,
+        IonGrid,
         IonRow,
         IonCol,
-        //     IonPage,
-        //     IonContent,
-        //     IonGrid,
-        //     IonText,
-        //     IonButton,
-        //     IonToolbar,
-        //     IonTitle,
-        //     IonIcon,
-        //     IonProgressBar,
-        //     MyHeader,
-        //     VersionFooter,
+        IonText,
+        IonButton,
+        IonIcon,
+        IonProgressBar,
+        //VersionFooter,
     },
     methods: {
         ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setProgress']),

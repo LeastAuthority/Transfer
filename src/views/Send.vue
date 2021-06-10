@@ -47,8 +47,8 @@
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
-import SendDefault from '@/components/SendDefault.vue';
-import SendInstructions from '@/components/SendInstructions.vue';
+import SendDefault from '@/components/send/SendDefault.vue';
+import SendInstructions from '@/components/send/SendInstructions.vue';
 import CardModal from '@/components/CardModal.vue';
 import {SendStep} from "@/types";
 

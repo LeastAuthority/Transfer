@@ -51,8 +51,8 @@ import router from '@/router/index.ts'
 import MyHeader from '@/components/MyHeader.vue'
 import VersionFooter from "@/components/VersionFooter.vue";
 import CardModal from "@/components/CardModal.vue";
-import ReceiveDefault from "@/components/ReceiveDefault.vue";
-import ReceiveConsent from "@/components/ReceiveConsent.vue";
+import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
+import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
 import {ReceiveStep} from "@/types";
 
 export default defineComponent({
@@ -72,7 +72,7 @@ export default defineComponent({
             return /^\d+-\w+-\w+$/.test(this.code);
         },
         // TODO: can this error handling / alertController call be moved into an action?
-        async presentAlert(error) {
+        async presentAlert(error: string) {
             const alert = await alertController
                     .create({
                         // cssClass: 'my-custom-class',
@@ -83,7 +83,6 @@ export default defineComponent({
                     });
             await alert.present();
             await alert.onWillDismiss();
-            this.cancel();
         },
         navigate() {
             if (!this.codeIsValid()) {

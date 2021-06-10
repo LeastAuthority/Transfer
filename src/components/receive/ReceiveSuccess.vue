@@ -41,7 +41,7 @@
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
 
-    import MyHeader from "./MyHeader";
+    import MyHeader from "../MyHeader";
 
     export default defineComponent({
         name: "ReceiveSuccess",

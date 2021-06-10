@@ -182,7 +182,7 @@ import {add} from 'ionicons/icons';
 
 import {sizeToClosestUnit} from '@/util';
 
-import router from '@/router/index.ts'
+import router from '@/router'
 import MyHeader from '@/components/MyHeader.vue';
 import VersionFooter from "@/components/VersionFooter.vue";
 import CopyButton from "@/components/CopyButton.vue";
