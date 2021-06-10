@@ -25,11 +25,11 @@
                             </ion-text>
                         </div>
                         <ion-button class="select-button"
-                                    color="medium"
+                                    color="grey"
                                     size="large"
                                     @click="select">
                                 <ion-icon class="dark-label-icon" :icon="add"></ion-icon>
-                                <ion-label color="dark" class="ion-text-lowercase">select</ion-label>
+                                <ion-label class="ion-text-lowercase">select</ion-label>
                         </ion-button>
                     </div>
                 </div>

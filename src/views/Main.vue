@@ -15,13 +15,13 @@
                         </ion-text>
                     </ion-col>
                     <ion-col size="6" align="right">
-                        <ion-button color="light"
+                        <ion-button color="grey"
                                     class="ion-margin-end"
                                     @click="toggleNav()">
                             <!--                            <ion-icon class="dark-label-icon" :icon="navIcon"></ion-icon>-->
                             <ion-icon class="nav dark-label-icon" :rotate="rotated"
                                       src="/assets/icon/download.svg"></ion-icon>
-                            <ion-label color="dark">
+                            <ion-label>
                                 {{ navButtonText }}
                             </ion-label>
                         </ion-button>

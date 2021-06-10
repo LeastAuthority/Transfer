@@ -2,5 +2,11 @@ export enum SendStep {
     Default = 0,
     Instructions,
     Progress,
-    Success,
+    Complete,
+}
+export enum ReceiveStep {
+    Default = 0,
+    Consent,
+    Progress,
+    Complete,
 }

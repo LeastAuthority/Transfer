@@ -8,13 +8,14 @@
         <!--            @onDidDismiss="setOpen(false)"-->
         <!--    >-->
         <SendDefault
-                v-if="isStep(SendStep.Default)"
+                v-if="onStep(SendStep.Default)"
                 :select="select"
         ></SendDefault>
         <SendInstructions
-                v-if="isStep(SendStep.Instructions)"
+                v-if="onStep(SendStep.Instructions)"
                 :file="file"
-                :step-back="stepBack"
+                :back="stepBack"
+                :next="nextFrom(SendStep.Instructions)"
         ></SendInstructions>
         <input ref="fileInput"
                type="file"
@@ -92,11 +93,11 @@ export default defineComponent({
                 this.stepForward();
             }
         },
-        isStep(step: SendStep): boolean {
+        onStep(step: SendStep): boolean {
             return this.step === step;
         },
         stepForward() {
-            if (this.step < SendStep.Success) {
+            if (this.step < SendStep.Complete) {
                 this.step++;
             } else {
                 this.step = SendStep.Default;
@@ -105,6 +106,13 @@ export default defineComponent({
         stepBack() {
             if (this.step > SendStep.Default) {
                 this.step--;
+            }
+        },
+        nextFrom(step: SendStep): () => void {
+            return (): void => {
+                if (this.step === step) {
+                    this.step++;
+                }
             }
         },
         //     fileSize() {

@@ -6,7 +6,6 @@ import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
 import {errRelay, errMailbox} from "@/errors";
-import {SendStep} from "@/types";
 
 let host = 'http://localhost:8080';
 
@@ -145,15 +144,6 @@ function newClientMutation(state: any, config?: ClientConfig): void {
         _config = {...state.config};
     }
     client = new ClientWorker(_config)
-}
-
-// TODO: be more specific with types.
-function nextStepMutation(state: any): void {
-    if (state.step < SendStep.Success) {
-        state.step++;
-    } else {
-        state.step = 0;
-    }
 }
 
 export default createStore({

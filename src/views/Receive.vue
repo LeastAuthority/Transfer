@@ -1,18 +1,27 @@
 <template>
-<!--    <transition name="slide-secondary">-->
-        <!--    <ion-page>-->
-        <!--        <ion-content>-->
-        <CardModal>
-            <!--            :is-open="onStep(Step.Default)"-->
-            <!--            css-class="modal"-->
-            <!--            @onDidDismiss="setOpen(false)"-->
-            <!--    >-->
-            <ReceiveDefault
-            ></ReceiveDefault>
-        </CardModal>
-        <!--        </ion-content>-->
-        <!--    </ion-page>-->
-<!--    </transition>-->
+    <!--    <transition name="slide-secondary">-->
+    <!--    <ion-page>-->
+    <!--        <ion-content>-->
+    <CardModal>
+        <!--            :is-open="onStep(Step.Default)"-->
+        <!--            css-class="modal"-->
+        <!--            @onDidDismiss="setOpen(false)"-->
+        <!--    >-->
+        <ReceiveDefault
+                v-if="onStep(ReceiveStep.Default)"
+                :next="nextFrom(ReceiveStep.Default)"
+                :setCode="setCode"
+        ></ReceiveDefault>
+        <ReceiveConsent
+                v-if="onStep(ReceiveStep.Consent)"
+                :code="code"
+                :next="nextFrom(ReceiveStep.Consent)"
+                :back="stepBack"
+        ></ReceiveConsent>
+    </CardModal>
+    <!--        </ion-content>-->
+    <!--    </ion-page>-->
+    <!--    </transition>-->
 </template>
 
 <style lang="css">
@@ -21,7 +30,7 @@ ion-card {
 }
 </style>
 
-<script>
+<script lang="ts">
 import {
     IonPage,
     IonToolbar,
@@ -41,17 +50,24 @@ import {defineComponent, Transition} from 'vue';
 import router from '@/router/index.ts'
 import MyHeader from '@/components/MyHeader.vue'
 import VersionFooter from "@/components/VersionFooter.vue";
-import CardModal from "@/components/CardModal";
-import ReceiveDefault from "@/components/ReceiveDefault";
+import CardModal from "@/components/CardModal.vue";
+import ReceiveDefault from "@/components/ReceiveDefault.vue";
+import ReceiveConsent from "@/components/ReceiveConsent.vue";
+import {ReceiveStep} from "@/types";
 
 export default defineComponent({
     name: 'Receive',
     data() {
         return {
             code: '',
+            step: 0,
         }
     },
     methods: {
+        setCode(code: string) {
+            console.log(code)
+            this.code = code;
+        },
         codeIsValid() {
             return /^\d+-\w+-\w+$/.test(this.code);
         },
@@ -80,6 +96,28 @@ export default defineComponent({
         paste() {
             console.log('paste clicked.')
         },
+        onStep(step: ReceiveStep): boolean {
+            return this.step === step;
+        },
+        stepForward() {
+            if (this.step < ReceiveStep.Complete) {
+                this.step++;
+            } else {
+                this.step = ReceiveStep.Default;
+            }
+        },
+        stepBack() {
+            if (this.step > ReceiveStep.Default) {
+                this.step--;
+            }
+        },
+        nextFrom(step: ReceiveStep): () => void {
+            return (): void => {
+                if (this.step === step) {
+                    this.step++;
+                }
+            }
+        },
     },
     components: {
         // IonToolbar,
@@ -98,11 +136,13 @@ export default defineComponent({
         // Transition,
         CardModal,
         ReceiveDefault,
+        ReceiveConsent,
     },
     setup() {
         return {
             clipboardOutline,
             router,
+            ReceiveStep,
         }
     }
 });
