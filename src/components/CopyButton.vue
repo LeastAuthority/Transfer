@@ -1,9 +1,10 @@
 <template>
     <ion-button class="copy-button"
-                color="light"
+                color="primary"
                 @click="copyLink"
                 :disabled="disabled">
-        <ion-icon :icon="linkOutline"></ion-icon>
+        <ion-icon :icon="copy"></ion-icon>
+        <ion-label class="ion-padding-start">Copy</ion-label>
     </ion-button>
 </template>
 
@@ -12,9 +13,9 @@
 
     import {
         IonIcon,
-        IonButton,
+        IonButton, IonLabel,
     } from '@ionic/vue';
-    import {linkOutline} from 'ionicons/icons';
+    import {copy} from 'ionicons/icons';
 
     export default defineComponent({
         name: 'CopyButton.vue',
@@ -30,14 +31,15 @@
                 navigator.clipboard.writeText(url);
             },
         },
-        setup() {
-            return {
-                linkOutline,
-            }
-        },
         components: {
             IonIcon,
+            IonLabel,
             IonButton,
-        }
+        },
+        setup() {
+            return {
+                copy,
+            }
+        },
     })
 </script>

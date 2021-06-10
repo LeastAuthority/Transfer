@@ -17,4 +17,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
+ion-card {
+    position: relative;
+}
 </style>

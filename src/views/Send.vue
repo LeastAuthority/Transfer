@@ -1,53 +1,38 @@
 <template>
-    <CardModal
-            :is-open="onStep(Step.Default)"
-            css-class="modal"
-            @onDidDismiss="setOpen(false)"
-    >
+    <!--    <transition name="slide-primary">-->
+    <!--    <ion-page>-->
+    <!--        <ion-content>-->
+    <CardModal>
+        <!--            :is-open="onStep(Step.Default)"-->
+        <!--            css-class="modal"-->
+        <!--            @onDidDismiss="setOpen(false)"-->
+        <!--    >-->
         <SendDefault
+                v-if="isStep(SendStep.Default)"
                 :select="select"
         ></SendDefault>
+        <SendInstructions
+                v-if="isStep(SendStep.Instructions)"
+                :file="file"
+                :step-back="stepBack"
+        ></SendInstructions>
+        <input ref="fileInput"
+               type="file"
+               class="ion-hide"
+               @change="fileChanged"
+        />
     </CardModal>
-<!--    <CardModal-->
-<!--            :is-open="onStep(Step.SendInstructions)"-->
-<!--            css-class="modal"-->
-<!--            @onDidDismiss="setOpen(false)"-->
-<!--    >-->
-<!--        <SendInstructions-->
-<!--        ></SendInstructions>-->
-<!--    </CardModal>-->
-<!--    <CardModal-->
-<!--            :is-open="onStep(Step.SendProgress)"-->
-<!--            css-class="modal"-->
-<!--            @onDidDismiss="setOpen(false)"-->
-<!--    >-->
-<!--        <SendProgress-->
-<!--        ></SendProgress>-->
-<!--    </CardModal>-->
-<!--    <CardModal-->
-<!--            :is-open="onStep(Step.SendSuccess)"-->
-<!--            css-class="modal"-->
-<!--            @onDidDismiss="setOpen(false)"-->
-<!--    >-->
-<!--        <SendSuccess-->
-<!--        ></SendSuccess>-->
-<!--    </CardModal>-->
-    <input ref="fileInput"
-           type="file"
-           class="ion-hide"
-           @change="fileChanged"
-    />
-    <!--        <version-footer></version-footer>-->
-    <!--    </ion-page>-->
 </template>
 
+<style scoped>
+</style>
+
 <style lang="css">
+/*
 .modal {
-    //--min-width: 100vw;
-    //--min-height: 100vh;
-    max-height: 500px;
+//--min-width: 100vw; //--min-height: 100vh; max-height: 500px;
     max-width: 700px;
-}
+} */
 
 .size {
     font-size: small;
@@ -58,32 +43,13 @@
 }
 </style>
 
-<style scoped>
-.italic {
-    font-style: italic;
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.drag-n-drop {
-    background-color: #f2f2f2;
-    border-style: dashed;
-    border-width: 3px;
-}
-</style>
-
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
-import router from '@/router/index.ts'
-import {sizeToClosestUnit} from "@/util";
-import {mapActions, mapState} from 'vuex';
 import SendDefault from '@/components/SendDefault.vue';
+import SendInstructions from '@/components/SendInstructions.vue';
 import CardModal from '@/components/CardModal.vue';
 import {SendStep} from "@/types";
-// import {Step} from "@/go/wormhole/types";
 
 // TODO: use proper state management.
 const isOpenRef = ref(false);
@@ -102,26 +68,20 @@ export default defineComponent({
         };
     },
     // props: ['title', 'subtitle'],
-    computed: {
-        ...mapState(['open', 'done', 'step']),
-    },
-    components: {
-        // IonModal,
-        CardModal,
-        SendDefault,
-        // SendInstructions,
-    },
-    mounted() {
-        if (typeof (this.$route.query.select) !== 'undefined') {
-            this.select();
-            this.router.replace(this.$route.path)
-        }
-    },
+    // computed: {
+    //     ...mapState(['open', 'done', 'step']),
+    // },
+    // mounted() {
+    //     if (typeof (this.$route.query.select) !== 'undefined') {
+    //         this.select();
+    //         this.router.replace(this.$route.path)
+    //     }
+    // },
     methods: {
-        ...mapActions(['setOpen', 'setDone', 'nextStep']),
-        onStep(checkStep: SendStep): boolean {
-            return this.step === checkStep;
-        },
+        //     ...mapActions(['setOpen', 'setDone', 'nextStep']),
+        //     onStep(checkStep: SendStep): boolean {
+        //         return this.step === checkStep;
+        //     },
         select() {
             (this.$refs.fileInput as HTMLInputElement).click();
         },
@@ -129,24 +89,48 @@ export default defineComponent({
             const fileInput = this.$refs.fileInput as HTMLInputElement;
             if (fileInput.files!.length > 0) {
                 this.file = fileInput.files![0] as File;
-                this.setOpen(true);
+                this.stepForward();
             }
         },
-        fileSize() {
-            return typeof (this.file) !== 'undefined' ?
-                    sizeToClosestUnit(this.file.size) : '';
+        isStep(step: SendStep): boolean {
+            return this.step === step;
         },
-        sendMore() {
-            this.setDone(false);
-            this.select();
+        stepForward() {
+            if (this.step < SendStep.Success) {
+                this.step++;
+            } else {
+                this.step = SendStep.Default;
+            }
         },
+        stepBack() {
+            if (this.step > SendStep.Default) {
+                this.step--;
+            }
+        },
+        //     fileSize() {
+        //         return typeof (this.file) !== 'undefined' ?
+        //                 sizeToClosestUnit(this.file.size) : '';
+        //     },
+        //     sendMore() {
+        //         this.setDone(false);
+        //         this.select();
+        //     },
+    },
+    components: {
+        // IonPage,
+        // IonContent,
+        // IonModal,
+        // Transition,
+        CardModal,
+        SendDefault,
+        SendInstructions,
     },
     setup() {
         return {
             add,
-            isOpenRef,
-            router,
-            Step: SendStep,
+            // isOpenRef,
+            // router,
+            SendStep,
         };
     }
 });

@@ -1,10 +1,10 @@
 <template>
-    <ion-page>
-        <my-header></my-header>
-        <ion-content :fullscreen="true">
-            <ion-toolbar>
-                <ion-title size="large" class="ion-text-uppercase">Receive Success!</ion-title>
-            </ion-toolbar>
+<!--    <ion-page>-->
+<!--        <my-header></my-header>-->
+<!--        <ion-content :fullscreen="true">-->
+<!--            <ion-toolbar>-->
+<!--                <ion-title size="large" class="ion-text-uppercase">Receive Success!</ion-title>-->
+<!--            </ion-toolbar>-->
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
@@ -22,8 +22,8 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-        </ion-content>
-    </ion-page>
+<!--        </ion-content>-->
+<!--    </ion-page>-->
 </template>
 
 <script>
@@ -41,7 +41,7 @@
     } from '@ionic/vue';
     import {defineComponent} from 'vue';
 
-    import MyHeader from "../components/MyHeader";
+    import MyHeader from "./MyHeader";
 
     export default defineComponent({
         name: "ReceiveSuccess",

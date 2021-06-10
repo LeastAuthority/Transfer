@@ -1,58 +1,46 @@
 <template>
-    <!--    <ion-card>-->
-    <ion-card-header>
-        <ion-card-title>
-            <!--            {{title}}-->
-            Send files with ease, speed, and security
-        </ion-card-title>
-        <ion-card-subtitle>
-            <!--            {{subtitle}}-->
-            No sign-ups. No snooping. No nonsense. <span class="italic">Just send</span>.
-        </ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-        <div class="flex-col drag-n-drop">
-            <!--    <ion-grid class="drag-n-drop">-->
-            <!--        <ion-row>-->
-            <!--            <ion-col class="ion-text-center">-->
-            <div class="flex-row ion-text-center">
-                <ion-text class="bold">
-                    drag a file
-                </ion-text>
-            </div>
-            <!--            </ion-col>-->
-            <!--        </ion-row>-->
-            <!--        <ion-row>-->
-            <!--            <ion-col class="ion-text-center">-->
-            <div class="flex-row ion-text-center">
-                <ion-text>
-                    or
-                </ion-text>
-            </div>
-            <!--            </ion-col>-->
-            <!--        </ion-row>-->
-            <!--        <ion-row>-->
-            <!--            <ion-col class="ion-text-center">-->
-            <div class="flex-row ion-text-center">
-                <ion-button class="select-button"
-                            color="medium"
-                            size="large"
-                            @click="select">
-                    <ion-icon class="dark-label-icon" :icon="add"></ion-icon>
-                    <ion-label color="dark" class="ion-text-lowercase">select</ion-label>
-                </ion-button>
-            </div>
-            <!--            </ion-col>-->
-            <!--        </ion-row>-->
-            <!--    </ion-grid>-->
+    <transition name="step-fade" mode="out-in">
+        <div>
+            <ion-card-header>
+                <ion-card-title>
+                    <!--            {{title}}-->
+                    Send files with ease, speed, and security
+                </ion-card-title>
+                <ion-card-subtitle>
+                    <!--            {{subtitle}}-->
+                    No sign-ups. No snooping. No nonsense. <span class="italic">Just send</span>.
+                </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content class="ion-text-center">
+                <div class="flex-col drag-n-drop ion-justify-content-center">
+                    <div>
+                        <div class="ion-margin-bottom">
+                            <ion-text class="bold">
+                                drag a file
+                            </ion-text>
+                        </div>
+                        <div class="ion-margin-bottom">
+                            <ion-text>
+                                or
+                            </ion-text>
+                        </div>
+                        <ion-button class="select-button"
+                                    color="medium"
+                                    size="large"
+                                    @click="select">
+                                <ion-icon class="dark-label-icon" :icon="add"></ion-icon>
+                                <ion-label color="dark" class="ion-text-lowercase">select</ion-label>
+                        </ion-button>
+                    </div>
+                </div>
+            </ion-card-content>
         </div>
-    </ion-card-content>
-    <!--    </ion-card>-->
+    </transition>
 </template>
 
 <script>
 import {add} from 'ionicons/icons';
-import {defineComponent} from "vue";
+import {defineComponent, Transition} from "vue";
 
 import {
     IonButton,
@@ -83,6 +71,7 @@ export default defineComponent({
         IonLabel,
         IonIcon,
         IonText,
+        Transition,
     },
     setup() {
         return {
@@ -93,10 +82,26 @@ export default defineComponent({
 </script>
 
 <style scoped>
+/*:host-context(.button-solid.ion-color) .button-inner {*/
+:host(.button-solid.ion-color) .button-native .button-inner {
+    background: green !important;
+    flex-direction: column !important;
+}
+
+.step-fade-enter-active, .step-fade-leave-active {
+    transition: opacity .3s ease;
+//position: absolute; //top: 0; //left: 0; //right: 0;
+}
+
+.step-fade-enter-from, .step-fade-leave-to {
+    opacity: 0;
+}
+
 .bold {
     font-weight: bold;
 }
 
+/* TODO: use ion- classes instead where possible */
 .flex-col {
     display: flex;
     flex-direction: column;
