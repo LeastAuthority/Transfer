@@ -1,7 +1,7 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
-import {NEW_CLIENT, SAVE_FILE, SEND_FILE} from "@/store/actions";
+import {NEW_CLIENT, SAVE_FILE, SEND_FILE, SET_CODE} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
@@ -12,8 +12,8 @@ let host = 'http://localhost:8080';
 let defaultConfig: ClientConfig | undefined;
 if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-    // host = 'https://wormhole.bryanchriswhite.com';
-    host = 'https://test.winden.la.bryanchriswhite.com';
+    host = 'https://wormhole.bryanchriswhite.com';
+    // host = 'https://test.winden.la.bryanchriswhite.com';
 }
 
 let client = new ClientWorker(defaultConfig);
@@ -146,6 +146,11 @@ function newClientMutation(state: any, config?: ClientConfig): void {
     client = new ClientWorker(_config)
 }
 
+// TODO: be more specific with types.
+function setCodeMutation(state: any, code: string): void {
+    state.code = code;
+}
+
 export default createStore({
     devtools: process.env['NODE_ENV'] !== 'production',
     state() {
@@ -172,6 +177,7 @@ export default createStore({
         setProgress: setProgressMutation,
         [NEW_CLIENT]: newClientMutation,
         [SEND_FILE]: sendFileMutation,
+        [SET_CODE]: setCodeMutation,
     },
     actions: {
         setConfig({commit, dispatch}, config) {

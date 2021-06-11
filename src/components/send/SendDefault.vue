@@ -1,5 +1,5 @@
 <template>
-    <transition name="step-fade" mode="out-in">
+<!--    <transition name="step-fade">-->
         <div>
             <ion-card-header>
                 <ion-card-title>
@@ -35,7 +35,7 @@
                 </div>
             </ion-card-content>
         </div>
-    </transition>
+<!--    </transition>-->
 </template>
 
 <script>
@@ -71,7 +71,7 @@ export default defineComponent({
         IonLabel,
         IonIcon,
         IonText,
-        Transition,
+        // Transition,
     },
     setup() {
         return {

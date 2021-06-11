@@ -22,6 +22,7 @@
                                        type="text"
                                        placeholder="Enter code here"
                                        @change="_setCode"
+                                       :value="code"
                             ></ion-input>
                         </ion-col>
                         <ion-col size="1">
@@ -38,7 +39,7 @@
     </transition>
 </template>
 
-<script>
+<script lang="ts">
 import {
     IonButton,
     IonCardContent,
@@ -50,22 +51,20 @@ import {
     IonRow,
     IonText
 } from "@ionic/vue";
+import {mapActions, mapMutations, mapState} from "vuex";
+import {SET_CODE} from "@/store/actions";
 
 export default {
     name: "ReceiveDefault",
-    props: ['next', 'setCode'],
-    data() {
-        return {
-            code: '',
-        }
-    },
+    props: ['next'],
     methods: {
+        ...mapMutations([SET_CODE]),
         _setCode(event) {
-            this.code = event.target.value;
-            this.setCode(this.code);
+            this[SET_CODE](event.target.value);
         },
     },
     computed: {
+        ...mapState(['code']),
         nextButtonContents() {
             return 'Next';
         }

@@ -49,7 +49,7 @@ ion-button.waiting {
         },
         methods: {
             copyLink() {
-                const url = `${this.host}/#/r/${this.code}`;
+                const url = `${this.host}/#/${this.code}`;
                 navigator.clipboard.writeText(url);
                 window.setTimeout(() => {
                     this.waiting = false;

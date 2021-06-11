@@ -1,5 +1,5 @@
 <template>
-    <transition name="step-fade" mode="out-in">
+<!--    <transition name="step-fade">-->
         <div>
             <ion-card-header>
                 <ion-card-title>
@@ -74,7 +74,7 @@
 <!--                </div>-->
             </ion-card-content>
         </div>
-    </transition>
+<!--    </transition>-->
     <!--    <ion-page>-->
     <!--        <my-header></my-header>-->
     <!--        <ion-content :fullscreen="true">-->
@@ -253,7 +253,7 @@ export default defineComponent({
     //     this.reset();
     // },
     components: {
-        Transition,
+        // Transition,
         // IonPage,
         // IonContent,
         IonGrid,

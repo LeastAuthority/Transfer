@@ -10,11 +10,9 @@
         <ReceiveDefault
                 v-if="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
-                :setCode="setCode"
         ></ReceiveDefault>
         <ReceiveConsent
-                v-if="onStep(ReceiveStep.Consent)"
-                :code="code"
+                v-else-if="onStep(ReceiveStep.Consent)"
                 :next="nextFrom(ReceiveStep.Consent)"
                 :back="stepBack"
         ></ReceiveConsent>

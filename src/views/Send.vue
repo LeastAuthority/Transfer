@@ -7,16 +7,18 @@
         <!--            css-class="modal"-->
         <!--            @onDidDismiss="setOpen(false)"-->
         <!--    >-->
-        <SendDefault
-                v-if="onStep(SendStep.Default)"
-                :select="select"
-        ></SendDefault>
-        <SendInstructions
-                v-if="onStep(SendStep.Instructions)"
-                :file="file"
-                :back="stepBack"
-                :next="nextFrom(SendStep.Instructions)"
-        ></SendInstructions>
+        <transition name="fade">
+            <SendDefault
+                    v-if="onStep(SendStep.Default)"
+                    :select="select"
+            ></SendDefault>
+            <SendInstructions
+                    v-else-if="onStep(SendStep.Instructions)"
+                    :file="file"
+                    :back="stepBack"
+                    :next="nextFrom(SendStep.Instructions)"
+            ></SendInstructions>
+        </transition>
         <input ref="fileInput"
                type="file"
                class="ion-hide"
@@ -26,7 +28,15 @@
 </template>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}
 </style>
+
 
 <style lang="css">
 /*

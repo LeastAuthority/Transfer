@@ -114,7 +114,7 @@
     <!--    </ion-page>-->
 </template>
 
-<script>
+<script lang="ts">
 import {
     IonGrid,
     IonRow,
@@ -132,7 +132,7 @@ import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ioni
 import router from '@/router/index.ts'
 // import VersionFooter from '@/components/VersionFooter.vue';
 import {sizeToClosestUnit} from "@/util";
-import {NEW_CLIENT, SAVE_FILE} from "../../store/actions";
+import {NEW_CLIENT, SAVE_FILE} from "@/store/actions";
 
 const alertOpts = {
     buttons: ['OK'],
@@ -140,14 +140,14 @@ const alertOpts = {
 
 export default defineComponent({
     name: "ReceiveConsent",
-    props: ['code', 'back', 'next'],
+    props: ['back', 'next'],
     // data() {
     //   return {
     //       accept: undefined,
     //   }
     // },
     computed: {
-        ...mapState(['config', 'fileMeta', 'progress', 'done']),
+        ...mapState(['config', 'code', 'fileMeta', 'progress', 'done']),
         fileSize() {
             return sizeToClosestUnit(this.fileMeta.size);
         },
