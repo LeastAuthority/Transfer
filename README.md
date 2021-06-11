@@ -1,5 +1,4 @@
 # MyFileTransfer
-([wormhole.bryanchriswhite.com](https://wormhole.bryanchriswhite.com))
 
 File transfer app that uses the magic wormhole protocol and ionic/vue UI framework.
 
