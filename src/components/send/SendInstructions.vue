@@ -35,10 +35,10 @@
                                    readonly
                                    :value="link"
                         ></ion-input>
-                        <copy-button class="ion-margin-start"
-                                     color="yellow"
-                                     :text="link"
-                        ></copy-button>
+                        <WaitButton class="ion-margin-start"
+                                    color="yellow"
+                                    :text="link"
+                        ></WaitButton>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
@@ -103,7 +103,12 @@ import {
     IonTitle,
     IonToolbar,
     IonProgressBar,
-    alertController, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonLabel,
+    alertController,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonCardContent,
+    IonLabel,
 } from '@ionic/vue';
 import {copy, close} from 'ionicons/icons';
 import {defineComponent, Transition} from 'vue';
@@ -115,7 +120,7 @@ import {sizeToClosestUnit} from '@/util';
 import router from '@/router'
 import MyHeader from '@/components/MyHeader.vue';
 import VersionFooter from "@/components/VersionFooter.vue";
-import CopyButton from "@/components/CopyButton.vue";
+import WaitButton from "@/components/WaitButton.vue";
 import {NEW_CLIENT, RESET_PROGRESS, SEND_FILE, SET_PROGRESS} from "@/store/actions";
 
 export default defineComponent({
@@ -194,7 +199,7 @@ export default defineComponent({
         IonCardHeader,
         IonCardTitle,
         IonCardContent,
-        CopyButton,
+        WaitButton,
     },
     setup() {
         return {

@@ -7,15 +7,14 @@
         ></SendDefault>
         <SendInstructions
                 :active="onStep(SendStep.Instructions)"
-                :file="file"
                 :back="backFrom(SendStep.Instructions)"
                 :next="nextFrom(SendStep.Instructions)"
                 :complete="nextFrom(SendStep.Progress)"
+                :file="file"
         ></SendInstructions>
         <SendProgress
                 :active="onStep(SendStep.Progress)"
                 :back="backFrom(SendStep.Progress)"
-                :next="nextFrom(SendStep.Progress)"
         ></SendProgress>
         <SendComplete
                 :active="onStep(SendStep.Complete)"

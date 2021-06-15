@@ -29,8 +29,8 @@
                 </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col>
-                        <ion-progress-bar color="medium"
-                                          :value="progress"
+                        <!--                        TODO: something better.-->
+                        <ion-progress-bar style="opacity: 0;"
                         ></ion-progress-bar>
                     </ion-col>
                 </ion-row>
@@ -74,17 +74,18 @@ import router from '@/router/index.ts'
 import {sizeToClosestUnit} from "@/util";
 import {ACCEPT_FILE, NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_PROGRESS} from "@/store/actions";
 import {FileMeta} from "@/store";
+import {TransferProgress} from "@/go/wormhole/types";
 
 declare interface ReceiveConsentData {
-    done?: Promise<void>;
+    receivingPromise?: Promise<TransferProgress>;
 }
 
 export default defineComponent({
     name: "ReceiveConsent",
-    props: ['active', 'back', 'next'],
+    props: ['active', 'back', 'next', 'complete'],
     data(): ReceiveConsentData {
         return {
-            done: undefined,
+            receivingPromise: undefined,
         }
     },
     computed: {
@@ -106,14 +107,14 @@ export default defineComponent({
         ...mapActions([NEW_CLIENT, SAVE_FILE, ACCEPT_FILE, 'alert']),
         ...mapMutations([SET_PROGRESS, RESET_CODE, RESET_PROGRESS]),
         async saveFileOnce(): Promise<void> {
-            if (this.active && typeof (this.done) === 'undefined' &&
+            if (this.active && typeof (this.receivingPromise) === 'undefined' &&
                     typeof (this.fileMeta.done) === 'undefined') {
                 try {
-                    this.done = this[SAVE_FILE](this.code);
-                    await this.done.then(() => {
-                        this.done = undefined;
-                    });
-                    this.next();
+                    this.receivingPromise = this[SAVE_FILE](this.code);
+                    const {done} = await this.receivingPromise;
+                    await done
+                    this.receivingPromise = undefined;
+                    this.complete();
                 } catch (error) {
                     await this.alert({error});
                     this.cancel();
@@ -121,19 +122,11 @@ export default defineComponent({
             }
         },
         async download() {
-            console.log('Download clicked!');
+            this.next();
             this[ACCEPT_FILE]();
-            // TODO: cleanup.
-            // try {
-            //     if (typeof(this.accept) !== 'function') {
-            //         throw new Error('accept is not a function')
-            //     }
-            //     await this.accept!();
-            // } catch (error) {
-            //     this.alert({error, opts: alertOpts})
-            // }
         },
         cancel() {
+            // TODO: move into action.
             // TODO: *use reject here.
             this.back();
             this[RESET_PROGRESS]();
@@ -151,7 +144,6 @@ export default defineComponent({
         IonIcon,
         IonLabel,
         IonProgressBar,
-        //VersionFooter,
     },
     setup() {
         return {

@@ -1,12 +1,5 @@
 import {createRouter, createWebHashHistory} from '@ionic/vue-router';
 import {RouteRecordRaw} from 'vue-router';
-import Tabs from '../views/Tabs.vue'
-import Main from "@/views/Main.vue";
-import Send from "@/views/Send.vue";
-import SendContainer from "@/views/SendContainer.vue";
-import Receive from "@/views/Receive.vue";
-import ReceiveConfirm from "@/views/ReceiveConfirm.vue";
-import {defineComponent} from "vue";
 import {SET_CODE} from "@/store/actions";
 
 const routes: Array<RouteRecordRaw> = [
@@ -21,28 +14,20 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/s',
         component: () => import('@/views/Send.vue'),
-        // component: Send,
         meta: {transition: 'slide-left'},
     },
     {
         path: '/r',
         component: () => import('@/views/Receive.vue'),
-        // component: Receive,
         meta: {transition: 'slide-right'},
     },
     {
         path: '/:code',
-        redirect: (to): string => {
+        redirect: (_): string => {
             return `/r?hasCode`
         },
         // meta: {transition: 'slide-right'},
     },
-    // {
-    //   path: 'r/:code',
-    //   component: ReceiveConfirm,
-    // },
-    // ]
-    // }
 ]
 
 const router = createRouter({

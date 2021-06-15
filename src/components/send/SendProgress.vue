@@ -52,7 +52,9 @@
 import {defineComponent} from "vue";
 import {
     IonButton,
-    IonCardContent, IonCardHeader, IonCardTitle,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
     IonCol,
     IonGrid,
     IonIcon,
@@ -66,7 +68,7 @@ import {RESET_PROGRESS} from "@/store/actions";
 
 export default defineComponent({
     name: "SendProgress.vue",
-    props: ['active', 'back', 'next'],
+    props: ['active', 'back'],
     computed: {
         ...mapState(['progress', 'fileMeta']),
         // TODO: calculate!
@@ -104,5 +106,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 </style>

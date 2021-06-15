@@ -15,12 +15,13 @@
                 :active="onStep(ReceiveStep.Consent)"
                 :back="backFrom(ReceiveStep.Consent)"
                 :next="nextFrom(ReceiveStep.Consent)"
+                :complete="nextFrom(ReceiveStep.Progress)"
         ></ReceiveConsent>
 
-        <!--  // TODO: -->
-<!--        <ReceiveProgress-->
-<!--        :active="onStep(ReceiveStep.Progress)"-->
-        <!--        ></ReceiveProgress>-->
+        <ReceiveProgress
+                :active="onStep(ReceiveStep.Progress)"
+                :back="goToStep(ReceiveStep.Default)"
+        ></ReceiveProgress>
 
         <ReceiveComplete
                 :active="onStep(ReceiveStep.Complete)"
@@ -45,8 +46,6 @@ import {clipboardOutline} from 'ionicons/icons'
 import {defineComponent, Transition} from 'vue';
 
 import router from '@/router/index.ts'
-// import MyHeader from '@/components/MyHeader.vue'
-// import VersionFooter from "@/components/VersionFooter.vue";
 import CardModal from "@/components/CardModal.vue";
 import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
@@ -54,18 +53,18 @@ import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
 import {ReceiveStep} from "@/types";
 import {RESET_PROGRESS, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
 import {mapMutations} from "vuex";
+import ReceiveProgress from "@/components/receive/ReceiveProgress.vue";
 
 export default defineComponent({
     name: 'Receive',
     beforeUpdate() {
-        if (typeof(this.$route.query.hasCode) !== 'undefined') {
+        if (typeof (this.$route.query.hasCode) !== 'undefined') {
             this.$router.replace('/r');
             this.step = ReceiveStep.Consent;
         }
     },
     data() {
         return {
-            // code: '',
             step: 0,
         }
     },
@@ -74,7 +73,7 @@ export default defineComponent({
         onStep(step: ReceiveStep): boolean {
             return this.step === step;
         },
-        stepForward() {
+        stepForward(): void {
             if (this.step < ReceiveStep.Complete) {
                 this.step++;
             } else {
@@ -83,7 +82,7 @@ export default defineComponent({
                 this[SET_FILE_META]({name: '', size: 0});
             }
         },
-        stepBack() {
+        stepBack(): void {
             if (this.step > ReceiveStep.Default) {
                 this.step--;
             }
@@ -102,11 +101,17 @@ export default defineComponent({
                 }
             }
         },
+        goToStep(step: ReceiveStep): () => void {
+            return (): void => {
+                this.step = step;
+            }
+        },
     },
     components: {
         CardModal,
         ReceiveDefault,
         ReceiveConsent,
+        ReceiveProgress,
         ReceiveComplete,
     },
     setup() {

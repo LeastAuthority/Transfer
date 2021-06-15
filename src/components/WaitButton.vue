@@ -2,7 +2,7 @@
     <ion-button :class="{'copy-button': true, waiting}"
                 color="primary"
                 @click="copyLink"
-                :disabled="disabled">
+                :disabled="waiting">
         <ion-icon :icon="copy"></ion-icon>
         <ion-label class="ion-padding-start">Copy</ion-label>
     </ion-button>
@@ -11,7 +11,7 @@
 <style scoped lang="css">
 ion-button {
     /*transition: background-color .3s ease;*/
-    transition: background-color 1s ease;
+    transition: background-color .5s ease;
 }
 
 ion-button.waiting {
@@ -40,7 +40,7 @@ ion-button.waiting {
 
     export default defineComponent({
         name: 'CopyButton.vue',
-        props: ['host', 'text'],
+        props: ['host', 'text', 'waitingText'],
         data() {
             return {
                 // disabled: !navigator.clipboard,

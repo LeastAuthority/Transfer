@@ -7,6 +7,6 @@ export enum SendStep {
 export enum ReceiveStep {
     Default = 0,
     Consent,
-    // Progress,
+    Progress,
     Complete,
 }

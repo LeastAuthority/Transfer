@@ -73,7 +73,7 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
 async function saveFileAction(this: Store<any>, {
     commit,
     dispatch
-}: ActionContext<any, any>, code: string): Promise<void> {
+}: ActionContext<any, any>, code: string): Promise<TransferProgress> {
     const opts = {
         progressFunc: (sentBytes: number, totalBytes: number) => {
             commit(SET_PROGRESS, sentBytes/totalBytes);
@@ -81,15 +81,17 @@ async function saveFileAction(this: Store<any>, {
     }
     try {
         const p = client.saveFile(code, opts);
-        const {name, size, accept, done} = await p;
-        commit(SET_FILE_META, {name, size, accept, done});
-        done.then(() => {
-            commit(RESET_CODE);
-            commit(RESET_PROGRESS);
-        }).catch(async (error: string) => {
-            dispatch('alert', {error});
+        p.then(({name, size, accept, done}) => {
+            commit(SET_FILE_META, {name, size, accept, done});
+            done.then(() => {
+                commit(RESET_CODE);
+                commit(RESET_PROGRESS);
+            }).catch(async (error: string) => {
+                await dispatch('alert', {error});
+            });
+            // return done;
         });
-        return done;
+        return p;
     } catch (error) {
         dispatch('alert', {error})
         return Promise.reject(error);
@@ -97,8 +99,10 @@ async function saveFileAction(this: Store<any>, {
 
 }
 
-async function acceptFileAction(this: Store<any>, ctx: ActionContext<any, any>): Promise<void> {
-    return this.state.fileMeta.accept();
+async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
+    return state.fileMeta.accept().catch((error: string) => {
+        dispatch('alert', {error});
+    });
 }
 
 
