@@ -20,16 +20,20 @@ import {defineComponent} from 'vue';
 
 import {IonButton} from '@ionic/vue';
 
+declare interface WaitButtonData {
+    waiting: boolean;
+}
+
 export default defineComponent({
     name: 'WaitButton',
     props: ['text', 'waitingText', 'click'],
-    data() {
+    data(): WaitButtonData {
         return {
             waiting: false,
         }
     },
     computed: {
-        color() {
+        color(): string {
             return this.waiting ?
                     'light-yellow' : 'yellow';
         },
