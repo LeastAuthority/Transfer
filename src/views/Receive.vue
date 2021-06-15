@@ -9,7 +9,6 @@
         <!--    >-->
         <ReceiveDefault
                 v-if="onStep(ReceiveStep.Default)"
-                :setCode="_setCode"
                 :next="nextFrom(ReceiveStep.Default)"
         ></ReceiveDefault>
         <ReceiveConsent
@@ -24,6 +23,7 @@
 
         <ReceiveComplete
                 v-else-if="onStep(ReceiveStep.Complete)"
+                :next="nextFrom(ReceiveStep.Complete)"
         ></ReceiveComplete>
     </CardModal>
     <!--        </ion-content>-->
@@ -82,7 +82,6 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapMutations([SET_CODE]),
         // TODO: can this error handling / alertController call be moved into an action?
         async presentAlert(error: string) {
             const alert = await alertController
@@ -125,13 +124,10 @@ export default defineComponent({
         nextFrom(step: ReceiveStep): () => void {
             return (): void => {
                 if (this.step === step) {
-                    this.step++;
+                    this.stepForward();
                 }
             }
         },
-        _setCode(code: string): void {
-            this[SET_CODE](code);
-        }
     },
     components: {
         // IonToolbar,

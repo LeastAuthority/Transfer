@@ -1,7 +1,7 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
-import {NEW_CLIENT, SAVE_FILE, SEND_FILE, SET_CODE} from "@/store/actions";
+import {NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SEND_FILE, SET_CODE, SET_FILE_META} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
@@ -19,10 +19,6 @@ if (process.env['NODE_ENV'] === 'production') {
 let client = new ClientWorker(defaultConfig);
 
 /* --- ACTIONS --- */
-function setOpenAction(this: Store<any>, {commit}: ActionContext<any, any>, open: boolean): any {
-    commit('setOpen', open);
-}
-
 function setProgressAction(this: Store<any>, {commit}: ActionContext<any, any>, value: number): any {
     commit('setProgress', value);
 }
@@ -50,10 +46,11 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
     try {
         const {code, done} = await client.sendFile(file, opts);
 
+        const {name, size} = file;
+        commit(SET_FILE_META, {name, size})
         commit(SEND_FILE, {code});
         done.then(() => {
             commit('setDone', true);
-            commit('setOpen', false);
             // TODO: remove!
             dispatch(NEW_CLIENT);
         }).catch(error => {
@@ -74,7 +71,7 @@ async function saveFileAction(this: Store<any>, {
     const {code, opts} = payload;
     const promise = client.saveFile(code, opts);
     promise.then(({name, size}) => {
-        commit('setFileMeta', {name, size});
+        commit(SET_FILE_META, {name, size});
     });
     return promise;
 }
@@ -109,11 +106,6 @@ async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload
 }
 
 /* --- MUTATIONS --- */
-
-// TODO: more specific types
-function setOpenMutation(state: any, open: boolean): void {
-    state.open = open;
-}
 
 // TODO: more specific types
 function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
@@ -151,6 +143,16 @@ function setCodeMutation(state: any, code: string): void {
     state.code = code;
 }
 
+// TODO: be more specific with types.
+function resetCodeMutation(state: any): void {
+    state.code = '';
+}
+
+// TODO: be more specific with types.
+function resetProgressMutation(state: any): void {
+    state.progress = -1;
+}
+
 export interface FileMeta {
     name: string;
     size: number;
@@ -185,20 +187,20 @@ export default createStore({
         setConfig(state, config: ClientConfig) {
             state.config = config;
         },
-        setOpen: setOpenMutation,
         setDone: setDoneMutation,
-        setFileMeta: setFileMetaMutation,
         setProgress: setProgressMutation,
+        [SET_FILE_META]: setFileMetaMutation,
         [NEW_CLIENT]: newClientMutation,
         [SEND_FILE]: sendFileMutation,
         [SET_CODE]: setCodeMutation,
+        [RESET_CODE]: resetCodeMutation,
+        [RESET_PROGRESS]: resetProgressMutation,
     },
     actions: {
         setConfig({commit, dispatch}, config) {
             commit('setConfig', config);
             dispatch(NEW_CLIENT, config);
         },
-        setOpen: setOpenAction,
         setDone: setDoneAction,
         setProgress: setProgressAction,
         [NEW_CLIENT]: newClientAction,

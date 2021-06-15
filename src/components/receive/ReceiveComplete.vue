@@ -9,19 +9,28 @@
         <ion-grid>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text>Receive Success!</ion-text>
+                    <ion-text class="filename">{{ fileMeta.name }}</ion-text>
+                    <ion-text class="size">({{ fileSize }})</ion-text>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-text class="ion-text-center">
+                        <h1>
+                            &#x1f389; <!-- party popper -->
+                        </h1>
+                    </ion-text>
                 </ion-col>
             </ion-row>
             <ion-row>
                 <ion-col class="ion-text-center">
-                    <ion-text class="filename">{{ fileMeta.name }}</ion-text>
+                    <ion-button color="light"
+                                @click="next">
+                        <ion-icon :icon="downloadOutline"></ion-icon>
+                        <ion-text class="ion-padding-start">receive more</ion-text>
+                    </ion-button>
                 </ion-col>
             </ion-row>
-            <!--                <ion-row>-->
-            <!--                    <ion-col class="ion-text-center">-->
-            <!--                        <ion-text class="size">({{ fileSize }})</ion-text>-->
-            <!--                    </ion-col>-->
-            <!--                </ion-row>-->
         </ion-grid>
     </ion-card-content>
 </template>
@@ -41,12 +50,20 @@ import {
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
 import {mapState} from "vuex";
+import {downloadOutline} from 'ionicons/icons'
+import {FileMeta} from "@/store";
+import {sizeToClosestUnit} from "@/util";
 
 export default defineComponent({
     name: "ReceiveComplete",
     props: ['next'],
     computed: {
         ...mapState(['fileMeta']),
+        fileSize() {
+            // TODO: cleanup.
+            const fileMeta = this.fileMeta as unknown as FileMeta;
+            return sizeToClosestUnit(fileMeta.size);
+        },
     },
     components: {
         IonCardContent,
@@ -59,9 +76,21 @@ export default defineComponent({
         // IonIcon,
         // IonButton,
     },
+    setup() {
+        return {
+            downloadOutline,
+        }
+    },
 });
 </script>
 
 <style scoped>
+.size {
+    font-size: small;
+    padding-left: 6px;
+}
 
+.filename {
+    font-weight: bold;
+}
 </style>

@@ -200,7 +200,6 @@ export default defineComponent({
         },
     },
     async beforeUpdate() {
-        console.log('beforeUpdate');
         if (this.active) {
             const opts = {progressFunc: this.onProgress};
             const payload = {file: this.file, opts};
@@ -238,54 +237,33 @@ export default defineComponent({
             this.setProgress(sentBytes / totalBytes)
         },
         cancel() {
-            // this.setOpen(false);
             this.back();
             this.reset();
         },
-        //     sendMore() {
-        //         this.setOpen(false);
-        //         this.selectFile();
-        //         // NB: wait for animation to finish.
-        //         window.setTimeout(() => {
-        //             this.reset();
-        //         }, 300);
-        //     },
         reset() {
+            // TODO: remove.
             this[NEW_CLIENT]();
         },
     },
-    // beforeRouteLeave(to, _from, next) {
-    //     this.setOpen(false);
-    //     this.reset();
-    // },
     components: {
         // Transition,
-        // IonPage,
-        // IonContent,
         IonGrid,
         IonRow,
         IonCol,
         IonText,
         IonLabel,
         IonButton,
-        // IonToolbar,
-        // IonTitle,
         IonIcon,
         IonInput,
         IonCardHeader,
         IonCardTitle,
-        // IonCardSubtitle,
         IonCardContent,
-        // IonProgressBar,
-        // MyHeader,
-        // VersionFooter,
         CopyButton,
     },
     setup() {
         return {
             copy,
             close,
-            // router,
         }
     },
 });

@@ -148,13 +148,13 @@ import {
     IonCardContent, IonCardHeader, IonCardTitle,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
-import {mapState, mapActions} from 'vuex';
+import {mapState, mapActions, mapMutations} from 'vuex';
 import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
 import router from '@/router/index.ts'
 // import VersionFooter from '@/components/VersionFooter.vue';
 import {sizeToClosestUnit} from "@/util";
-import {NEW_CLIENT, SAVE_FILE} from "@/store/actions";
+import {NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {FileMeta} from "@/store";
 
 const alertOpts = {
@@ -193,24 +193,19 @@ export default defineComponent({
     },
     methods: {
         ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setProgress']),
+        ...mapMutations([RESET_CODE, RESET_PROGRESS]),
         async wait() {
-            // const code = this.$route.params.code;
             try {
                 const opts = {
-                    // name,
                     progressFunc: this.onProgress,
-                    // offerCondition: (offer) => {
-                    //     this.setOffer(offer)
-                    // }
                 };
-                console.log(this.code);
-                // TODO: this[SAVE_FILE] should return a cancel func and done promise.
+                // TODO: this[SAVE_FILE] return should incl. a cancel and/or reject func.*
                 const {accept, done} = await this[SAVE_FILE]({code: this.code, opts});
                 this.accept = accept;
-                // this.cancelSave = cancel;
                 done.then(() => {
                     this.next();
-                    this.reset();
+                    this[RESET_CODE]();
+                    this[RESET_PROGRESS]();
                 }).catch(async (error: string) => {
                     await this.alert({error, opts: alertOpts});
                     this.cancel();
@@ -237,20 +232,9 @@ export default defineComponent({
             this.setProgress(sentBytes / totalBytes);
         },
         cancel() {
-            // TODO: where did reject go?
-            // if (typeof (this.offer && this.offer.reject) !== 'undefined') {
-            //     this.offer.reject();
-            // }
-            // router.push('/r');
+            // TODO: *use reject here.
             this.back();
-            this.reset();
-        },
-        sendFile() {
-            router.push('/s?select');
-            this.reset();
-        },
-        reset() {
-            this.setProgress(-1);
+            this[RESET_PROGRESS]();
         },
     },
     components: {
@@ -280,11 +264,4 @@ export default defineComponent({
 </script>
 
 <style lang="css" scoped>
-.size {
-    font-size: small;
-}
-
-.filename {
-    font-weight: bold;
-}
 </style>

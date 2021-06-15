@@ -10,7 +10,7 @@
             <ion-card-content>
                 <ion-grid>
                     <ion-row class="ion-justify-content-center ion-align-items-center">
-                        <ion-col class="ion-text-end">
+                        <ion-col class="ion-text-center">
                             <!--                            "wild cat card"-->
                             <ion-text class="bold">
                                 {{ fileMeta.name }}

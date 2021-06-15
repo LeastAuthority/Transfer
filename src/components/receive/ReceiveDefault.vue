@@ -21,7 +21,7 @@
                                        style="border: 1px solid #424242; border-radius: 5px;"
                                        type="text"
                                        placeholder="Enter code here"
-                                       @change="(e) => setCode(e.target.value)"
+                                       @change="(e) => _setCode(e.target.value)"
                                        :value="code"
                             ></ion-input>
                         </ion-col>
@@ -57,7 +57,7 @@ import {defineComponent} from "vue";
 
 export default defineComponent({
     name: "ReceiveDefault",
-    props: ['next', 'setCode'],
+    props: ['next'],
     computed: {
         ...mapState(['code']),
         nextButtonContents(): string {
@@ -65,6 +65,12 @@ export default defineComponent({
         },
         codeIsValid(): boolean {
             return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
+        },
+    },
+    methods: {
+        ...mapMutations([SET_CODE]),
+        _setCode(code: string): void {
+            this[SET_CODE](code);
         },
     },
     components: {

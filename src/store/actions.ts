@@ -20,7 +20,10 @@ export const RECV_FILE_READ_ERROR = 'client/recv_file/read/error';
 export const FREE = 'client/free';
 export const SAVE_FILE = 'client/save_file';
 
+export const SET_FILE_META = 'set_file_meta';
 export const SET_CODE = 'set_code';
+export const RESET_CODE = 'reset_code';
+export const RESET_PROGRESS = 'set_progress';
 export const NEXT_STEP = 'next_step';
 
 export interface RPCMessage {

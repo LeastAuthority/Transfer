@@ -9,7 +9,7 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col class="ion-text-end">
+                    <ion-col class="ion-text-center">
                         <!--                            "wild cat card"-->
                         <ion-text class="bold">
                             {{ fileMeta.name }}
@@ -19,11 +19,11 @@
                         <!--                            </ion-text>-->
                     </ion-col>
                 </ion-row>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>
-                    </ion-col>
-                </ion-row>
+<!--                <ion-row>-->
+<!--                    <ion-col class="ion-text-center">-->
+<!--                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>-->
+<!--                    </ion-col>-->
+<!--                </ion-row>-->
                 <!--        <ion-row>-->
                 <!--            <ion-col class="ion-text-center">-->
                 <!--                <ion-text class="size">({{ fileSize() }})</ion-text>-->
@@ -43,7 +43,7 @@
                         <ion-button color="light"
                                     @click="sendMore">
                             <ion-icon :icon="add"></ion-icon>
-                            <ion-text class="ion-padding-start">Send more</ion-text>
+                            <ion-text class="ion-padding-start">send more</ion-text>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -67,12 +67,20 @@ import {
 } from "@ionic/vue";
 import {mapState} from "vuex";
 import {add} from "ionicons/icons";
+import {FileMeta} from "@/store";
+import {sizeToClosestUnit} from "@/util";
 
 export default defineComponent({
     name: "SendComplete",
     props: ['active', 'sendMore'],
     computed: {
         ...mapState(['fileMeta']),
+        // fileSize(): string {
+        //     // TODO: cleanup.
+        //     const fileMeta = this.fileMeta as unknown as FileMeta;
+        //     // return sizeToClosestUnit(fileMeta.size);
+        //     return '100MB';
+        // },
     },
     // methods: {
     //     sendMore(): void {
