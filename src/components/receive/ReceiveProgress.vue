@@ -4,7 +4,7 @@
             <ion-card-header>
                 <ion-card-title>
                     <!--            {{title}}-->
-                    Ready to download
+                    Receiving...
                 </ion-card-title>
             </ion-card-header>
             <ion-card-content>
@@ -19,9 +19,7 @@
                             </ion-text>
                         </ion-col>
                         <ion-col>
-                            <ion-button color="yellow"
-                                        @click="download"
-                            >
+                            <ion-button color="light-yellow">
                                 <ion-icon src="/assets/icon/download.svg"></ion-icon>
                                 <ion-label>Download</ion-label>
                             </ion-button>

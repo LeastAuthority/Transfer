@@ -32,7 +32,9 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: '/:code',
-        redirect: '/r',
+        redirect: (to): string => {
+            return `/r?hasCode`
+        },
         // meta: {transition: 'slide-right'},
     },
     // {

@@ -20,6 +20,10 @@
     background: #f1f1f1;
 }
 
+ion-progress-bar {
+    height: 40px;
+}
+
 ion-footer {
     background: transparent;
 }

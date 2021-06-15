@@ -21,14 +21,14 @@
                                        style="border: 1px solid #424242; border-radius: 5px;"
                                        type="text"
                                        placeholder="Enter code here"
-                                       @change="_setCode"
+                                       @change="(e) => setCode(e.target.value)"
                                        :value="code"
                             ></ion-input>
                         </ion-col>
                         <ion-col size="1">
                             <ion-button class="receive-next"
                                         color="yellow"
-                                        @click="next()">
+                                        @click="next">
                                 <ion-text class="ion-text-capitalize">{{ nextButtonContents }}</ion-text>
                             </ion-button>
                         </ion-col>
@@ -53,21 +53,19 @@ import {
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
 import {SET_CODE} from "@/store/actions";
+import {defineComponent} from "vue";
 
-export default {
+export default defineComponent({
     name: "ReceiveDefault",
-    props: ['next'],
-    methods: {
-        ...mapMutations([SET_CODE]),
-        _setCode(event) {
-            this[SET_CODE](event.target.value);
-        },
-    },
+    props: ['next', 'setCode'],
     computed: {
         ...mapState(['code']),
-        nextButtonContents() {
+        nextButtonContents(): string {
             return 'Next';
-        }
+        },
+        codeIsValid(): boolean {
+            return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
+        },
     },
     components: {
         IonGrid,
@@ -81,7 +79,7 @@ export default {
         IonCardSubtitle,
         IonCardContent,
     }
-}
+})
 </script>
 
 <style scoped>

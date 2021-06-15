@@ -66,7 +66,10 @@
 }
 
 ion-content {
+    /* TODO: use css variables! */
     max-width: 1100px;
+    /* min-height: 730px; */
+    min-height: 33vh;
 }
 
 .header h1 {

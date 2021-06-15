@@ -1,80 +1,82 @@
 <template>
-<!--    <transition name="step-fade">-->
-        <div>
-            <ion-card-header>
-                <ion-card-title>
-                    <!--            {{title}}-->
-                    Ready to send from your device!
-                </ion-card-title>
-                <ion-card-subtitle>
-                    <!--            {{subtitle}}-->
-                    <!--                TODO: file size?-->
-                    {{ file?.name }}
-                </ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content>
-                <ion-grid>
-                    <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
-                        <ion-col>
-                            <ion-text class="bold">
-                                1. Give the receiver the link below
-                            </ion-text>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row class="ion-text-center ion-justify-content-center ion-margin-top ion-padding-top ion-padding-bottom">
-                        <ion-col style="display: flex;"
-                                 sizeLg="5"
-                                 sizeMd="8"
-                                 sizeSm="10"
-                                 sizeXs="12"
-                        >
-                            <ion-input class="send-code-input"
-                                       v-model="code"
-                                       placeholder="code"
-                                       readonly
-                            ></ion-input>
-                            <copy-button class="ion-margin-start"
-                                        color="yellow"
-                                         :code="code"
-                                         :host="host"/>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
-                        <ion-col>
-                            <ion-text class="bold">
-                                2. Keep this tab open until you're notified that they have received the file
-                            </ion-text>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row class="ion-text-center ion-margin-top ion-margin-bottom  ion-padding-top ion-padding-bottom">
-                        <ion-col>
-                            <ion-button color="grey"
-                                        @click="cancel()">
-                                <ion-icon :icon="close"></ion-icon>
-                                <ion-label class="ion-padding-start">cancel</ion-label>
-                            </ion-button>
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
-<!--                <div class="flex-col">-->
-<!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-<!--                    </div>-->
-<!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-<!--                        &lt;!&ndash;                    <ion-button class="select-button"&ndash;&gt;-->
-<!--                        &lt;!&ndash;                                color="medium"&ndash;&gt;-->
-<!--                        &lt;!&ndash;                                size="large">&ndash;&gt;-->
-<!--                        &lt;!&ndash;                        <ion-icon class="dark-label-icon" :icon="copy"></ion-icon>&ndash;&gt;-->
-<!--                        &lt;!&ndash;                        <ion-label color="dark" class="ion-text-lowercase">copy</ion-label>&ndash;&gt;-->
-<!--                        &lt;!&ndash;                    </ion-button>&ndash;&gt;-->
-<!--                    </div>-->
-<!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-<!--                    </div>-->
-<!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-<!--                    </div>-->
-<!--                </div>-->
-            </ion-card-content>
-        </div>
-<!--    </transition>-->
+    <!--    <transition name="step-fade">-->
+    <div v-show="active">
+        <ion-card-header>
+            <ion-card-title>
+                <!--            {{title}}-->
+                Ready to send from your device!
+            </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
+                    <ion-col>
+                        <!--                TODO: file size?-->
+                        {{ file?.name }}
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
+                    <ion-col>
+                        <ion-text class="bold">
+                            1. Give the receiver the link below
+                        </ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row
+                        class="ion-text-center ion-justify-content-center ion-margin-top ion-padding-top ion-padding-bottom">
+                    <ion-col style="display: flex;"
+                             sizeLg="5"
+                             sizeMd="8"
+                             sizeSm="10"
+                             sizeXs="12"
+                    >
+                        <ion-input class="send-code-input"
+                                   v-model="code"
+                                   placeholder="code"
+                                   readonly
+                        ></ion-input>
+                        <copy-button class="ion-margin-start"
+                                     color="yellow"
+                                     :code="code"
+                                     :host="host"/>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
+                    <ion-col>
+                        <ion-text class="bold">
+                            2. Keep this tab open until you're notified that they have received the file
+                        </ion-text>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center ion-margin-top ion-margin-bottom  ion-padding-top ion-padding-bottom">
+                    <ion-col>
+                        <ion-button color="grey"
+                                    @click="cancel()">
+                            <ion-icon :icon="close"></ion-icon>
+                            <ion-label class="ion-padding-start">cancel</ion-label>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+            <!--                <div class="flex-col">-->
+            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
+            <!--                    </div>-->
+            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
+            <!--                        &lt;!&ndash;                    <ion-button class="select-button"&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                                color="medium"&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                                size="large">&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                        <ion-icon class="dark-label-icon" :icon="copy"></ion-icon>&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                        <ion-label color="dark" class="ion-text-lowercase">copy</ion-label>&ndash;&gt;-->
+            <!--                        &lt;!&ndash;                    </ion-button>&ndash;&gt;-->
+            <!--                    </div>-->
+            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
+            <!--                    </div>-->
+            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
+            <!--                    </div>-->
+            <!--                </div>-->
+        </ion-card-content>
+    </div>
+    <!--    </transition>-->
     <!--    <ion-page>-->
     <!--        <my-header></my-header>-->
     <!--        <ion-content :fullscreen="true">-->
@@ -190,39 +192,43 @@ import {NEW_CLIENT, SEND_FILE} from "@/store/actions";
 
 export default defineComponent({
     name: "SendInstructions",
-    props: ['selectFile', 'file', 'back', 'next'],
+    props: ['active', 'selectFile', 'file', 'back', 'next', 'complete'],
     computed: {
-            ...mapState(['host', 'code', 'progress']),
+        ...mapState(['host', 'code', 'progress']),
         fileSize(): string {
             return sizeToClosestUnit(this.file.size);
         },
     },
-    async beforeMount() {
-        const opts = {progressFunc: this.onProgress};
-        const payload = {file: this.file, opts};
-        try {
-            await this[SEND_FILE](payload)
-                .catch(async (error) => {
-                    // NB: error during transfer.
-                    console.error(error);
-                    const opts = {
-                        buttons: ['OK'],
-                    };
-                    await this.alert({error, opts});
-                    this.cancel();
-                })
-        } catch (error) {
-            // NB: error during setup.
-            console.error(error);
-            const opts = {
-                // cssClass: 'my-custom-class',
-                // header: 'Error',
-                // subHeader: 'error type',
-                // message: error,
-                buttons: ['OK'],
-            };
-            await this.alert({error, opts})
-            this.cancel();
+    async beforeUpdate() {
+        console.log('beforeUpdate');
+        if (this.active) {
+            const opts = {progressFunc: this.onProgress};
+            const payload = {file: this.file, opts};
+            try {
+                await this[SEND_FILE](payload)
+                        .catch(async (error) => {
+                            // NB: error during transfer.
+                            console.error(error);
+                            const opts = {
+                                buttons: ['OK'],
+                            };
+                            await this.alert({error, opts});
+                            this.cancel();
+                        });
+                this.complete();
+            } catch (error) {
+                // NB: error during setup.
+                console.error(error);
+                const opts = {
+                    // cssClass: 'my-custom-class',
+                    // header: 'Error',
+                    // subHeader: 'error type',
+                    // message: error,
+                    buttons: ['OK'],
+                };
+                await this.alert({error, opts})
+                this.cancel();
+            }
         }
     },
     methods: {
@@ -236,14 +242,14 @@ export default defineComponent({
             this.back();
             this.reset();
         },
-    //     sendMore() {
-    //         this.setOpen(false);
-    //         this.selectFile();
-    //         // NB: wait for animation to finish.
-    //         window.setTimeout(() => {
-    //             this.reset();
-    //         }, 300);
-    //     },
+        //     sendMore() {
+        //         this.setOpen(false);
+        //         this.selectFile();
+        //         // NB: wait for animation to finish.
+        //         window.setTimeout(() => {
+        //             this.reset();
+        //         }, 300);
+        //     },
         reset() {
             this[NEW_CLIENT]();
         },
@@ -268,7 +274,7 @@ export default defineComponent({
         IonInput,
         IonCardHeader,
         IonCardTitle,
-        IonCardSubtitle,
+        // IonCardSubtitle,
         IonCardContent,
         // IonProgressBar,
         // MyHeader,

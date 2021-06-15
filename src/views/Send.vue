@@ -1,24 +1,27 @@
 <template>
-    <!--    <transition name="slide-primary">-->
-    <!--    <ion-page>-->
-    <!--        <ion-content>-->
     <CardModal>
-        <!--            :is-open="onStep(Step.Default)"-->
-        <!--            css-class="modal"-->
-        <!--            @onDidDismiss="setOpen(false)"-->
-        <!--    >-->
-        <transition name="fade">
-            <SendDefault
-                    v-if="onStep(SendStep.Default)"
-                    :select="select"
-            ></SendDefault>
-            <SendInstructions
-                    v-else-if="onStep(SendStep.Instructions)"
-                    :file="file"
-                    :back="stepBack"
-                    :next="nextFrom(SendStep.Instructions)"
-            ></SendInstructions>
-        </transition>
+        <!--        <transition name="fade">-->
+        <SendDefault
+                :active="onStep(SendStep.Default)"
+                :select="select"
+        ></SendDefault>
+        <SendInstructions
+                :active="onStep(SendStep.Instructions)"
+                :file="file"
+                :back="stepBack"
+                :next="nextFrom(SendStep.Instructions)"
+                :complete="nextFrom(SendStep.Progress)"
+        ></SendInstructions>
+        <SendProgress
+                :active="onStep(SendStep.Progress)"
+                :back="stepBack"
+                :next="nextFrom(SendStep.Progress)"
+        ></SendProgress>
+        <SendComplete
+                :active="onStep(SendStep.Complete)"
+                :sendMore="sendMore"
+        ></SendComplete>
+        <!--        </transition>-->
         <input ref="fileInput"
                type="file"
                class="ion-hide"
@@ -28,6 +31,7 @@
 </template>
 
 <style scoped>
+/*
 .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
 }
@@ -35,6 +39,7 @@
 .fade-enter-from, .fade-leave-to {
     opacity: 0;
 }
+ */
 </style>
 
 
@@ -57,10 +62,13 @@
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
+
+import {SendStep} from "@/types";
+import CardModal from '@/components/CardModal.vue';
 import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
-import CardModal from '@/components/CardModal.vue';
-import {SendStep} from "@/types";
+import SendProgress from "@/components/send/SendProgress.vue";
+import SendComplete from "@/components/send/SendComplete.vue";
 
 // TODO: use proper state management.
 const isOpenRef = ref(false);
@@ -88,6 +96,12 @@ export default defineComponent({
     //         this.router.replace(this.$route.path)
     //     }
     // },
+    beforeUpdate() {
+        if (typeof(this.$route.query.select) !== 'undefined') {
+            this.$router.replace('/s');
+            this.select();
+        }
+    },
     methods: {
         //     ...mapActions(['setOpen', 'setDone', 'nextStep']),
         //     onStep(checkStep: SendStep): boolean {
@@ -100,8 +114,15 @@ export default defineComponent({
             const fileInput = this.$refs.fileInput as HTMLInputElement;
             if (fileInput.files!.length > 0) {
                 this.file = fileInput.files![0] as File;
-                this.stepForward();
+                // this.stepForward();
+                this.step = SendStep.Instructions;
             }
+        },
+        sendMore(): void {
+            // this.nextFrom(SendStep.Complete);
+            this.step = SendStep.Default;
+            this.$router.replace('/s');
+            this.select();
         },
         onStep(step: SendStep): boolean {
             return this.step === step;
@@ -129,10 +150,6 @@ export default defineComponent({
         //         return typeof (this.file) !== 'undefined' ?
         //                 sizeToClosestUnit(this.file.size) : '';
         //     },
-        //     sendMore() {
-        //         this.setDone(false);
-        //         this.select();
-        //     },
     },
     components: {
         // IonPage,
@@ -142,6 +159,8 @@ export default defineComponent({
         CardModal,
         SendDefault,
         SendInstructions,
+        SendProgress,
+        SendComplete,
     },
     setup() {
         return {

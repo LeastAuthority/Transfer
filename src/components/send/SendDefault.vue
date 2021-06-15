@@ -1,6 +1,6 @@
 <template>
 <!--    <transition name="step-fade">-->
-        <div>
+        <div v-show="active">
             <ion-card-header>
                 <ion-card-title>
                     <!--            {{title}}-->
@@ -57,7 +57,13 @@ import {
 
 export default defineComponent({
     name: "SendDefault",
-    props: ['select'],
+    props: ['select', 'active'],
+    mounted() {
+        // if (this.$route.query.hasOwnProperty('select')) {
+        //     this.$router.replace('/s');
+        //     this.select();
+        // }
+    },
     components: {
         // IonGrid,
         // IonRow,
@@ -124,6 +130,8 @@ export default defineComponent({
 }
 
 ion-card, .drag-n-drop {
+    /* TODO: use css variable! */
+    /* min-height: 730px; */
     min-height: 33vh;
 //max-height: ?;
 }

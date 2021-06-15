@@ -9,6 +9,7 @@
         <!--    >-->
         <ReceiveDefault
                 v-if="onStep(ReceiveStep.Default)"
+                :setCode="_setCode"
                 :next="nextFrom(ReceiveStep.Default)"
         ></ReceiveDefault>
         <ReceiveConsent
@@ -16,6 +17,14 @@
                 :next="nextFrom(ReceiveStep.Consent)"
                 :back="stepBack"
         ></ReceiveConsent>
+
+        <!--  // TODO: -->
+<!--        <ReceiveProgress-->
+<!--        ></ReceiveProgress>-->
+
+        <ReceiveComplete
+                v-else-if="onStep(ReceiveStep.Complete)"
+        ></ReceiveComplete>
     </CardModal>
     <!--        </ion-content>-->
     <!--    </ion-page>-->
@@ -24,6 +33,8 @@
 
 <style lang="css">
 ion-card {
+    /* TODO: use css variable! */
+    /* min-height: 730px; */
     min-height: 33vh;
 }
 </style>
@@ -46,29 +57,32 @@ import {clipboardOutline} from 'ionicons/icons'
 import {defineComponent, Transition} from 'vue';
 
 import router from '@/router/index.ts'
-import MyHeader from '@/components/MyHeader.vue'
-import VersionFooter from "@/components/VersionFooter.vue";
+// import MyHeader from '@/components/MyHeader.vue'
+// import VersionFooter from "@/components/VersionFooter.vue";
 import CardModal from "@/components/CardModal.vue";
 import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
+import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
 import {ReceiveStep} from "@/types";
+import {SET_CODE} from "@/store/actions";
+import {mapMutations} from "vuex";
 
 export default defineComponent({
     name: 'Receive',
+    beforeUpdate() {
+        if (typeof(this.$route.query.hasCode) !== 'undefined') {
+            this.$router.replace('/r');
+            this.step = ReceiveStep.Consent;
+        }
+    },
     data() {
         return {
-            code: '',
+            // code: '',
             step: 0,
         }
     },
     methods: {
-        setCode(code: string) {
-            console.log(code)
-            this.code = code;
-        },
-        codeIsValid() {
-            return /^\d+-\w+-\w+$/.test(this.code);
-        },
+        ...mapMutations([SET_CODE]),
         // TODO: can this error handling / alertController call be moved into an action?
         async presentAlert(error: string) {
             const alert = await alertController
@@ -82,17 +96,17 @@ export default defineComponent({
             await alert.present();
             await alert.onWillDismiss();
         },
-        navigate() {
-            if (!this.codeIsValid()) {
-                this.presentAlert('Invalid code format');
-                return;
-            }
-
-            router.replace(`/r/${this.code}`);
-        },
-        paste() {
-            console.log('paste clicked.')
-        },
+        // navigate() {
+        //     if (!this.codeIsValid()) {
+        //         this.presentAlert('Invalid code format');
+        //         return;
+        //     }
+        //
+        //     router.replace(`/r/${this.code}`);
+        // },
+        // paste() {
+        //     console.log('paste clicked.')
+        // },
         onStep(step: ReceiveStep): boolean {
             return this.step === step;
         },
@@ -115,6 +129,9 @@ export default defineComponent({
                 }
             }
         },
+        _setCode(code: string): void {
+            this[SET_CODE](code);
+        }
     },
     components: {
         // IonToolbar,
@@ -134,6 +151,7 @@ export default defineComponent({
         CardModal,
         ReceiveDefault,
         ReceiveConsent,
+        ReceiveComplete,
     },
     setup() {
         return {

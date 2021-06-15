@@ -151,9 +151,23 @@ function setCodeMutation(state: any, code: string): void {
     state.code = code;
 }
 
+export interface FileMeta {
+    name: string;
+    size: number;
+}
+
+export interface AppState {
+    host: string;
+    config: ClientConfig | Record<never, never>;
+    code: string;
+    done: boolean;
+    fileMeta: FileMeta;
+    progress: number;
+}
+
 export default createStore({
     devtools: process.env['NODE_ENV'] !== 'production',
-    state() {
+    state(): AppState {
         return {
             host,
             config: defaultConfig || {},
