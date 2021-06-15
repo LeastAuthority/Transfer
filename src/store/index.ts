@@ -37,7 +37,6 @@ let client = new ClientWorker(defaultConfig);
 // TODO: more specific types.
 function newClientAction(this: Store<any>, {commit}: ActionContext<any, any>, config?: ClientConfig): void {
     // TODO: something better.
-    commit('setProgress', -1);
     commit(NEW_CLIENT, config);
 }
 

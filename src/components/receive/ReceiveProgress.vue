@@ -101,9 +101,6 @@ export default defineComponent({
             return "4 sec. remaining";
         },
     },
-    // beforeRouteUpdate(to, from, next) {
-    //     this.wait();
-    // },
     async mounted() {
         await this.wait();
     },

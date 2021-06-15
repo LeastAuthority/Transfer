@@ -99,13 +99,6 @@ export default defineComponent({
             return "4 sec. remaining";
         },
     },
-    // async beforeRouteUpdate(to, from) {
-    //     console.log('beforeRouteUpdate')
-    //     console.log(to)
-    //     if (to.path === '/r') {
-    //         await this.saveFileOnce();
-    //     }
-    // },
     async beforeUpdate() {
         await this.saveFileOnce();
     },
@@ -117,7 +110,9 @@ export default defineComponent({
                     typeof (this.fileMeta.done) === 'undefined') {
                 try {
                     this.done = this[SAVE_FILE](this.code);
-                    await this.done
+                    await this.done.then(() => {
+                        this.done = undefined;
+                    });
                     this.next();
                 } catch (error) {
                     await this.alert({error});
