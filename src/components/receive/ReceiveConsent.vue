@@ -154,7 +154,7 @@ import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ioni
 import router from '@/router/index.ts'
 // import VersionFooter from '@/components/VersionFooter.vue';
 import {sizeToClosestUnit} from "@/util";
-import {NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE} from "@/store/actions";
+import {NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_PROGRESS} from "@/store/actions";
 import {FileMeta} from "@/store";
 
 const alertOpts = {
@@ -192,8 +192,8 @@ export default defineComponent({
         await this.wait();
     },
     methods: {
-        ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setProgress']),
-        ...mapMutations([RESET_CODE, RESET_PROGRESS]),
+        ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone']),
+        ...mapMutations([SET_PROGRESS, RESET_CODE, RESET_PROGRESS]),
         async wait() {
             try {
                 const opts = {
@@ -229,7 +229,7 @@ export default defineComponent({
             }
         },
         onProgress(sentBytes: number, totalBytes: number) {
-            this.setProgress(sentBytes / totalBytes);
+            this[SET_PROGRESS](sentBytes / totalBytes);
         },
         cancel() {
             // TODO: *use reject here.

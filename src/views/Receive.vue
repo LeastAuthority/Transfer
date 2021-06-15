@@ -64,7 +64,7 @@ import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
 import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
 import {ReceiveStep} from "@/types";
-import {SET_CODE} from "@/store/actions";
+import {RESET_PROGRESS, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
 import {mapMutations} from "vuex";
 
 export default defineComponent({
@@ -82,6 +82,7 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         // TODO: can this error handling / alertController call be moved into an action?
         async presentAlert(error: string) {
             const alert = await alertController
@@ -114,6 +115,8 @@ export default defineComponent({
                 this.step++;
             } else {
                 this.step = ReceiveStep.Default;
+                this[RESET_PROGRESS]();
+                this[SET_FILE_META]({name: '', size: 0});
             }
         },
         stepBack() {

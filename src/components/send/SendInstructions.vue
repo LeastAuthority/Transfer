@@ -25,20 +25,20 @@
                 <ion-row
                         class="ion-text-center ion-justify-content-center ion-margin-top ion-padding-top ion-padding-bottom">
                     <ion-col style="display: flex;"
-                             sizeLg="5"
+                             sizeLg="6"
                              sizeMd="8"
                              sizeSm="10"
                              sizeXs="12"
                     >
                         <ion-input class="send-code-input"
-                                   v-model="code"
-                                   placeholder="code"
+                                   placeholder="receive link"
                                    readonly
+                                   :value="link"
                         ></ion-input>
                         <copy-button class="ion-margin-start"
                                      color="yellow"
-                                     :code="code"
-                                     :host="host"/>
+                                     :text="link"
+                        ></copy-button>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
@@ -58,81 +58,9 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-            <!--                <div class="flex-col">-->
-            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-            <!--                    </div>-->
-            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-            <!--                        &lt;!&ndash;                    <ion-button class="select-button"&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                                color="medium"&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                                size="large">&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                        <ion-icon class="dark-label-icon" :icon="copy"></ion-icon>&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                        <ion-label color="dark" class="ion-text-lowercase">copy</ion-label>&ndash;&gt;-->
-            <!--                        &lt;!&ndash;                    </ion-button>&ndash;&gt;-->
-            <!--                    </div>-->
-            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-            <!--                    </div>-->
-            <!--                    <div class="flex-row ion-text-center ion-padding-top ion-padding-bottom">-->
-            <!--                    </div>-->
-            <!--                </div>-->
         </ion-card-content>
     </div>
     <!--    </transition>-->
-    <!--    <ion-page>-->
-    <!--        <my-header></my-header>-->
-    <!--        <ion-content :fullscreen="true">-->
-    <!--            <ion-toolbar>-->
-    <!--                <ion-title size="large" class="ion-text-uppercase">Send a file</ion-title>-->
-    <!--            </ion-toolbar>-->
-    <!--            <ion-grid>-->
-    <!--                <ion-row>-->
-    <!--                    <ion-col class="ion-text-center">-->
-    <!--                        <ion-text>Ready to send:</ion-text>-->
-    <!--                    </ion-col>-->
-    <!--                </ion-row>-->
-    <!--                <ion-row>-->
-    <!--                    <ion-col class="ion-text-center">-->
-    <!--                        <ion-text class="filename">{{ file.name }}</ion-text>-->
-    <!--                    </ion-col>-->
-    <!--                </ion-row>-->
-    <!--                <ion-row>-->
-    <!--                    <ion-col class="ion-text-center">-->
-    <!--                        <ion-text class="size">({{ fileSize }})</ion-text>-->
-    <!--                    </ion-col>-->
-    <!--                </ion-row>-->
-    <!--                <ion-row>-->
-    <!--                    <ion-col size="8" class="ion-text-right">-->
-    <!--                        <ion-input class="send-code-input"-->
-    <!--                                   v-model="code"-->
-    <!--                                   placeholder="code"-->
-    <!--                                   readonly-->
-    <!--                        ></ion-input>-->
-    <!--                    </ion-col>-->
-    <!--                    <ion-col size="1">-->
-    <!--                        <copy-button :code="code"-->
-    <!--                                     :host="host"/>-->
-    <!--                    </ion-col>-->
-    <!--                </ion-row>-->
-    <!--                <ion-row>-->
-    <!--                    <ion-col>-->
-    <!--                        <ion-progress-bar color="primary"-->
-    <!--                                          v-show="progress >= 0"-->
-    <!--                                          :value="progress"-->
-    <!--                        ></ion-progress-bar>-->
-    <!--                    </ion-col>-->
-    <!--                </ion-row>-->
-    <!--                <ion-row>-->
-    <!--                    <ion-col class="ion-text-center">-->
-    <!--                        <ion-button color="danger"-->
-    <!--                                    @click="cancel()">-->
-    <!--                            <ion-icon :icon="close"></ion-icon>-->
-    <!--                            <ion-text class="ion-padding-start">cancel</ion-text>-->
-    <!--                        </ion-button>-->
-    <!--                    </ion-col>-->
-    <!--                </ion-row>-->
-    <!--            </ion-grid>-->
-    <!--        </ion-content>-->
-    <!--        <version-footer></version-footer>-->
-    <!--    </ion-page>-->
 </template>
 
 <style lang="css" scoped>
@@ -179,7 +107,7 @@ import {
 } from '@ionic/vue';
 import {copy, close} from 'ionicons/icons';
 import {defineComponent, Transition} from 'vue';
-import {mapState, mapActions} from 'vuex';
+import {mapState, mapActions, mapMutations} from 'vuex';
 import {add} from 'ionicons/icons';
 
 import {sizeToClosestUnit} from '@/util';
@@ -188,7 +116,7 @@ import router from '@/router'
 import MyHeader from '@/components/MyHeader.vue';
 import VersionFooter from "@/components/VersionFooter.vue";
 import CopyButton from "@/components/CopyButton.vue";
-import {NEW_CLIENT, SEND_FILE} from "@/store/actions";
+import {NEW_CLIENT, RESET_PROGRESS, SEND_FILE, SET_PROGRESS} from "@/store/actions";
 
 export default defineComponent({
     name: "SendInstructions",
@@ -197,6 +125,10 @@ export default defineComponent({
         ...mapState(['host', 'code', 'progress']),
         fileSize(): string {
             return sizeToClosestUnit(this.file.size);
+        },
+        link(): string {
+            // TODO: move to utils.
+            return `${this.host}/#/${this.code}`;
         },
     },
     async beforeUpdate() {
@@ -231,13 +163,17 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions([NEW_CLIENT, SEND_FILE, 'alert', 'setProgress', 'setOpen', 'setDone']),
+        ...mapActions([NEW_CLIENT, SEND_FILE, 'alert', 'setDone']),
+        ...mapMutations([SET_PROGRESS, RESET_PROGRESS]),
         onProgress(sentBytes: number, totalBytes: number) {
             this.next();
-            this.setProgress(sentBytes / totalBytes)
+            this[SET_PROGRESS](sentBytes / totalBytes)
         },
         cancel() {
+            // TODO: move up to Send.vue
             this.back();
+            this[RESET_PROGRESS]();
+
             this.reset();
         },
         reset() {

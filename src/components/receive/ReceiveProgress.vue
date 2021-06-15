@@ -146,13 +146,13 @@ import {
     IonCardContent, IonCardHeader, IonCardTitle,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
-import {mapState, mapActions} from 'vuex';
+import {mapState, mapActions, mapMutations} from 'vuex';
 import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
 import router from '@/router/index.ts'
 // import VersionFooter from '@/components/VersionFooter.vue';
 import {sizeToClosestUnit} from "@/util";
-import {NEW_CLIENT, SAVE_FILE} from "@/store/actions";
+import {NEW_CLIENT, RESET_PROGRESS, SAVE_FILE, SET_PROGRESS} from "@/store/actions";
 import {FileMeta} from "@/store";
 
 const alertOpts = {
@@ -190,7 +190,8 @@ export default defineComponent({
         await this.wait();
     },
     methods: {
-        ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone', 'setProgress']),
+        ...mapActions([NEW_CLIENT, SAVE_FILE, 'alert', 'setDone']),
+        ...mapMutations([SET_PROGRESS, RESET_PROGRESS]),
         async wait() {
             // const code = this.$route.params.code;
             try {
@@ -208,7 +209,7 @@ export default defineComponent({
                 // this.cancelSave = cancel;
                 done.then(() => {
                     this.next();
-                    this.reset();
+                    this[RESET_PROGRESS]();
                 }).catch(async (error: string) => {
                     await this.alert({error, opts: alertOpts});
                     this.cancel();
@@ -220,7 +221,6 @@ export default defineComponent({
             }
         },
         async download() {
-            console.log('Download clicked!');
             // TODO: cleanup.
             try {
                 if (typeof(this.accept) !== 'function') {
@@ -232,23 +232,17 @@ export default defineComponent({
             }
         },
         onProgress(sentBytes: number, totalBytes: number) {
-            this.setProgress(sentBytes / totalBytes);
+            this[SET_PROGRESS](sentBytes / totalBytes);
         },
         cancel() {
             // TODO: where did reject go?
             // if (typeof (this.offer && this.offer.reject) !== 'undefined') {
             //     this.offer.reject();
             // }
-            // router.push('/r');
+
+            // TODO: move up to Receive.vue>
             this.back();
-            this.reset();
-        },
-        sendFile() {
-            router.push('/s?select');
-            this.reset();
-        },
-        reset() {
-            this.setProgress(-1);
+            this[RESET_PROGRESS]();
         },
     },
     components: {

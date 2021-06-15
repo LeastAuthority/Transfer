@@ -62,6 +62,7 @@ import {
     IonText
 } from "@ionic/vue";
 import {mapActions, mapState} from "vuex";
+import {RESET_PROGRESS} from "@/store/actions";
 
 export default defineComponent({
     name: "SendProgress.vue",
@@ -74,10 +75,11 @@ export default defineComponent({
         },
     },
     methods: {
-        ...mapActions(['resetProgress']),
+        ...mapActions([RESET_PROGRESS]),
+        // TODO: move up to Send.vue
         cancel() {
             this.back();
-            this.resetProgress();
+            this[RESET_PROGRESS]();
         },
     },
     components: {

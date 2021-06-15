@@ -69,6 +69,8 @@ import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
 import SendComplete from "@/components/send/SendComplete.vue";
+import {RESET_PROGRESS, SET_FILE_META} from "@/store/actions";
+import {mapMutations} from "vuex";
 
 // TODO: use proper state management.
 const isOpenRef = ref(false);
@@ -103,6 +105,7 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         //     ...mapActions(['setOpen', 'setDone', 'nextStep']),
         //     onStep(checkStep: SendStep): boolean {
         //         return this.step === checkStep;
@@ -132,6 +135,8 @@ export default defineComponent({
                 this.step++;
             } else {
                 this.step = SendStep.Default;
+                this[RESET_PROGRESS]();
+                this[SET_FILE_META]();
             }
         },
         stepBack() {
@@ -142,7 +147,7 @@ export default defineComponent({
         nextFrom(step: SendStep): () => void {
             return (): void => {
                 if (this.step === step) {
-                    this.step++;
+                    this.stepForward();
                 }
             }
         },

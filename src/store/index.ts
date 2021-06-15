@@ -1,7 +1,16 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
-import {NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SEND_FILE, SET_CODE, SET_FILE_META} from "@/store/actions";
+import {
+    NEW_CLIENT,
+    RESET_CODE,
+    RESET_PROGRESS,
+    SAVE_FILE,
+    SEND_FILE,
+    SET_CODE,
+    SET_FILE_META,
+    SET_PROGRESS
+} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
@@ -19,10 +28,6 @@ if (process.env['NODE_ENV'] === 'production') {
 let client = new ClientWorker(defaultConfig);
 
 /* --- ACTIONS --- */
-function setProgressAction(this: Store<any>, {commit}: ActionContext<any, any>, value: number): any {
-    commit('setProgress', value);
-}
-
 // TODO: more specific types.
 function setDoneAction(this: Store<any>, {commit}: ActionContext<any, any>, done: boolean): any {
     commit('setDone', done);
@@ -188,7 +193,7 @@ export default createStore({
             state.config = config;
         },
         setDone: setDoneMutation,
-        setProgress: setProgressMutation,
+        [SET_PROGRESS]: setProgressMutation,
         [SET_FILE_META]: setFileMetaMutation,
         [NEW_CLIENT]: newClientMutation,
         [SEND_FILE]: sendFileMutation,
@@ -202,7 +207,6 @@ export default createStore({
             dispatch(NEW_CLIENT, config);
         },
         setDone: setDoneAction,
-        setProgress: setProgressAction,
         [NEW_CLIENT]: newClientAction,
         [SEND_FILE]: sendFileAction,
         [SAVE_FILE]: saveFileAction,

@@ -40,7 +40,7 @@ ion-button.waiting {
 
     export default defineComponent({
         name: 'CopyButton.vue',
-        props: ['host', 'code'],
+        props: ['host', 'text'],
         data() {
             return {
                 // disabled: !navigator.clipboard,
@@ -49,8 +49,7 @@ ion-button.waiting {
         },
         methods: {
             copyLink() {
-                const url = `${this.host}/#/${this.code}`;
-                navigator.clipboard.writeText(url);
+                navigator.clipboard.writeText(this.text);
                 window.setTimeout(() => {
                     this.waiting = false;
                 }, 5000);
