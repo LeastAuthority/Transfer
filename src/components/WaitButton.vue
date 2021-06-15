@@ -1,70 +1,50 @@
 <template>
     <ion-button :class="{'copy-button': true, waiting}"
-                color="primary"
-                @click="copyLink"
+                :color="color"
+                @click="_click"
                 :disabled="waiting">
-        <ion-icon :icon="copy"></ion-icon>
-        <ion-label class="ion-padding-start">Copy</ion-label>
+        <slot v-if="waiting" name="waiting-text"></slot>
+        <slot v-else name="text"></slot>
     </ion-button>
 </template>
 
 <style scoped lang="css">
-ion-button {
+ion-button::part(native) {
     /*transition: background-color .3s ease;*/
     transition: background-color .5s ease;
 }
-
-ion-button.waiting {
-    background-color: #f3d79b;
-}
-
-/*
-:root {
-    --ion-color-yellow: #f3d79b;
-    --ion-color-yellow-rgb: 243,215,155;
-    --ion-color-yellow-contrast: #000000;
-    --ion-color-yellow-contrast-rgb: 0,0,0;
-    --ion-color-yellow-shade: #d6bd88;
-    --ion-color-yellow-tint: #f4dba5;
-} */
 </style>
 
-<script>
-    import {defineComponent} from 'vue';
+<script lang="ts">
+import {defineComponent} from 'vue';
 
-    import {
-        IonIcon,
-        IonButton, IonLabel,
-    } from '@ionic/vue';
-    import {copy} from 'ionicons/icons';
+import {IonButton} from '@ionic/vue';
 
-    export default defineComponent({
-        name: 'CopyButton.vue',
-        props: ['host', 'text', 'waitingText'],
-        data() {
-            return {
-                // disabled: !navigator.clipboard,
-                waiting: false,
-            }
+export default defineComponent({
+    name: 'WaitButton',
+    props: ['text', 'waitingText', 'click'],
+    data() {
+        return {
+            waiting: false,
+        }
+    },
+    computed: {
+        color() {
+            return this.waiting ?
+                    'light-yellow' : 'yellow';
         },
-        methods: {
-            copyLink() {
-                navigator.clipboard.writeText(this.text);
-                window.setTimeout(() => {
-                    this.waiting = false;
-                }, 5000);
-                this.waiting = true;
-            },
-        },
-        components: {
-            IonIcon,
-            IonLabel,
-            IonButton,
-        },
-        setup() {
-            return {
-                copy,
-            }
-        },
-    })
+    },
+    methods: {
+        _click(): void {
+            window.setTimeout(() => {
+                this.waiting = false;
+            }, 5000);
+            this.waiting = true;
+            this.click();
+        }
+    },
+    components: {
+        IonButton,
+    },
+})
 </script>

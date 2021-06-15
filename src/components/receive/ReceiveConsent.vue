@@ -29,14 +29,17 @@
                 </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col>
-                        <!--                        TODO: something better.-->
+                        <!--  TODO: something better.-->
                         <ion-progress-bar style="opacity: 0;"
                         ></ion-progress-bar>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        {{ timeRemaining }}
+                        <!--  TODO: something better.-->
+                        <ion-text style="opacity: 0;">
+                            waiting for sender...
+                        </ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
@@ -83,6 +86,9 @@ declare interface ReceiveConsentData {
 export default defineComponent({
     name: "ReceiveConsent",
     props: ['active', 'back', 'next', 'complete'],
+    async beforeUpdate() {
+        // await this.saveFileOnce();
+    },
     data(): ReceiveConsentData {
         return {
             receivingPromise: undefined,
@@ -100,30 +106,14 @@ export default defineComponent({
             return "4 sec. remaining";
         },
     },
-    async beforeUpdate() {
-        await this.saveFileOnce();
-    },
     methods: {
-        ...mapActions([NEW_CLIENT, SAVE_FILE, ACCEPT_FILE, 'alert']),
+        ...mapActions([ACCEPT_FILE, 'alert']),
         ...mapMutations([SET_PROGRESS, RESET_CODE, RESET_PROGRESS]),
-        async saveFileOnce(): Promise<void> {
-            if (this.active && typeof (this.receivingPromise) === 'undefined' &&
-                    typeof (this.fileMeta.done) === 'undefined') {
-                try {
-                    this.receivingPromise = this[SAVE_FILE](this.code);
-                    const {done} = await this.receivingPromise;
-                    await done
-                    this.receivingPromise = undefined;
-                    this.complete();
-                } catch (error) {
-                    await this.alert({error});
-                    this.cancel();
-                }
-            }
-        },
         async download() {
             this.next();
             this[ACCEPT_FILE]();
+            await this.fileMeta.done
+            this.complete();
         },
         cancel() {
             // TODO: move into action.
