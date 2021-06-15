@@ -41,7 +41,7 @@ class ErrRelay extends AlertError {
     }
 }
 
-export const errReceiveNoSender = new Error('No sender seen, check the code and try again.')
+export const errReceiveNoSender = new Error('no sender seen, check the code and try again.')
 export const errMailbox = new ErrMailbox({
     message: 'Unable to connect to the rendezvous server.',
 })

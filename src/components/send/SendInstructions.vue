@@ -163,7 +163,7 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions([NEW_CLIENT, SEND_FILE, 'alert', 'setDone']),
+        ...mapActions([NEW_CLIENT, SEND_FILE, 'alert']),
         ...mapMutations([SET_PROGRESS, RESET_PROGRESS]),
         onProgress(sentBytes: number, totalBytes: number) {
             this.next();

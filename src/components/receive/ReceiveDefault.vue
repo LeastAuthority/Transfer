@@ -1,6 +1,6 @@
 <template>
-    <transition name="step-fade" mode="out-in">
-        <div>
+<!--    <transition name="step-fade" mode="out-in">-->
+        <div v-show="active">
             <ion-card-header>
                 <ion-card-title>
                     <!--            {{title}}-->
@@ -36,7 +36,7 @@
                 </ion-grid>
             </ion-card-content>
         </div>
-    </transition>
+<!--    </transition>-->
 </template>
 
 <script lang="ts">
@@ -57,7 +57,7 @@ import {defineComponent} from "vue";
 
 export default defineComponent({
     name: "ReceiveDefault",
-    props: ['next'],
+    props: ['active', 'next'],
     computed: {
         ...mapState(['code']),
         nextButtonContents(): string {

@@ -6,7 +6,7 @@ export interface TransferProgress {
     size?: number;
     code?: string;
     done: Promise<void>;
-    accept?: () => Promise<Error>;
+    accept?: () => Promise<void>;
     // cancel: () => void;
 }
 

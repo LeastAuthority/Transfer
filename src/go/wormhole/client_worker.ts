@@ -304,7 +304,7 @@ export default class ClientWorker implements ClientInterface {
         const done: Promise<void> = new Promise((resolve, reject) => {
             this.pending[id].done = {resolve, reject};
         });
-        const accept = async (): Promise<Error> => {
+        const accept = async (): Promise<void> => {
             return this.rpc!.rpc(RECV_FILE_DATA, {id});
         }
         return {name, size, done, accept}

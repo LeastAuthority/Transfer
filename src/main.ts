@@ -42,13 +42,6 @@ if (process.env['NODE_ENV'] !== 'production') {
     })
 }
 
-router.afterEach((to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-        // NB: allow time for navigation
-        window.setTimeout(() => {
-            store.dispatch('setDone', false);
-        }, 250);
-})
-
 const app = createApp(App)
     .use(IonicVue)
     .use(store)

@@ -8,21 +8,22 @@
         <!--            @onDidDismiss="setOpen(false)"-->
         <!--    >-->
         <ReceiveDefault
-                v-if="onStep(ReceiveStep.Default)"
+                :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
         ></ReceiveDefault>
         <ReceiveConsent
-                v-else-if="onStep(ReceiveStep.Consent)"
+                :active="onStep(ReceiveStep.Consent)"
+                :back="backFrom(ReceiveStep.Consent)"
                 :next="nextFrom(ReceiveStep.Consent)"
-                :back="stepBack"
         ></ReceiveConsent>
 
         <!--  // TODO: -->
 <!--        <ReceiveProgress-->
-<!--        ></ReceiveProgress>-->
+<!--        :active="onStep(ReceiveStep.Progress)"-->
+        <!--        ></ReceiveProgress>-->
 
         <ReceiveComplete
-                v-else-if="onStep(ReceiveStep.Complete)"
+                :active="onStep(ReceiveStep.Complete)"
                 :next="nextFrom(ReceiveStep.Complete)"
         ></ReceiveComplete>
     </CardModal>
@@ -40,19 +41,6 @@ ion-card {
 </style>
 
 <script lang="ts">
-import {
-    IonPage,
-    IonToolbar,
-    IonTitle,
-    IonContent,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonButton,
-    IonText,
-    IonIcon,
-    IonInput, alertController,
-} from '@ionic/vue';
 import {clipboardOutline} from 'ionicons/icons'
 import {defineComponent, Transition} from 'vue';
 
@@ -83,30 +71,6 @@ export default defineComponent({
     },
     methods: {
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
-        // TODO: can this error handling / alertController call be moved into an action?
-        async presentAlert(error: string) {
-            const alert = await alertController
-                    .create({
-                        // cssClass: 'my-custom-class',
-                        header: 'Error',
-                        // subHeader: 'error type',
-                        message: error,
-                        buttons: ['OK'],
-                    });
-            await alert.present();
-            await alert.onWillDismiss();
-        },
-        // navigate() {
-        //     if (!this.codeIsValid()) {
-        //         this.presentAlert('Invalid code format');
-        //         return;
-        //     }
-        //
-        //     router.replace(`/r/${this.code}`);
-        // },
-        // paste() {
-        //     console.log('paste clicked.')
-        // },
         onStep(step: ReceiveStep): boolean {
             return this.step === step;
         },
@@ -131,22 +95,15 @@ export default defineComponent({
                 }
             }
         },
+        backFrom(step: ReceiveStep): () => void {
+            return (): void => {
+                if (this.step === step) {
+                    this.stepBack();
+                }
+            }
+        },
     },
     components: {
-        // IonToolbar,
-        // IonTitle,
-        // IonContent,
-        // IonPage,
-        // IonGrid,
-        // IonRow,
-        // IonCol,
-        // IonButton,
-        // IonText,
-        // IonIcon,
-        // IonInput,
-        // MyHeader,
-        // VersionFooter,
-        // Transition,
         CardModal,
         ReceiveDefault,
         ReceiveConsent,

@@ -2,6 +2,7 @@ import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
+    ACCEPT_FILE,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -16,6 +17,10 @@ import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
 import {errRelay, errMailbox} from "@/errors";
 
+const defaultAlertOpts: AlertOptions = {
+    buttons: ['OK'],
+};
+
 let host = 'http://localhost:8080';
 
 let defaultConfig: ClientConfig | undefined;
@@ -28,11 +33,8 @@ if (process.env['NODE_ENV'] === 'production') {
 let client = new ClientWorker(defaultConfig);
 
 /* --- ACTIONS --- */
-// TODO: more specific types.
-function setDoneAction(this: Store<any>, {commit}: ActionContext<any, any>, done: boolean): any {
-    commit('setDone', done);
-}
 
+// TODO: more specific types.
 function newClientAction(this: Store<any>, {commit}: ActionContext<any, any>, config?: ClientConfig): void {
     // TODO: something better.
     commit('setProgress', -1);
@@ -55,7 +57,7 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
         commit(SET_FILE_META, {name, size})
         commit(SEND_FILE, {code});
         done.then(() => {
-            commit('setDone', true);
+            commit(SET_PROGRESS, -1)
             // TODO: remove!
             dispatch(NEW_CLIENT);
         }).catch(error => {
@@ -72,25 +74,48 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
 async function saveFileAction(this: Store<any>, {
     commit,
     dispatch
-}: ActionContext<any, any>, payload: any): Promise<TransferProgress> {
-    const {code, opts} = payload;
-    const promise = client.saveFile(code, opts);
-    promise.then(({name, size}) => {
-        commit(SET_FILE_META, {name, size});
-    });
-    return promise;
+}: ActionContext<any, any>, code: string): Promise<void> {
+    const opts = {
+        progressFunc: (sentBytes: number, totalBytes: number) => {
+            commit(SET_PROGRESS, sentBytes/totalBytes);
+        },
+    }
+    try {
+        const p = client.saveFile(code, opts);
+        const {name, size, accept, done} = await p;
+        commit(SET_FILE_META, {name, size, accept, done});
+        done.then(() => {
+            commit(RESET_CODE);
+            commit(RESET_PROGRESS);
+        }).catch(async (error: string) => {
+            dispatch('alert', {error});
+        });
+        return done;
+    } catch (error) {
+        dispatch('alert', {error})
+        return Promise.reject(error);
+    }
+
+}
+
+async function acceptFileAction(this: Store<any>, ctx: ActionContext<any, any>): Promise<void> {
+    return this.state.fileMeta.accept();
 }
 
 
 declare interface AlertPayload {
     error: string;
-    opts: AlertOptions;
+    opts?: AlertOptions;
 }
 
 async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
     // TODO: types!
     // NB: error is a string
-    const {error, opts} = payload;
+    const {error} = payload;
+    let {opts} = payload;
+    if (typeof(opts) === 'undefined') {
+        opts = defaultAlertOpts;
+    }
 
     if (errMailbox.matches(error, state.config)) {
         opts.header = errMailbox.name
@@ -120,12 +145,6 @@ function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
 // TODO: more specific types
 function setProgressMutation(state: any, percent: any): void {
     state.progress = percent;
-}
-
-// TODO: more specific types
-function setDoneMutation(state: any, done: boolean): void {
-    console.log(`index.ts:62| setting done: ${done}`);
-    state.done = done;
 }
 
 // TODO: be more specific with types.
@@ -161,6 +180,8 @@ function resetProgressMutation(state: any): void {
 export interface FileMeta {
     name: string;
     size: number;
+    accept?: () => Promise<void>;
+    done?: Promise<void>;
 }
 
 export interface AppState {
@@ -184,6 +205,8 @@ export default createStore({
             fileMeta: {
                 name: '',
                 size: 0,
+                accept: undefined,
+                done: undefined,
             },
             progress: -1,
         }
@@ -192,7 +215,6 @@ export default createStore({
         setConfig(state, config: ClientConfig) {
             state.config = config;
         },
-        setDone: setDoneMutation,
         [SET_PROGRESS]: setProgressMutation,
         [SET_FILE_META]: setFileMetaMutation,
         [NEW_CLIENT]: newClientMutation,
@@ -206,10 +228,10 @@ export default createStore({
             commit('setConfig', config);
             dispatch(NEW_CLIENT, config);
         },
-        setDone: setDoneAction,
         [NEW_CLIENT]: newClientAction,
         [SEND_FILE]: sendFileAction,
         [SAVE_FILE]: saveFileAction,
+        [ACCEPT_FILE]: acceptFileAction,
         alert,
     },
 })

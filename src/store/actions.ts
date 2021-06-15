@@ -21,6 +21,7 @@ export const FREE = 'client/free';
 export const SAVE_FILE = 'client/save_file';
 
 export const SET_FILE_META = 'set_file_meta';
+export const ACCEPT_FILE = 'accept_file';
 export const SET_CODE = 'set_code';
 export const RESET_CODE = 'reset_code';
 export const SET_PROGRESS = 'set_progress';

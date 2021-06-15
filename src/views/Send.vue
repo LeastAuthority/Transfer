@@ -8,13 +8,13 @@
         <SendInstructions
                 :active="onStep(SendStep.Instructions)"
                 :file="file"
-                :back="stepBack"
+                :back="backFrom(SendStep.Instructions)"
                 :next="nextFrom(SendStep.Instructions)"
                 :complete="nextFrom(SendStep.Progress)"
         ></SendInstructions>
         <SendProgress
                 :active="onStep(SendStep.Progress)"
-                :back="stepBack"
+                :back="backFrom(SendStep.Progress)"
                 :next="nextFrom(SendStep.Progress)"
         ></SendProgress>
         <SendComplete
@@ -63,7 +63,7 @@
 import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
 
-import {SendStep} from "@/types";
+import {ReceiveStep, SendStep} from "@/types";
 import CardModal from '@/components/CardModal.vue';
 import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
@@ -88,16 +88,6 @@ export default defineComponent({
             file: undefined,
         };
     },
-    // props: ['title', 'subtitle'],
-    // computed: {
-    //     ...mapState(['open', 'done', 'step']),
-    // },
-    // mounted() {
-    //     if (typeof (this.$route.query.select) !== 'undefined') {
-    //         this.select();
-    //         this.router.replace(this.$route.path)
-    //     }
-    // },
     beforeUpdate() {
         if (typeof(this.$route.query.select) !== 'undefined') {
             this.$router.replace('/s');
@@ -106,10 +96,6 @@ export default defineComponent({
     },
     methods: {
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
-        //     ...mapActions(['setOpen', 'setDone', 'nextStep']),
-        //     onStep(checkStep: SendStep): boolean {
-        //         return this.step === checkStep;
-        //     },
         select() {
             (this.$refs.fileInput as HTMLInputElement).click();
         },
@@ -117,12 +103,10 @@ export default defineComponent({
             const fileInput = this.$refs.fileInput as HTMLInputElement;
             if (fileInput.files!.length > 0) {
                 this.file = fileInput.files![0] as File;
-                // this.stepForward();
                 this.step = SendStep.Instructions;
             }
         },
         sendMore(): void {
-            // this.nextFrom(SendStep.Complete);
             this.step = SendStep.Default;
             this.$router.replace('/s');
             this.select();
@@ -136,7 +120,7 @@ export default defineComponent({
             } else {
                 this.step = SendStep.Default;
                 this[RESET_PROGRESS]();
-                this[SET_FILE_META]();
+                this[SET_FILE_META]({name: '', size: 0});
             }
         },
         stepBack() {
@@ -151,15 +135,15 @@ export default defineComponent({
                 }
             }
         },
-        //     fileSize() {
-        //         return typeof (this.file) !== 'undefined' ?
-        //                 sizeToClosestUnit(this.file.size) : '';
-        //     },
+        backFrom(step: SendStep): () => void {
+            return (): void => {
+                if (this.step === step) {
+                    this.stepBack();
+                }
+            }
+        },
     },
     components: {
-        // IonPage,
-        // IonContent,
-        // IonModal,
         // Transition,
         CardModal,
         SendDefault,
@@ -170,8 +154,6 @@ export default defineComponent({
     setup() {
         return {
             add,
-            // isOpenRef,
-            // router,
             SendStep,
         };
     }
