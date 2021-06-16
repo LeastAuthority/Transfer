@@ -30,7 +30,7 @@
                 <ion-row>
                     <ion-col>
                         <router-view v-slot="{ Component, route }">
-                            <transition :name="route.meta.transition">
+                            <transition :name="route.meta.transition" mode="out-in">
                                 <component :is="Component"></component>
                             </transition>
                         </router-view>
