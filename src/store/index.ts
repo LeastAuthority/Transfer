@@ -10,7 +10,8 @@ import {
     SEND_FILE,
     SET_CODE,
     SET_FILE_META,
-    SET_PROGRESS
+    SET_PROGRESS,
+    UPDATE_PROGRESS_ETA
 } from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
@@ -49,6 +50,19 @@ async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContex
     file,
     opts
 }: SendFilePayload): Promise<void> {
+    const _progressFunc = opts?.progressFunc
+    const updateProgressETA = (sentBytes: number, totalBytes: number) => {
+        if (typeof (_progressFunc) === 'function') {
+            _progressFunc(sentBytes, totalBytes);
+        }
+        dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
+    };
+    if (typeof (opts) === 'undefined') {
+        opts = {progressFunc: updateProgressETA};
+    } else {
+        opts.progressFunc = updateProgressETA;
+    }
+
     try {
         const {code, done} = await client.sendFile(file, opts);
 
@@ -76,7 +90,8 @@ async function saveFileAction(this: Store<any>, {
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
     const opts = {
         progressFunc: (sentBytes: number, totalBytes: number) => {
-            commit(SET_PROGRESS, sentBytes/totalBytes);
+            commit(SET_PROGRESS, sentBytes / totalBytes);
+            dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
         },
     }
     try {
@@ -99,6 +114,39 @@ async function saveFileAction(this: Store<any>, {
 
 }
 
+// TODO: use more specific types.
+function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContext<any, any>, {
+    sentBytes,
+    totalBytes
+}: any): void {
+    const maxSamples = 200;
+    if (state.progressSamples.length >= maxSamples) {
+        state.progressSamples.shift()
+    }
+    state.progressSamples.push([sentBytes, Date.now()]);
+
+    let timeDiff = 0;
+    if (state.progressSamples.length >= 1) {
+        const firstSample = state.progressSamples[0];
+        const lastSample = state.progressSamples[state.progressSamples.length - 1];
+        if (firstSample instanceof Array && firstSample.length === 2) {
+            timeDiff = (lastSample[1] - firstSample[1]) / 1000;
+            console.log(`firstSample[1]: ${firstSample[1]}; lastSample[1]: ${lastSample[1]}`)
+        }
+    }
+
+    const avg = function (samples: number[][]): number {
+        return samples.reduce((acc, next): number => {
+            return acc + next[0];
+        }, 0);
+    }
+    const samplesAvg = avg(state.progressSamples);
+    const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
+    const bytesRemaining = totalBytes - sentBytes;
+    console.log(`timeDiff: ${timeDiff.toPrecision(2)} s; eta: ${(bytesRemaining / bytesPerSecond).toPrecision(3)} s; bytesPerSecond: ${bytesPerSecond.toPrecision(3)} B/s | ${(bytesPerSecond / 1024).toPrecision(3)} KB/s; sentBytes: ${sentBytes} B; bytesRemaining: ${bytesRemaining} B`);
+    state.progressETASeconds = Math.ceil(bytesRemaining / bytesPerSecond);
+}
+
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
     return state.fileMeta.accept().catch((error: string) => {
         dispatch('alert', {error});
@@ -116,7 +164,7 @@ async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload
     // NB: error is a string
     const {error} = payload;
     let {opts} = payload;
-    if (typeof(opts) === 'undefined') {
+    if (typeof (opts) === 'undefined') {
         opts = defaultAlertOpts;
     }
 
@@ -146,8 +194,9 @@ function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
 }
 
 // TODO: more specific types
-function setProgressMutation(state: any, percent: any): void {
-    state.progress = percent;
+function setProgressMutation(state: any, sentRatio: number): void {
+    // const sendRatio = sentBytes/totalBytes;
+    state.progress = sentRatio;
 }
 
 // TODO: be more specific with types.
@@ -194,11 +243,13 @@ export interface AppState {
     done: boolean;
     fileMeta: FileMeta;
     progress: number;
+    progressSamples: number[];
+    progressETASeconds: number;
 }
 
 export default createStore({
     devtools: process.env['NODE_ENV'] !== 'production',
-    state(): AppState {
+    state(): any {
         return {
             host,
             config: defaultConfig || {},
@@ -212,10 +263,12 @@ export default createStore({
                 done: undefined,
             },
             progress: -1,
+            progressSamples: [],
+            progressETASeconds: 0,
         }
     },
     mutations: {
-        setConfig(state, config: ClientConfig) {
+        setConfig(state: any, config: ClientConfig) {
             state.config = config;
         },
         [SET_PROGRESS]: setProgressMutation,
@@ -235,6 +288,7 @@ export default createStore({
         [SEND_FILE]: sendFileAction,
         [SAVE_FILE]: saveFileAction,
         [ACCEPT_FILE]: acceptFileAction,
+        [UPDATE_PROGRESS_ETA]: updateProgressETAAction,
         alert,
     },
 })

@@ -37,7 +37,7 @@
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        {{ timeRemaining }}
+                        {{ progressETASeconds }} sec. remaining
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
@@ -89,16 +89,13 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(['config', 'code', 'fileMeta', 'progress']),
+        ...mapState(['config', 'code', 'fileMeta', 'progress', 'progressETASeconds']),
         fileSize() {
             // TODO: cleanup.
             const fileMeta = this.fileMeta as unknown as FileMeta;
             return sizeToClosestUnit(fileMeta.size);
         },
         // TODO: calculate!
-        timeRemaining(): string {
-            return "4 sec. remaining";
-        },
     },
     methods: {
         ...mapMutations([RESET_PROGRESS]),

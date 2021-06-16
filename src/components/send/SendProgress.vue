@@ -29,7 +29,7 @@
                     </ion-row>
                     <ion-row class="ion-text-center">
                         <ion-col>
-                            {{ timeRemaining }}
+                            {{ progressETASeconds }} sec. remaining
                         </ion-col>
                     </ion-row>
                     <ion-row class="ion-text-center">
@@ -70,11 +70,7 @@ export default defineComponent({
     name: "SendProgress.vue",
     props: ['active', 'back'],
     computed: {
-        ...mapState(['progress', 'fileMeta']),
-        // TODO: calculate!
-        timeRemaining(): string {
-            return "4 sec. remaining";
-        },
+        ...mapState(['progress', 'fileMeta', 'progressETASeconds']),
     },
     methods: {
         ...mapActions([RESET_PROGRESS]),

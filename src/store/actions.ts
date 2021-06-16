@@ -27,6 +27,7 @@ export const RESET_CODE = 'reset_code';
 export const SET_PROGRESS = 'set_progress';
 export const RESET_PROGRESS = 'reset_progress';
 export const NEXT_STEP = 'next_step';
+export const UPDATE_PROGRESS_ETA = 'update_progress_eta';
 
 export interface RPCMessage {
     id: number;

@@ -53,7 +53,7 @@ import {
     IonCardTitle,
     IonCol,
     IonGrid, IonInput,
-    IonRow,
+    IonRow, IonSpinner,
     IonText
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
@@ -106,6 +106,7 @@ export default defineComponent({
         IonCardTitle,
         IonCardSubtitle,
         IonCardContent,
+        IonSpinner,
         WaitButton,
     }
 })

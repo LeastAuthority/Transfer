@@ -30,6 +30,7 @@
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col>
                         <!--  TODO: something better.-->
+                        <!--NB: should never see this but takes up the right amount of space-->
                         <ion-progress-bar style="opacity: 0;"
                         ></ion-progress-bar>
                     </ion-col>
@@ -37,6 +38,7 @@
                 <ion-row class="ion-text-center">
                     <ion-col>
                         <!--  TODO: something better.-->
+                        <!--NB: should never see this but takes up the right amount of space-->
                         <ion-text style="opacity: 0;">
                             waiting for sender...
                         </ion-text>
@@ -100,10 +102,6 @@ export default defineComponent({
             // TODO: cleanup.
             const fileMeta = this.fileMeta as unknown as FileMeta;
             return sizeToClosestUnit(fileMeta.size);
-        },
-        // TODO: calculate!
-        timeRemaining(): string {
-            return "4 sec. remaining";
         },
     },
     methods: {
