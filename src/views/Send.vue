@@ -8,8 +8,6 @@
         <SendInstructions
                 :active="onStep(SendStep.Instructions)"
                 :back="backFrom(SendStep.Instructions)"
-                :next="nextFrom(SendStep.Instructions)"
-                :complete="nextFrom(SendStep.Progress)"
                 :file="file"
         ></SendInstructions>
         <SendProgress

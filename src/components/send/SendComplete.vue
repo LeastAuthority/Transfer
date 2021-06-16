@@ -67,26 +67,13 @@ import {
 } from "@ionic/vue";
 import {mapState} from "vuex";
 import {add} from "ionicons/icons";
-import {FileMeta} from "@/store";
-import {sizeToClosestUnit} from "@/util";
 
 export default defineComponent({
     name: "SendComplete",
     props: ['active', 'sendMore'],
     computed: {
         ...mapState(['fileMeta']),
-        // fileSize(): string {
-        //     // TODO: cleanup.
-        //     const fileMeta = this.fileMeta as unknown as FileMeta;
-        //     // return sizeToClosestUnit(fileMeta.size);
-        //     return '100MB';
-        // },
     },
-    // methods: {
-    //     sendMore(): void {
-    //         this.$router.replace('/s?select')
-    //     }
-    // },
     components: {
         IonGrid,
         IonRow,
@@ -107,5 +94,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 </style>

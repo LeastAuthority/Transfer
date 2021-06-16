@@ -105,20 +105,15 @@ import {
 import {copy, close} from 'ionicons/icons';
 import {defineComponent, Transition} from 'vue';
 import {mapState, mapActions, mapMutations} from 'vuex';
-import {add} from 'ionicons/icons';
 
 import {sizeToClosestUnit} from '@/util';
 
-import router from '@/router'
-import MyHeader from '@/components/MyHeader.vue';
-import VersionFooter from "@/components/VersionFooter.vue";
-import WaitButton from "@/components/WaitButton.vue";
-import {ALERT, NEW_CLIENT, RESET_PROGRESS, SEND_FILE, SET_PROGRESS} from "@/store/actions";
+import {ALERT, NEW_CLIENT, RESET_PROGRESS} from "@/store/actions";
 import CopyButton from "@/components/CopyButton.vue";
 
 export default defineComponent({
     name: "SendInstructions",
-    props: ['active', 'selectFile', 'file', 'back', 'next', 'complete'],
+    props: ['active', 'selectFile', 'file', 'back'],
     computed: {
         ...mapState(['host', 'code', 'progress']),
         fileSize(): string {
@@ -130,12 +125,8 @@ export default defineComponent({
         },
     },
     methods: {
-        ...mapActions([NEW_CLIENT, SEND_FILE, ALERT]),
+        ...mapActions([NEW_CLIENT, ALERT]),
         ...mapMutations([RESET_PROGRESS]),
-        // onProgress(sentBytes: number, totalBytes: number) {
-        //     this.next();
-        //     this[SET_PROGRESS](sentBytes / totalBytes)
-        // },
         cancel() {
             // TODO: move up to Send.vue
             this.back();

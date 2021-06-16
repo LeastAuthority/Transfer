@@ -44,31 +44,18 @@ import {defineComponent, Transition} from "vue";
 
 import {
     IonButton,
-    IonCard, IonCardContent,
+    IonCardContent,
     IonCardHeader, IonCardSubtitle,
     IonCardTitle,
-    IonCol,
-    IonGrid,
     IonIcon,
     IonLabel,
-    IonRow,
     IonText
 } from "@ionic/vue";
 
 export default defineComponent({
     name: "SendDefault",
     props: ['select', 'active'],
-    mounted() {
-        // if (this.$route.query.hasOwnProperty('select')) {
-        //     this.$router.replace('/s');
-        //     this.select();
-        // }
-    },
     components: {
-        // IonGrid,
-        // IonRow,
-        // IonCol,
-        // IonCard,
         IonCardHeader,
         IonCardTitle,
         IonCardSubtitle,
@@ -88,21 +75,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/*:host-context(.button-solid.ion-color) .button-inner {*/
-:host(.button-solid.ion-color) .button-native .button-inner {
-    background: green !important;
-    flex-direction: column !important;
-}
-
-.step-fade-enter-active, .step-fade-leave-active {
-    transition: opacity .3s ease;
-//position: absolute; //top: 0; //left: 0; //right: 0;
-}
-
-.step-fade-enter-from, .step-fade-leave-to {
-    opacity: 0;
-}
-
 .bold {
     font-weight: bold;
 }
@@ -113,20 +85,6 @@ export default defineComponent({
     flex-direction: column;
     flex-grow: 1;
 //justify-content: space-around; align-items: center;
-}
-
-.flex-row {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-}
-
-.flex-row:first-child {
-    align-items: flex-end;
-}
-
-.flex-row:last-child {
-    align-items: initial;
 }
 
 ion-card, .drag-n-drop {
