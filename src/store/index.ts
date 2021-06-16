@@ -126,30 +126,33 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
     sentBytes,
     totalBytes
 }: any): void {
+    // state.progressAvgSentByte
     // state.progressAvgSentBytes = (state.progressAvgSentBytes * state.progress) +
     //     (sentBytes * ());
     const maxSamples = 200;
     if (state.progressSamples.length >= maxSamples) {
         state.progressSamples.shift()
     }
-    state.progressSamples.push([sentBytes, Date.now()]);
+    state.progressSamples.push([sentBytes, 1, Date.now()]);
 
     let timeDiff = 0;
     if (state.progressSamples.length >= 1) {
         const firstSample = state.progressSamples[0];
         const lastSample = state.progressSamples[state.progressSamples.length - 1];
         if (firstSample instanceof Array && firstSample.length === 2) {
-            timeDiff = (lastSample[1] - firstSample[1]) / 1000;
+            timeDiff = (lastSample[2] - firstSample[2]) / 1000;
         }
     }
 
     const avg = function (samples: number[][]): number {
-        return samples.reduce((acc, next): number => {
-            return acc + next[0];
-        }, 0);
+        const sums: number[] = samples.reduce((acc, next): number[] => {
+            return [acc[0] + next[0], acc[1] + next[1]];
+        }, [0, 0]);
+        return sums[0]/sums[1];
     }
     const samplesAvg = avg(state.progressSamples);
     const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
+    // const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
     const bytesRemaining = totalBytes - sentBytes;
     state.progressETASeconds = Math.ceil(bytesRemaining / bytesPerSecond);
 }

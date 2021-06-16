@@ -15,7 +15,7 @@
                         </ion-text>
                     </ion-col>
                     <ion-col size="6" align="right">
-                        <ion-button color="grey"
+                        <ion-button color="light-grey"
                                     class="ion-margin-end"
                                     @click="toggleNav()">
                             <!--                            <ion-icon class="dark-label-icon" :icon="navIcon"></ion-icon>-->
@@ -30,7 +30,7 @@
                 <ion-row>
                     <ion-col>
                         <router-view v-slot="{ Component, route }">
-                            <transition :name="route.meta.transition" mode="out-in">
+                            <transition :name="route.meta.transition">
                                 <component :is="Component"></component>
                             </transition>
                         </router-view>
@@ -43,16 +43,24 @@
                 <!--                TODO: use ion- classes instead of style attr. -->
                 <ion-row style="justify-content: flex-end; text-align: center">
                     <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        Security
+                        <ion-text color="dark-grey">
+                            Security
+                        </ion-text>
                     </ion-col>
                     <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        Privacy
+                        <ion-text color="dark-grey">
+                            Privacy
+                        </ion-text>
                     </ion-col>
                     <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        About Us
+                        <ion-text color="dark-grey">
+                            About Us
+                        </ion-text>
                     </ion-col>
                     <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        GitHub
+                        <ion-text color="dark-grey">
+                            GitHub
+                        </ion-text>
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -63,6 +71,12 @@
 <style scoped>
 .ion-page {
     align-items: center;
+}
+
+ion-footer {
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 ion-content {

@@ -14,7 +14,7 @@
             <ion-card-content class="ion-text-center">
                 <div class="flex-col drag-n-drop ion-justify-content-center">
                     <div>
-                        <div class="ion-margin-bottom">
+                        <div class="ion-margin-vertical">
                             <ion-text class="bold">
                                 drag a file
                             </ion-text>
@@ -24,12 +24,11 @@
                                 or
                             </ion-text>
                         </div>
-                        <ion-button class="select-button"
-                                    color="grey"
+                        <ion-button class="select-button ion-margin-vertical"
+                                    color="light-grey"
                                     size="large"
                                     @click="select">
-                                <ion-icon class="dark-label-icon" :icon="add"></ion-icon>
-                                <ion-label class="ion-text-lowercase">select</ion-label>
+                                <ion-icon slot="icon-only" class="dark-label-icon" src="/assets/icon/send-more.svg"></ion-icon>
                         </ion-button>
                     </div>
                 </div>
@@ -61,7 +60,6 @@ export default defineComponent({
         IonCardSubtitle,
         IonCardContent,
         IonButton,
-        IonLabel,
         IonIcon,
         IonText,
         // Transition,
@@ -77,6 +75,19 @@ export default defineComponent({
 <style scoped>
 .bold {
     font-weight: bold;
+}
+
+.select-button {
+    width: 135px;
+    height: 135px;
+}
+
+.select-button ion-icon {
+    font-size: 140px;
+    position: absolute;
+    top: 0;
+    padding: 0;
+    margin: auto;
 }
 
 /* TODO: use ion- classes instead where possible */
