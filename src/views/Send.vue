@@ -1,6 +1,6 @@
 <template>
+    <!--    <transition name="slide-left">-->
     <CardModal>
-        <!--        <transition name="fade">-->
         <SendDefault
                 :active="onStep(SendStep.Default)"
                 :select="select"
@@ -18,13 +18,13 @@
                 :active="onStep(SendStep.Complete)"
                 :sendMore="sendMore"
         ></SendComplete>
-        <!--        </transition>-->
         <input ref="fileInput"
                type="file"
                class="ion-hide"
                @change="fileChanged"
         />
     </CardModal>
+    <!--    </transition>-->
 </template>
 
 <style scoped>

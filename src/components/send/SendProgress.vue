@@ -22,7 +22,7 @@
                     </ion-row>
                     <ion-row class="ion-justify-content-center ion-align-items-center">
                         <ion-col>
-                            <ion-progress-bar color="medium"
+                            <ion-progress-bar color="medium-grey"
                                               :value="progress"
                             ></ion-progress-bar>
                         </ion-col>
@@ -34,11 +34,11 @@
                     </ion-row>
                     <ion-row class="ion-text-center">
                         <ion-col>
-                            <ion-button color="grey"
+                            <ion-button color="light-grey"
                                         @click="cancel"
                             >
-                                <ion-icon :icon="close"></ion-icon>
-                                <ion-label>Cancel</ion-label>
+                                <ion-icon slot="start" :icon="close"></ion-icon>
+                                <ion-label slot="end">Cancel</ion-label>
                             </ion-button>
                         </ion-col>
                     </ion-row>

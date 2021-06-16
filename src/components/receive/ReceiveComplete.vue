@@ -26,7 +26,7 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="light"
+                        <ion-button color="light-grey"
                                     @click="next">
                             <ion-icon :icon="downloadOutline"></ion-icon>
                             <ion-text class="ion-padding-start">receive more</ion-text>

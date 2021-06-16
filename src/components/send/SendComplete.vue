@@ -19,11 +19,11 @@
                         <!--                            </ion-text>-->
                     </ion-col>
                 </ion-row>
-<!--                <ion-row>-->
-<!--                    <ion-col class="ion-text-center">-->
-<!--                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>-->
-<!--                    </ion-col>-->
-<!--                </ion-row>-->
+                <!--                <ion-row>-->
+                <!--                    <ion-col class="ion-text-center">-->
+                <!--                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>-->
+                <!--                    </ion-col>-->
+                <!--                </ion-row>-->
                 <!--        <ion-row>-->
                 <!--            <ion-col class="ion-text-center">-->
                 <!--                <ion-text class="size">({{ fileSize() }})</ion-text>-->
@@ -40,10 +40,10 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="light"
+                        <ion-button color="light-grey"
+                                    class="send-more-button"
                                     @click="sendMore">
-                            <ion-icon :icon="add"></ion-icon>
-                            <ion-text class="ion-padding-start">send more</ion-text>
+                            <ion-icon slot="icon-only" src="/assets/icon/send-more.svg"></ion-icon>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -85,13 +85,20 @@ export default defineComponent({
         IonCardTitle,
         IonCardContent,
     },
-    setup() {
-        return {
-            add
-        }
-    },
 });
 </script>
 
 <style scoped>
+.send-more-button {
+    width: 135px;
+    height: 135px;
+}
+
+.send-more-button ion-icon {
+    font-size: 140px;
+    position: absolute;
+    top: 0;
+    padding: 0;
+    margin: auto;
+}
 </style>

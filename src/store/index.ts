@@ -139,16 +139,19 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
     if (state.progressSamples.length >= 1) {
         const firstSample = state.progressSamples[0];
         const lastSample = state.progressSamples[state.progressSamples.length - 1];
-        if (firstSample instanceof Array && firstSample.length === 2) {
+        if (firstSample instanceof Array && firstSample.length === 3) {
             timeDiff = (lastSample[2] - firstSample[2]) / 1000;
         }
     }
 
     const avg = function (samples: number[][]): number {
-        const sums: number[] = samples.reduce((acc, next): number[] => {
-            return [acc[0] + next[0], acc[1] + next[1]];
-        }, [0, 0]);
-        return sums[0]/sums[1];
+        // const sums: number[] = samples.reduce((acc, next): number[] => {
+        //     return [acc[0] + next[0], acc[1] + next[1]];
+        // }, [0, 0]);
+        // return sums[0]/sums[1];
+        return samples.reduce((acc, next): number => {
+            return acc + next[0];
+        }, 0);
     }
     const samplesAvg = avg(state.progressSamples);
     const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
@@ -255,7 +258,7 @@ export interface AppState {
     fileMeta: FileMeta;
     progress: number;
     // progressAvgSentBytes: number;
-    progressSamples: number[];
+    progressSamples: number[][];
     progressETASeconds: number;
 }
 

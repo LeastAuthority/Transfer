@@ -16,12 +16,12 @@
                     </ion-col>
                     <ion-col size="6" align="right">
                         <ion-button color="light-grey"
-                                    class="ion-margin-end"
+                                    class="ion-margin-end nav-button"
                                     @click="toggleNav()">
                             <!--                            <ion-icon class="dark-label-icon" :icon="navIcon"></ion-icon>-->
-                            <ion-icon class="nav dark-label-icon" :rotate="rotated"
+                            <ion-icon slot="start" :rotate="rotated"
                                       src="/assets/icon/download.svg"></ion-icon>
-                            <ion-label>
+                            <ion-label slot="end">
                                 {{ navButtonText }}
                             </ion-label>
                         </ion-button>
@@ -30,7 +30,7 @@
                 <ion-row>
                     <ion-col>
                         <router-view v-slot="{ Component, route }">
-                            <transition :name="route.meta.transition">
+                            <transition :name="route.meta.transition" mode="out-int">
                                 <component :is="Component"></component>
                             </transition>
                         </router-view>
@@ -95,25 +95,8 @@ ion-icon.nav {
     transition: transform .3s ease;
 } */
 
-ion-icon.nav[rotate=true] {
+.nav-button ion-icon[rotate=true] {
     transform: rotate(-90deg);
-}
-
-/*
-.header ion-button {
-    transition: width .3s ease;
-} */
-
-.main-enter-active, .main-leave-active {
-    transition: opacity .3s ease, transform .3s ease;
-}
-
-/*.main-enter-to, .main-leave {
-    opacity: 1;
-}*/
-
-.main-leave-to, .main-enter-from {
-//transform: translateX(-10px); opacity: 0;
 }
 
 .bg {
@@ -183,6 +166,7 @@ export default defineComponent({
             return this.$route.path === '/s' ? '/r' : '/s';
         },
         rotated(): boolean {
+            console.log(this.$route.path !== '/s');
             return this.$route.path !== '/s';
         },
     },

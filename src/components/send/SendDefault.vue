@@ -28,7 +28,7 @@
                                     color="light-grey"
                                     size="large"
                                     @click="select">
-                                <ion-icon slot="icon-only" class="dark-label-icon" src="/assets/icon/send-more.svg"></ion-icon>
+                                <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
                         </ion-button>
                     </div>
                 </div>

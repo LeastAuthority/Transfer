@@ -1,5 +1,5 @@
 <template>
-    <!--    <transition name="slide-secondary">-->
+    <!--        <transition name="slide-right">-->
     <!--    <ion-page>-->
     <!--        <ion-content>-->
     <CardModal>
@@ -30,7 +30,7 @@
     </CardModal>
     <!--        </ion-content>-->
     <!--    </ion-page>-->
-    <!--    </transition>-->
+    <!--        </transition>-->
 </template>
 
 <style lang="css">

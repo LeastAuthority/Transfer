@@ -22,8 +22,8 @@
                         <ion-button color="yellow"
                                     @click="download"
                         >
-                            <ion-icon src="/assets/icon/download.svg"></ion-icon>
-                            <ion-label>Download</ion-label>
+                            <ion-icon slot="start" src="/assets/icon/download.svg"></ion-icon>
+                            <ion-label slot="end">Download</ion-label>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -46,11 +46,11 @@
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        <ion-button color="grey"
+                        <ion-button color="light-grey"
                                     @click="cancel"
                         >
-                            <ion-icon :icon="close"></ion-icon>
-                            <ion-label>Cancel</ion-label>
+                            <ion-icon slot="start" :icon="close"></ion-icon>
+                            <ion-label slot="end">Cancel</ion-label>
                         </ion-button>
                     </ion-col>
                 </ion-row>

@@ -34,15 +34,16 @@ export default defineComponent({
     },
     computed: {
         color(): string {
-            return this.waiting ?
-                    'light-yellow' : 'yellow';
+            return 'yellow';
+            // return this.waiting ?
+            //         'light-yellow' : 'yellow';
         },
     },
     methods: {
         _click(): void {
             window.setTimeout(() => {
                 this.waiting = false;
-            }, 5000);
+            }, 1000);
             this.waiting = true;
             this.click();
         }
