@@ -113,7 +113,7 @@ import router from '@/router'
 import MyHeader from '@/components/MyHeader.vue';
 import VersionFooter from "@/components/VersionFooter.vue";
 import WaitButton from "@/components/WaitButton.vue";
-import {NEW_CLIENT, RESET_PROGRESS, SEND_FILE, SET_PROGRESS} from "@/store/actions";
+import {ALERT, NEW_CLIENT, RESET_PROGRESS, SEND_FILE, SET_PROGRESS} from "@/store/actions";
 import CopyButton from "@/components/CopyButton.vue";
 
 export default defineComponent({
@@ -129,44 +129,13 @@ export default defineComponent({
             return `${this.host}/#/${this.code}`;
         },
     },
-    async beforeUpdate() {
-        if (this.active) {
-            const opts = {progressFunc: this.onProgress};
-            const payload = {file: this.file, opts};
-            try {
-                await this[SEND_FILE](payload)
-                        .catch(async (error) => {
-                            // NB: error during transfer.
-                            console.error(error);
-                            const opts = {
-                                buttons: ['OK'],
-                            };
-                            await this.alert({error, opts});
-                            this.cancel();
-                        });
-                this.complete();
-            } catch (error) {
-                // NB: error during setup.
-                console.error(error);
-                const opts = {
-                    // cssClass: 'my-custom-class',
-                    // header: 'Error',
-                    // subHeader: 'error type',
-                    // message: error,
-                    buttons: ['OK'],
-                };
-                await this.alert({error, opts})
-                this.cancel();
-            }
-        }
-    },
     methods: {
-        ...mapActions([NEW_CLIENT, SEND_FILE, 'alert']),
-        ...mapMutations([SET_PROGRESS, RESET_PROGRESS]),
-        onProgress(sentBytes: number, totalBytes: number) {
-            this.next();
-            this[SET_PROGRESS](sentBytes / totalBytes)
-        },
+        ...mapActions([NEW_CLIENT, SEND_FILE, ALERT]),
+        ...mapMutations([RESET_PROGRESS]),
+        // onProgress(sentBytes: number, totalBytes: number) {
+        //     this.next();
+        //     this[SET_PROGRESS](sentBytes / totalBytes)
+        // },
         cancel() {
             // TODO: move up to Send.vue
             this.back();

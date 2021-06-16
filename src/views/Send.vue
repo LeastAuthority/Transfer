@@ -62,14 +62,14 @@
 import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
 
-import {ReceiveStep, SendStep} from "@/types";
+import {SendStep} from "@/types";
 import CardModal from '@/components/CardModal.vue';
 import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
 import SendComplete from "@/components/send/SendComplete.vue";
-import {RESET_PROGRESS, SET_FILE_META} from "@/store/actions";
-import {mapMutations} from "vuex";
+import {ALERT, RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
+import {mapActions, mapMutations} from "vuex";
 
 // TODO: use proper state management.
 const isOpenRef = ref(false);
@@ -88,12 +88,13 @@ export default defineComponent({
         };
     },
     beforeUpdate() {
-        if (typeof(this.$route.query.select) !== 'undefined') {
+        if (typeof (this.$route.query.select) !== 'undefined') {
             this.$router.replace('/s');
             this.select();
         }
     },
     methods: {
+        ...mapActions([SEND_FILE, ALERT]),
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         select() {
             (this.$refs.fileInput as HTMLInputElement).click();
@@ -103,6 +104,25 @@ export default defineComponent({
             if (fileInput.files!.length > 0) {
                 this.file = fileInput.files![0] as File;
                 this.step = SendStep.Instructions;
+            }
+            this.sendFile();
+        },
+        // TODO: refactor.
+        async sendFile(): Promise<void> {
+            const progressNext = this.nextFrom(SendStep.Instructions);
+            const opts = {progressFunc: progressNext};
+            const payload = {file: this.file, opts};
+            const p = this[SEND_FILE](payload);
+            this.step = SendStep.Instructions;
+            try {
+                const {done} = await p
+                // this.step = SendStep.Progress
+                await done;
+                this.step = SendStep.Complete;
+            } catch (error) {
+                // NB: error during transfer.
+                await this[ALERT]({error});
+                this.step = SendStep.Default;
             }
         },
         sendMore(): void {

@@ -77,7 +77,16 @@ import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ioni
 
 import router from '@/router/index.ts'
 import {sizeToClosestUnit} from "@/util";
-import {ACCEPT_FILE, NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_PROGRESS} from "@/store/actions";
+import {
+    ACCEPT_FILE,
+    ALERT,
+    NEW_CLIENT,
+    RESET_CODE,
+    RESET_PROGRESS,
+    SAVE_FILE,
+    SET_CODE,
+    SET_PROGRESS
+} from "@/store/actions";
 import {FileMeta} from "@/store";
 import {TransferProgress} from "@/go/wormhole/types";
 
@@ -105,7 +114,7 @@ export default defineComponent({
         },
     },
     methods: {
-        ...mapActions([ACCEPT_FILE, 'alert']),
+        ...mapActions([ACCEPT_FILE, ALERT]),
         ...mapMutations([SET_PROGRESS, RESET_CODE, RESET_PROGRESS]),
         async download() {
             this.next();

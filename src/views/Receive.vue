@@ -51,7 +51,7 @@ import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
 import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
 import {ReceiveStep} from "@/types";
-import {RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
+import {ALERT, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
 import {mapActions, mapMutations, mapState} from "vuex";
 import ReceiveProgress from "@/components/receive/ReceiveProgress.vue";
 
@@ -59,9 +59,21 @@ export default defineComponent({
     name: 'Receive',
     async beforeUpdate() {
         if (typeof (this.$route.query.hasCode) !== 'undefined') {
-            this.$router.replace('/r');
-            await this[SAVE_FILE](this.code);
-            this.step = ReceiveStep.Consent;
+            await this.$router.replace('/r');
+            try {
+                await this[SAVE_FILE](this.code);
+                this.step = ReceiveStep.Consent;
+            } catch (error) {
+                console.error(error);
+                const opts = {
+                    // cssClass: 'my-custom-class',
+                    // header: 'Error',
+                    // subHeader: 'error type',
+                    // message: error,
+                    buttons: ['OK'],
+                };
+                await this[ALERT]({error, opts})
+            }
         }
     },
     data() {
@@ -73,7 +85,7 @@ export default defineComponent({
         ...mapState(['code']),
     },
     methods: {
-        ...mapActions([SAVE_FILE]),
+        ...mapActions([SAVE_FILE, ALERT]),
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         onStep(step: ReceiveStep): boolean {
             return this.step === step;

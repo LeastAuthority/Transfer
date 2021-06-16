@@ -2,7 +2,7 @@ import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
-    ACCEPT_FILE,
+    ACCEPT_FILE, ALERT,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -46,39 +46,46 @@ declare interface SendFilePayload {
     opts?: TransferOptions;
 }
 
-async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, {
-    file,
-    opts
-}: SendFilePayload): Promise<void> {
-    const _progressFunc = opts?.progressFunc
-    const updateProgressETA = (sentBytes: number, totalBytes: number) => {
-        if (typeof (_progressFunc) === 'function') {
-            _progressFunc(sentBytes, totalBytes);
-        }
+async function sendFileAction(this: Store<any>, {
+    commit,
+    dispatch
+}: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
+    const progressFunc = (sentBytes: number, totalBytes: number) => {
+        commit(SET_PROGRESS, sentBytes / totalBytes);
         dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
     };
+
     if (typeof (opts) === 'undefined') {
-        opts = {progressFunc: updateProgressETA};
+        opts = {progressFunc};
+    } else if (typeof (opts.progressFunc) !== 'function') {
+        opts.progressFunc = progressFunc;
     } else {
-        opts.progressFunc = updateProgressETA;
+        const _progressFunc = opts.progressFunc;
+        opts.progressFunc = (sentBytes: number, totalBytes: number): void => {
+            _progressFunc(sentBytes, totalBytes);
+            progressFunc(sentBytes, totalBytes);
+        }
     }
 
     try {
-        const {code, done} = await client.sendFile(file, opts);
-
-        const {name, size} = file;
-        commit(SET_FILE_META, {name, size})
-        commit(SEND_FILE, {code});
-        done.then(() => {
-            commit(SET_PROGRESS, -1)
-            // TODO: remove!
-            dispatch(NEW_CLIENT);
-        }).catch(error => {
-            return Promise.reject(error);
+        const p = client.sendFile(file, opts);
+        p.then(({code, done}) => {
+            const {name, size} = file;
+            commit(SET_FILE_META, {name, size})
+            commit(SEND_FILE, {code});
+            done.then(() => {
+                commit(SET_PROGRESS, -1)
+                // TODO: remove!
+                dispatch(NEW_CLIENT);
+            }).catch(error => {
+                dispatch(ALERT, {error})
+                // return Promise.reject(error);
+            });
+            // return done;
         });
-
-        return done;
+        return p;
     } catch (error) {
+        dispatch(ALERT, {error})
         return Promise.reject(error);
     }
 }
@@ -102,13 +109,13 @@ async function saveFileAction(this: Store<any>, {
                 commit(RESET_CODE);
                 commit(RESET_PROGRESS);
             }).catch(async (error: string) => {
-                await dispatch('alert', {error});
+                await dispatch('alertAction', {error});
             });
             // return done;
         });
         return p;
     } catch (error) {
-        dispatch('alert', {error})
+        dispatch('alertAction', {error});
         return Promise.reject(error);
     }
 
@@ -119,6 +126,8 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
     sentBytes,
     totalBytes
 }: any): void {
+    // state.progressAvgSentBytes = (state.progressAvgSentBytes * state.progress) +
+    //     (sentBytes * ());
     const maxSamples = 200;
     if (state.progressSamples.length >= maxSamples) {
         state.progressSamples.shift()
@@ -131,7 +140,6 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
         const lastSample = state.progressSamples[state.progressSamples.length - 1];
         if (firstSample instanceof Array && firstSample.length === 2) {
             timeDiff = (lastSample[1] - firstSample[1]) / 1000;
-            console.log(`firstSample[1]: ${firstSample[1]}; lastSample[1]: ${lastSample[1]}`)
         }
     }
 
@@ -143,13 +151,12 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
     const samplesAvg = avg(state.progressSamples);
     const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
     const bytesRemaining = totalBytes - sentBytes;
-    console.log(`timeDiff: ${timeDiff.toPrecision(2)} s; eta: ${(bytesRemaining / bytesPerSecond).toPrecision(3)} s; bytesPerSecond: ${bytesPerSecond.toPrecision(3)} B/s | ${(bytesPerSecond / 1024).toPrecision(3)} KB/s; sentBytes: ${sentBytes} B; bytesRemaining: ${bytesRemaining} B`);
     state.progressETASeconds = Math.ceil(bytesRemaining / bytesPerSecond);
 }
 
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
     return state.fileMeta.accept().catch((error: string) => {
-        dispatch('alert', {error});
+        dispatch('alertAction', {error});
     });
 }
 
@@ -159,10 +166,11 @@ declare interface AlertPayload {
     opts?: AlertOptions;
 }
 
-async function alert(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
+async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
     // TODO: types!
     // NB: error is a string
     const {error} = payload;
+    console.error(error);
     let {opts} = payload;
     if (typeof (opts) === 'undefined') {
         opts = defaultAlertOpts;
@@ -243,6 +251,7 @@ export interface AppState {
     done: boolean;
     fileMeta: FileMeta;
     progress: number;
+    // progressAvgSentBytes: number;
     progressSamples: number[];
     progressETASeconds: number;
 }
@@ -263,6 +272,7 @@ export default createStore({
                 done: undefined,
             },
             progress: -1,
+            // progressAvgSentBytes: 0,
             progressSamples: [],
             progressETASeconds: 0,
         }
@@ -289,6 +299,6 @@ export default createStore({
         [SAVE_FILE]: saveFileAction,
         [ACCEPT_FILE]: acceptFileAction,
         [UPDATE_PROGRESS_ETA]: updateProgressETAAction,
-        alert,
+        [ALERT]: alertAction,
     },
 })

@@ -57,7 +57,7 @@ import {
     IonText
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
-import {SAVE_FILE, SET_CODE} from "@/store/actions";
+import {ALERT, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
 import WaitButton from "@/components/WaitButton.vue";
 
@@ -71,7 +71,7 @@ export default defineComponent({
         },
     },
     methods: {
-        ...mapActions([SAVE_FILE, 'alert']),
+        ...mapActions([SAVE_FILE, ALERT]),
         ...mapMutations([SET_CODE]),
         _setCode(code: string): void {
             this[SET_CODE](code);
@@ -81,7 +81,7 @@ export default defineComponent({
                 await this[SAVE_FILE](this.code);
                 this.next();
             } catch (error) {
-                await this.alert({error});
+                await this[ALERT]({error});
             }
 
             // try {
@@ -91,7 +91,7 @@ export default defineComponent({
             //     this.receivingPromise = undefined;
             //     this.next();
             // } catch (error) {
-            //     await this.alert({error});
+            //     await this[ALERT]({error});
             //     this.cancel();
             // }
         },

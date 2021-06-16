@@ -63,7 +63,7 @@ import {
     IonRow,
     IonText
 } from "@ionic/vue";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 import {RESET_PROGRESS} from "@/store/actions";
 
 export default defineComponent({
@@ -73,7 +73,7 @@ export default defineComponent({
         ...mapState(['progress', 'fileMeta', 'progressETASeconds']),
     },
     methods: {
-        ...mapActions([RESET_PROGRESS]),
+        ...mapMutations([RESET_PROGRESS]),
         // TODO: move up to Send.vue
         cancel() {
             this.back();
