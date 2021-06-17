@@ -19,7 +19,7 @@
                     <div>
                         <div class="ion-margin-vertical">
                             <ion-text class="bold">
-                                drag a file
+                                drop a file
                             </ion-text>
                         </div>
                         <div class="ion-margin-bottom">
