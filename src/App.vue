@@ -165,8 +165,7 @@ body {
     --ion-color-tint: var(--ion-color-yellow-tint);
 } */
 
-.slide-right-enter-active, .slide-right-leave-active,
-.slide-left-enter-active, .slide-left-leave-active {
+.slide-right-enter-active, .slide-left-enter-active {
     transition: transform .3s ease, opacity .3s ease;
 }
 

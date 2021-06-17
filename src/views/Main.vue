@@ -18,7 +18,6 @@
                         <ion-button color="light-grey"
                                     class="ion-margin-end nav-button"
                                     @click="toggleNav()">
-                            <!--                            <ion-icon class="dark-label-icon" :icon="navIcon"></ion-icon>-->
                             <ion-icon slot="start" :rotate="rotated"
                                       src="/assets/icon/download.svg"></ion-icon>
                             <ion-label slot="end">
@@ -29,10 +28,10 @@
                 </ion-row>
                 <ion-row>
                     <ion-col>
-                        <router-view v-slot="{ Component }">
-<!--                            <transition :name="route.meta.transition" mode="out-int">-->
+                        <router-view v-slot="{ Component, route }">
+                            <transition :name="route.meta.transition">
                                 <component :is="Component"></component>
-<!--                            </transition>-->
+                            </transition>
                         </router-view>
                     </ion-col>
                 </ion-row>
