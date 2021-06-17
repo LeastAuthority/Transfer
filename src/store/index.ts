@@ -17,7 +17,9 @@ import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
 import {errRelay, errMailbox} from "@/errors";
+import {sizeToClosestUnit} from "@/util";
 
+const updateProgressETAFrequency = 10;
 const defaultAlertOpts: AlertOptions = {
     buttons: ['OK'],
 };
@@ -126,38 +128,13 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
     sentBytes,
     totalBytes
 }: any): void {
-    // state.progressAvgSentByte
-    // state.progressAvgSentBytes = (state.progressAvgSentBytes * state.progress) +
-    //     (sentBytes * ());
-    const maxSamples = 200;
-    if (state.progressSamples.length >= maxSamples) {
-        state.progressSamples.shift()
-    }
-    state.progressSamples.push([sentBytes, 1, Date.now()]);
-
-    let timeDiff = 0;
-    if (state.progressSamples.length >= 1) {
-        const firstSample = state.progressSamples[0];
-        const lastSample = state.progressSamples[state.progressSamples.length - 1];
-        if (firstSample instanceof Array && firstSample.length === 3) {
-            timeDiff = (lastSample[2] - firstSample[2]) / 1000;
-        }
-    }
-
-    const avg = function (samples: number[][]): number {
-        // const sums: number[] = samples.reduce((acc, next): number[] => {
-        //     return [acc[0] + next[0], acc[1] + next[1]];
-        // }, [0, 0]);
-        // return sums[0]/sums[1];
-        return samples.reduce((acc, next): number => {
-            return acc + next[0];
-        }, 0);
-    }
-    const samplesAvg = avg(state.progressSamples);
-    const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
-    // const bytesPerSecond = samplesAvg * (timeDiff / maxSamples);
+    const now = Date.now()
+    const secSinceBegin = (now - state.progressBegin) / 1000;
+    const bytesPerSecond = sentBytes / secSinceBegin;
     const bytesRemaining = totalBytes - sentBytes;
-    state.progressETASeconds = Math.ceil(bytesRemaining / bytesPerSecond);
+    if (state.progressCounter % updateProgressETAFrequency === 0) {
+        state.progressETASeconds = Math.ceil(bytesRemaining / bytesPerSecond);
+    }
 }
 
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
@@ -209,8 +186,12 @@ function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
 
 // TODO: more specific types
 function setProgressMutation(state: any, sentRatio: number): void {
-    // const sendRatio = sentBytes/totalBytes;
+    if (state.progressBegin === 0) {
+        state.progressBegin = Date.now();
+    }
+
     state.progress = sentRatio;
+    state.progressCounter++;
 }
 
 // TODO: be more specific with types.
@@ -241,6 +222,8 @@ function resetCodeMutation(state: any): void {
 // TODO: be more specific with types.
 function resetProgressMutation(state: any): void {
     state.progress = -1;
+    state.progressCounter = 0;
+    state.progressBegin = 0;
 }
 
 export interface FileMeta {
@@ -257,8 +240,8 @@ export interface AppState {
     done: boolean;
     fileMeta: FileMeta;
     progress: number;
-    // progressAvgSentBytes: number;
-    progressSamples: number[][];
+    progressCounter: number;
+    progressBegin: number;
     progressETASeconds: number;
 }
 
@@ -278,8 +261,8 @@ export default createStore({
                 done: undefined,
             },
             progress: -1,
-            // progressAvgSentBytes: 0,
-            progressSamples: [],
+            progressCounter: 0,
+            progressBegin: 0,
             progressETASeconds: 0,
         }
     },
