@@ -63,8 +63,9 @@ import {
     IonRow,
     IonText
 } from "@ionic/vue";
-import {mapActions, mapMutations, mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 import {RESET_PROGRESS} from "@/store/actions";
+import {close} from 'ionicons/icons'
 
 export default defineComponent({
     name: "SendProgress.vue",
@@ -74,7 +75,7 @@ export default defineComponent({
     },
     methods: {
         ...mapMutations([RESET_PROGRESS]),
-        // TODO: move up to Send.vue
+        // TODO: lift up.
         cancel() {
             this.back();
             this[RESET_PROGRESS]();

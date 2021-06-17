@@ -130,7 +130,9 @@ export default defineComponent({
             }
         },
         sendMore(): void {
+            this[SET_FILE_META]({name: '', size: 0});
             this.step = SendStep.Default;
+            this[RESET_PROGRESS]();
             this.$router.replace('/s');
             this.select();
         },
@@ -141,9 +143,9 @@ export default defineComponent({
             if (this.step < SendStep.Complete) {
                 this.step++;
             } else {
+                this[SET_FILE_META]({name: '', size: 0});
                 this.step = SendStep.Default;
                 this[RESET_PROGRESS]();
-                this[SET_FILE_META]({name: '', size: 0});
             }
         },
         stepBack() {

@@ -29,10 +29,10 @@
                 </ion-row>
                 <ion-row>
                     <ion-col>
-                        <router-view v-slot="{ Component, route }">
-                            <transition :name="route.meta.transition" mode="out-int">
+                        <router-view v-slot="{ Component }">
+<!--                            <transition :name="route.meta.transition" mode="out-int">-->
                                 <component :is="Component"></component>
-                            </transition>
+<!--                            </transition>-->
                         </router-view>
                     </ion-col>
                 </ion-row>
