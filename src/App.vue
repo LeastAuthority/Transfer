@@ -1,8 +1,6 @@
 <template>
     <ion-app>
         <Main id="content"></Main>
-        <!--        <ion-menu side="end" content-id="content"></ion-menu>-->
-        <!--        <ion-router-outlet id="content"/>-->
     </ion-app>
 </template>
 
@@ -101,15 +99,6 @@ body {
     --ion-color-tint: var(--ion-color-yellow-tint);
 }
 
-.ion-color-light-yellow {
-    --ion-color-base: var(--ion-color-light-yellow);
-    --ion-color-base-rgb: var(--ion-color-light-yellow-rgb);
-    --ion-color-contrast: var(--ion-color-light-yellow-contrast);
-    --ion-color-contrast-rgb: var(--ion-color-light-yellow-contrast-rgb);
-    --ion-color-shade: var(--ion-color-light-yellow-shade);
-    --ion-color-tint: var(--ion-color-light-yellow-tint);
-}
-
 .ion-color-blue {
     --ion-color-base: var(--ion-color-blue);
     --ion-color-base-rgb: var(--ion-color-blue-rgb);
@@ -189,8 +178,6 @@ export default defineComponent({
     name: 'App',
     components: {
         IonApp,
-        // IonRouterOutlet,
-        // IonMenu
         Main,
     }
 });
