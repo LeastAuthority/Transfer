@@ -94,8 +94,14 @@ export default defineComponent({
     methods: {
         ...mapActions([SEND_FILE, ALERT]),
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
-        select() {
+        select(file?: File) {
+            if (typeof(file) === 'undefined') {
             (this.$refs.fileInput as HTMLInputElement).click();
+            } else {
+                this.file = file;
+                this.step = SendStep.Instructions;
+                this.sendFile();
+            }
         },
         fileChanged() {
             const fileInput = this.$refs.fileInput as HTMLInputElement;

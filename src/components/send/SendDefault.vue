@@ -12,7 +12,10 @@
                 </ion-card-subtitle>
             </ion-card-header>
             <ion-card-content class="ion-text-center">
-                <div class="flex-col drag-n-drop ion-justify-content-center">
+                <div class="flex-col drag-n-drop ion-justify-content-center"
+                     @dragover="dragOver"
+                     @drop="drop"
+                >
                     <div>
                         <div class="ion-margin-vertical">
                             <ion-text class="bold">
@@ -27,7 +30,7 @@
                         <ion-button class="select-button ion-margin-vertical"
                                     color="light-grey"
                                     size="large"
-                                    @click="select">
+                                    @click="() => select()">
                                 <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
                         </ion-button>
                     </div>
@@ -37,7 +40,7 @@
 <!--    </transition>-->
 </template>
 
-<script>
+<script lang="ts">
 import {add} from 'ionicons/icons';
 import {defineComponent, Transition} from "vue";
 
@@ -63,6 +66,21 @@ export default defineComponent({
         IonIcon,
         IonText,
         // Transition,
+    },
+    methods: {
+        drop(event: DragEvent) {
+            event.preventDefault();
+            const files = event.dataTransfer!.files;
+            if (files.length > 0) {
+                // NB: only dropping first file in list.
+                this.select(files[0]);
+            } else {
+                console.error("no files listed in drop event")
+            }
+        },
+        dragOver(event: DragEvent) {
+            event.preventDefault();
+        }
     },
     setup() {
         return {
