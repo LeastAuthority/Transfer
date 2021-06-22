@@ -16,6 +16,7 @@
 
 :root * {
     font-family: 'Poppins', sans-serif !important;
+    text-transform: initial;
 }
 
 :root ion-content {

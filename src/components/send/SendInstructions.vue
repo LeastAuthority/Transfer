@@ -54,7 +54,7 @@
                         <ion-button color="medium-grey"
                                     @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
-                            <ion-label class="ion-padding-start">cancel</ion-label>
+                            <ion-label class="ion-padding-start">Cancel</ion-label>
                         </ion-button>
                     </ion-col>
                 </ion-row>

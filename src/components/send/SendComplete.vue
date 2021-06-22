@@ -2,7 +2,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="black" class="bold">
+                <ion-text color="dark-grey" class="bold">
                     Sent!
                 </ion-text>
             </ion-card-title>
@@ -23,7 +23,7 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="dark-grey"
+                        <ion-button color="medium-grey"
                                     class="send-more-button"
                                     @click="sendMore">
                             <ion-icon slot="icon-only" src="/assets/icon/send-more.svg"></ion-icon>

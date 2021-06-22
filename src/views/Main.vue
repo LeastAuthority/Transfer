@@ -19,7 +19,7 @@
                                     @click="toggleNav()">
                             <ion-icon slot="start" :rotate="rotated"
                                       src="/assets/icon/download.svg"></ion-icon>
-                            <ion-label slot="end">
+                            <ion-label class="ion-text-uppercase" slot="end">
                                 {{ navButtonText }}
                             </ion-label>
                         </ion-button>
