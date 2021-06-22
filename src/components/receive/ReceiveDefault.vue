@@ -3,12 +3,14 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <!--            {{title}}-->
-                Receive files with ease, speed, and security
+                <ion-text color="medium-grey">
+                    Receive files with ease, speed, and security
+                </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
-                <!--            {{subtitle}}-->
-                Always end-to-end encrypted.
+                <ion-text color="medium-grey">
+                    Always end-to-end encrypted.
+                </ion-text>
             </ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
@@ -71,10 +73,10 @@ export default defineComponent({
             return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
         },
         _code: {
-            get: function(): string {
+            get: function (): string {
                 return this.code;
             },
-            set: function(code: string) {
+            set: function (code: string) {
                 this[SET_CODE](code);
             }
         }

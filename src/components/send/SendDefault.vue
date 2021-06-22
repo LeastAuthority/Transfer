@@ -1,43 +1,45 @@
 <template>
-<!--    <transition name="step-fade">-->
-        <div v-show="active">
-            <ion-card-header>
-                <ion-card-title>
-                    <!--            {{title}}-->
+    <!--    <transition name="step-fade">-->
+    <div v-show="active">
+        <ion-card-header>
+            <ion-card-title>
+                <ion-text color="medium-grey">
                     Send files with ease, speed, and security
-                </ion-card-title>
-                <ion-card-subtitle>
-                    <!--            {{subtitle}}-->
+                </ion-text>
+            </ion-card-title>
+            <ion-card-subtitle>
+                <ion-text color="medium-grey">
                     No sign-ups. No snooping. No nonsense. <span class="italic">Just send</span>.
-                </ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content class="ion-text-center">
-                <div class="flex-col drag-n-drop ion-justify-content-center"
-                     @dragover="dragOver"
-                     @drop="drop"
-                >
-                    <div>
-                        <div class="ion-margin-vertical">
-                            <ion-text class="bold">
-                                drop a file
-                            </ion-text>
-                        </div>
-                        <div class="ion-margin-bottom">
-                            <ion-text>
-                                or
-                            </ion-text>
-                        </div>
-                        <ion-button class="select-button ion-margin-vertical"
-                                    color="light-grey"
-                                    size="large"
-                                    @click="() => select()">
-                                <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
-                        </ion-button>
+                </ion-text>
+            </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content class="ion-text-center">
+            <div class="flex-col drag-n-drop ion-justify-content-center"
+                 @dragover="dragOver"
+                 @drop="drop"
+            >
+                <div>
+                    <div class="ion-margin-vertical">
+                        <ion-text color="medium-grey" class="bold">
+                            drop a file
+                        </ion-text>
                     </div>
+                    <div class="ion-margin-bottom">
+                        <ion-text color="medium-grey">
+                            or
+                        </ion-text>
+                    </div>
+                    <ion-button class="select-button ion-margin-vertical"
+                                color="light-grey"
+                                size="large"
+                                @click="() => select()">
+                        <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
+                    </ion-button>
                 </div>
-            </ion-card-content>
-        </div>
-<!--    </transition>-->
+            </div>
+        </ion-card-content>
+    </div>
+    <!--    </transition>-->
 </template>
 
 <script lang="ts">

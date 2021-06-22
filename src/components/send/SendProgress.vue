@@ -1,51 +1,44 @@
 <template>
-<!--    <transition name="step-fade" mode="out-in">-->
-        <div v-show="active">
-            <ion-card-header>
-                <ion-card-title>
-                    <!--            {{title}}-->
+    <!--    <transition name="step-fade" mode="out-in">-->
+    <div v-show="active">
+        <ion-card-header>
+            <ion-card-title>
+                <ion-text color="medium-grey">
                     Sending...
-                </ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-                <ion-grid>
-                    <ion-row class="ion-justify-content-center ion-align-items-center">
-                        <ion-col class="ion-text-center">
-                            <!--                            "wild cat card"-->
-                            <ion-text class="bold">
-                                {{ fileMeta.name }}
-                            </ion-text>
-                            <!--                            <ion-text>-->
-                            <!--                                ({{ fileSize }})-->
-                            <!--                            </ion-text>-->
-                        </ion-col>
-                    </ion-row>
-                    <ion-row class="ion-justify-content-center ion-align-items-center">
-                        <ion-col>
-                            <ion-progress-bar color="medium-grey"
-                                              :value="progress"
-                            ></ion-progress-bar>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row class="ion-text-center">
-                        <ion-col>
-                            {{ progressETASeconds }} sec. remaining
-                        </ion-col>
-                    </ion-row>
-                    <ion-row class="ion-text-center">
-                        <ion-col>
-                            <ion-button color="light-grey"
-                                        @click="cancel"
-                            >
-                                <ion-icon slot="start" :icon="close"></ion-icon>
-                                <ion-label slot="end">Cancel</ion-label>
-                            </ion-button>
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
-            </ion-card-content>
-        </div>
-<!--    </transition>-->
+                </ion-text>
+            </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row class="ion-justify-content-center">
+                    <FileCard :filename="fileMeta.name"></FileCard>
+                </ion-row>
+                <ion-row class="ion-justify-content-center ion-align-items-center">
+                    <ion-col>
+                        <ion-progress-bar color="medium-grey"
+                                          :value="progress"
+                        ></ion-progress-bar>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center">
+                    <ion-col>
+                        {{ progressETASeconds }} sec. remaining
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center">
+                    <ion-col>
+                        <ion-button color="light-grey"
+                                    @click="cancel"
+                        >
+                            <ion-icon slot="start" :icon="close"></ion-icon>
+                            <ion-label slot="end">Cancel</ion-label>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-card-content>
+    </div>
+    <!--    </transition>-->
 </template>
 
 <script lang="ts">
@@ -66,6 +59,7 @@ import {
 import {mapMutations, mapState} from "vuex";
 import {RESET_PROGRESS} from "@/store/actions";
 import {close} from 'ionicons/icons'
+import FileCard from "@/components/FileCard.vue";
 
 export default defineComponent({
     name: "SendProgress.vue",
@@ -92,7 +86,7 @@ export default defineComponent({
         IonLabel,
         IonIcon,
         IonProgressBar,
-        IonText,
+        FileCard,
     },
     setup() {
         return {

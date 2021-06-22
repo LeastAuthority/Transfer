@@ -5,8 +5,7 @@
                 <div class="bg">
                     <div class="bg-circle"></div>
                 </div>
-                <!--                TODO: use ion- classes instead of style attr. -->
-                <ion-row class="header" style="align-items: flex-end">
+                <ion-row class="header ion-align-items-end">
                     <ion-col size="6">
                         <ion-text>
                             <h1 class="ion-padding-start">
@@ -40,7 +39,7 @@
         <ion-footer class="ion-no-border">
             <ion-grid>
                 <!--                TODO: use ion- classes instead of style attr. -->
-                <ion-row style="justify-content: flex-end; text-align: center">
+                <ion-row class="ion-justify-content-center ion-justify-content-end ion-text-center">
                     <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
                         <ion-text color="dark-grey">
                             Security
@@ -67,7 +66,23 @@
     </ion-page>
 </template>
 
-<style scoped>
+<style lang="css">
+/*
+    ion-card-title {
+        font-size: 28px;
+    }
+
+    ion-card-subtitle {
+        font-size: 20px;
+    }
+
+    ion-card-content p ion-text {
+            font-size: 24px;
+    }
+ */
+</style>
+
+<style lang="css" scoped>
 .ion-page {
     align-items: center;
 }

@@ -3,18 +3,19 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <!--            {{title}}-->
-                Receiving...
+                <ion-text color="medium-grey">
+                    Receiving...
+                </ion-text>
             </ion-card-title>
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col class="ion-text-end">
-                        <ion-text class="bold">
+                        <ion-text class="bold" color="medium-grey">
                             {{ fileMeta.name }}
                         </ion-text>
-                        <ion-text>
+                        <ion-text color="medium-grey">
                             ({{ fileSize }})
                         </ion-text>
                     </ion-col>
@@ -37,7 +38,9 @@
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        {{ progressETASeconds }} sec. remaining
+                        <ion-text color="light-grey">
+                            {{ progressETASeconds }} sec. remaining
+                        </ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">

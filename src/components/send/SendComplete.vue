@@ -8,27 +8,9 @@
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
-                <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col class="ion-text-center">
-                        <!--                            "wild cat card"-->
-                        <ion-text class="bold">
-                            {{ fileMeta.name }}
-                        </ion-text>
-                        <!--                            <ion-text>-->
-                        <!--                                ({{ fileSize }})-->
-                        <!--                            </ion-text>-->
-                    </ion-col>
+                <ion-row class="ion-justify-content-center">
+                    <FileCard :filename="fileMeta.name"></FileCard>
                 </ion-row>
-                <!--                <ion-row>-->
-                <!--                    <ion-col class="ion-text-center">-->
-                <!--                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>-->
-                <!--                    </ion-col>-->
-                <!--                </ion-row>-->
-                <!--        <ion-row>-->
-                <!--            <ion-col class="ion-text-center">-->
-                <!--                <ion-text class="size">({{ fileSize() }})</ion-text>-->
-                <!--            </ion-col>-->
-                <!--        </ion-row>-->
                 <ion-row>
                     <ion-col>
                         <ion-text class="ion-text-center">
@@ -67,6 +49,7 @@ import {
 } from "@ionic/vue";
 import {mapState} from "vuex";
 import {add} from "ionicons/icons";
+import FileCard from "@/components/FileCard.vue";
 
 export default defineComponent({
     name: "SendComplete",
@@ -84,6 +67,7 @@ export default defineComponent({
         IonCardHeader,
         IonCardTitle,
         IonCardContent,
+        FileCard,
     },
 });
 </script>

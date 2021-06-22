@@ -3,8 +3,9 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <!--            {{title}}-->
-                Ready to download
+                <ion-text color="medium-grey">
+                    Ready to download
+                </ion-text>
             </ion-card-title>
         </ion-card-header>
         <ion-card-content>

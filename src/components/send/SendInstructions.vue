@@ -3,23 +3,23 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <!--            {{title}}-->
-                Ready to send from your device!
+                <ion-text color="medium-grey">
+                    Ready to send from your device!
+                </ion-text>
             </ion-card-title>
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
-                <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
-                    <ion-col>
-                        <!--                TODO: file size?-->
-                        {{ file?.name }}
-                    </ion-col>
+                <ion-row class="ion-justify-content-center ion-margin-top">
+                    <FileCard :filename="file && file.name"></FileCard>
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
                     <ion-col>
-                        <ion-text class="bold">
-                            1. Give the receiver the link below
-                        </ion-text>
+                        <p>
+                            <ion-text class="bold">
+                                1. Give the receiver the link below
+                            </ion-text>
+                        </p>
                     </ion-col>
                 </ion-row>
                 <ion-row
@@ -110,6 +110,7 @@ import {sizeToClosestUnit} from '@/util';
 
 import {ALERT, NEW_CLIENT, RESET_PROGRESS} from "@/store/actions";
 import CopyButton from "@/components/CopyButton.vue";
+import FileCard from "@/components/FileCard.vue";
 
 export default defineComponent({
     name: "SendInstructions",
@@ -153,6 +154,7 @@ export default defineComponent({
         IonCardTitle,
         IonCardContent,
         CopyButton,
+        FileCard,
     },
     setup() {
         return {
