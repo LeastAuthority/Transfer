@@ -33,7 +33,7 @@
                         <ion-input class="send-code-input"
                                    placeholder="receive link"
                                    readonly
-                                   :value="link"
+                                   :value="shortLink"
                         ></ion-input>
                         <CopyButton class="ion-margin-start copy-button"
                                     :link="link"
@@ -124,6 +124,9 @@ export default defineComponent({
             // TODO: move to utils.
             return `${this.host}/#/${this.code}`;
         },
+        shortLink(): string {
+            return this.link.replace(/https?:\/\//, '');
+        }
     },
     methods: {
         ...mapActions([NEW_CLIENT, ALERT]),
