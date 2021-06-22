@@ -67,19 +67,18 @@
 </template>
 
 <style lang="css">
-/*
-    ion-card-title {
-        font-size: 28px;
-    }
+ion-card-title {
+    font-size: 20px;
+}
 
-    ion-card-subtitle {
-        font-size: 20px;
-    }
+ion-card-subtitle {
+    font-size: 14px;
+}
 
-    ion-card-content p ion-text {
-            font-size: 24px;
-    }
- */
+ion-card-content p ion-text {
+    font-size: 14px;
+    font-weight: 500;
+}
 </style>
 
 <style lang="css" scoped>

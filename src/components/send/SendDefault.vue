@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="medium-grey">
+                <ion-text class="bold" color="medium-grey">
                     Send files with ease, speed, and security
                 </ion-text>
             </ion-card-title>
@@ -93,10 +93,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.bold {
-    font-weight: bold;
-}
-
 .select-button {
     width: 135px;
     height: 135px;

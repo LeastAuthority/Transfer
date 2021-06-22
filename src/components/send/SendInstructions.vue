@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="medium-grey">
+                <ion-text class="bold" color="medium-grey">
                     Ready to send from your device!
                 </ion-text>
             </ion-card-title>
@@ -30,7 +30,8 @@
                              sizeSm="10"
                              sizeXs="12"
                     >
-                        <ion-input class="send-code-input"
+                        <ion-input color="black"
+                                   class="send-code-input"
                                    placeholder="receive link"
                                    readonly
                                    :value="shortLink"
@@ -42,9 +43,11 @@
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
                     <ion-col>
-                        <ion-text class="bold">
-                            2. Keep this tab open until you're notified that they have received the file
-                        </ion-text>
+                        <p>
+                            <ion-text class="bold">
+                                2. Keep this tab open until you're notified that they have received the file
+                            </ion-text>
+                        </p>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-margin-bottom  ion-padding-top ion-padding-bottom">
@@ -76,7 +79,7 @@
 }
 
 .send-code-input {
-    background-color: var(--ion-color-light);
+    background-color: var(--ion-color-light-grey);
 }
 
 .size {
