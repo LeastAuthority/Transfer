@@ -2,8 +2,9 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <!--            {{title}}-->
-                Sent!
+                <ion-text color="medium-grey" class="bold">
+                    Sent!
+                </ion-text>
             </ion-card-title>
         </ion-card-header>
         <ion-card-content>

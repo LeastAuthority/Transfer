@@ -3,16 +3,23 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <!--            {{title}}-->
-                Received!
+                <ion-text color="medium-grey">
+                    Received!
+                </ion-text>
             </ion-card-title>
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text class="filename">{{ fileMeta.name }}</ion-text>
-                        <ion-text class="size">({{ fileSize }})</ion-text>
+                        <ion-text color="medium-grey"
+                                  class="filename">
+                            {{ fileMeta.name }}
+                        </ion-text>
+                        <ion-text color="medium-grey"
+                                  class="size">
+                            ({{ fileSize }})
+                        </ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row>
