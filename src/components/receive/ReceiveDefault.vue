@@ -21,12 +21,13 @@
                                    style="border: 1px solid #424242; border-radius: 5px;"
                                    type="text"
                                    placeholder="Enter code here"
-                                   @change="(e) => _setCode(e.target.value)"
-                                   :value="code"
+                                   v-model="_code"
                         ></ion-input>
                     </ion-col>
                     <ion-col size="1">
-                        <WaitButton :click="_next">
+                        <WaitButton class="receive-next"
+                                    :disabled="!codeIsValid"
+                                    :click="_next">
                             <template v-slot:text>
                                 <ion-text>Next</ion-text>
                             </template>
@@ -69,6 +70,14 @@ export default defineComponent({
         codeIsValid(): boolean {
             return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
         },
+        _code: {
+            get: function(): string {
+                return this.code;
+            },
+            set: function(code: string) {
+                this[SET_CODE](code);
+            }
+        }
     },
     methods: {
         ...mapActions([SAVE_FILE, ALERT]),

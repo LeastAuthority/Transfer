@@ -1,6 +1,6 @@
 import Chainable = Cypress.Chainable;
 import Client from "@/go/wormhole/client";
-import {Offer, TransferProgress, TransferOptions} from "@/go/wormhole/types";
+import {TransferProgress, TransferOptions} from "@/go/wormhole/types";
 import Go from "../../../src/go";
 import {FileReader} from "@/go/wormhole/streaming";
 
@@ -28,14 +28,14 @@ export function expectFileDownloaded(filename: string, expected: string): Chaina
     });
 }
 
-export function expectReceiveConfirm(code: string): Chainable<string> {
+export function expectReceiveConsent(code: string): Chainable<string> {
     return cy.url().then(url => {
-        const _url = new URL(url);
-        expect(_url.hash).to.eq(`#/r/${code}`)
+        // const _url = new URL(url);
+        // expect(_url.hash).to.eq(`#/${code}`)
 
-        cy.contains('ion-text', 'download')
-        cy.contains('ion-text', 'cancel')
-        cy.contains('ion-text', 'Ready to download:')
+        cy.contains('ion-label', 'Download')
+        cy.contains('ion-label', 'Cancel')
+        cy.contains('ion-text', 'Ready to download')
     });
 }
 
@@ -67,7 +67,7 @@ export function largeUint8ArrToString(uint8arr: Uint8Array) {
 export async function UIGetCode(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         cy.fixture(filename).then(fileContent => {
-            cy.contains('ion-button', 'select')
+            cy.get('ion-button.select-button')
                 // TODO: doesn't test button triggers file dialog
                 // TODO: can't set / test file size?
                 .get('input[type="file"]')
@@ -76,12 +76,20 @@ export async function UIGetCode(filename: string): Promise<string> {
                     fileContent,
                 })
                 .get('.send-code-input>input')
-                .should('not.have.value', '')
+                .should('not.match', RegExp(`^(|${TEST_HOST}/#/)$`))
+                .wait(1000)
                 .then(el => {
                     resolve((el[0] as HTMLInputElement).value);
                 })
         })
     });
+}
+
+export function codeFromURL(url: string): string {
+    const urlObj = new URL(url)
+    console.log(urlObj);
+    // NB: drop leading `#/`.
+    return urlObj.hash.slice(2);
 }
 
 export async function mockGetReceiveReader(code: string): Promise<FileReader> {

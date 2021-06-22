@@ -1,6 +1,5 @@
 <template>
-    <ion-button :class="{'copy-button': true, waiting}"
-                :color="color"
+    <ion-button :color="color"
                 @click="_click"
                 :disabled="waiting">
         <slot v-if="waiting" name="waiting-text"></slot>

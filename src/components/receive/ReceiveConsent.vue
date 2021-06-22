@@ -19,7 +19,8 @@
                         </ion-text>
                     </ion-col>
                     <ion-col>
-                        <ion-button color="yellow"
+                        <ion-button class="download-button"
+                                    color="yellow"
                                     @click="download"
                         >
                             <ion-icon slot="start" src="/assets/icon/download.svg"></ion-icon>

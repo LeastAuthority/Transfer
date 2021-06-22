@@ -6,6 +6,7 @@ import {
     mockClientSend,
     mockGetReceiveReader,
     TEST_HOST,
+    codeFromURL,
     UIGetCode, NewTestFile, largeUint8ArrToString
 } from "../support/util";
 import {SET_CONFIG} from "../support/const";
@@ -69,7 +70,8 @@ describe('Error messaging', () => {
                 }, '*')
                 cy.wait(100)
                 UIGetCode(filename)
-                    .then((code) => {
+                    .then((url) => {
+                        const code = codeFromURL(url);
                         mockGetReceiveReader(code)
                         cy.wait(100)
 
@@ -219,7 +221,7 @@ async function UISend(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         try {
             cy.fixture(filename).then(fileContent => {
-                cy.contains('ion-button', 'select')
+                cy.get('ion-button.select-button')
                     .get('input[type="file"]')
                     .attachFile({
                         fileName: 'large-file.txt',

@@ -1,5 +1,5 @@
 import Go from '../../../src/go'
-import {expectFileDownloaded, expectReceiveConfirm, mobileViewport, mockClientSend, TEST_HOST} from "../support/util";
+import {expectFileDownloaded, expectReceiveConsent, mobileViewport, mockClientSend, TEST_HOST} from "../support/util";
 
 
 before(initGo)
@@ -23,7 +23,7 @@ describe('Receive', () => {
         cy.fixture(filename).then(async (file: string) => {
             const {code} = await mockClientSend(filename, file)
             UIEnterCode(code).then(() => {
-                expectReceiveConfirm(code).then(() => {
+                expectReceiveConsent(code).then(() => {
                     expectFileDownloaded(filename, file).then(() => {
                         done();
                     });
@@ -38,8 +38,8 @@ describe('Receive', () => {
         cy.fixture(filename).then(async (file: string) => {
             const {code} = await mockClientSend(filename, file);
             console.log(code);
-            cy.visit(`/#/r/${code}`)
-            expectReceiveConfirm(code).then(() => {
+            cy.visit(`/#/${code}`)
+            expectReceiveConsent(code).then(() => {
                 expectFileDownloaded(filename, file).then(() => {
                     done();
                 });

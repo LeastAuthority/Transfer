@@ -35,7 +35,7 @@
                                    readonly
                                    :value="link"
                         ></ion-input>
-                        <CopyButton class="ion-margin-start"
+                        <CopyButton class="ion-margin-start copy-button"
                                     :link="link"
                         ></CopyButton>
                     </ion-col>
