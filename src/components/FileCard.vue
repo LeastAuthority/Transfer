@@ -35,7 +35,7 @@ export default {
         /* TODO: be more specific with main ion-card selector and delete this */
         min-height: initial !important;
         box-shadow: none;
-        border: 1px solid var(--ion-color-light-grey);
+        border: 1px solid var(--ion-color-medium-grey);
 
         display: flex;
         justify-content: space-evenly;

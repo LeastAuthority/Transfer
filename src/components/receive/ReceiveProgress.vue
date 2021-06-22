@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="medium-grey">
+                <ion-text color="black">
                     Receiving...
                 </ion-text>
             </ion-card-title>
@@ -12,10 +12,10 @@
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col class="ion-text-end">
-                        <ion-text class="bold" color="medium-grey">
+                        <ion-text class="bold" color="black">
                             {{ fileMeta.name }}
                         </ion-text>
-                        <ion-text color="medium-grey">
+                        <ion-text color="black">
                             ({{ fileSize }})
                         </ion-text>
                     </ion-col>
@@ -31,21 +31,21 @@
                 </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col>
-                        <ion-progress-bar color="medium-grey"
+                        <ion-progress-bar color="black"
                                           :value="progress"
                         ></ion-progress-bar>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        <ion-text color="light-grey">
+                        <ion-text color="black">
                             {{ progressETASeconds }} sec. remaining
                         </ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        <ion-button color="light-grey"
+                        <ion-button color="dark-grey"
                                     @click="cancel"
                         >
                             <ion-icon slot="start" :icon="close"></ion-icon>

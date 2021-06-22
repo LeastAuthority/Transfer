@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text class="bold" color="medium-grey">
+                <ion-text class="bold" color="dark-grey">
                     Ready to send from your device!
                 </ion-text>
             </ion-card-title>
@@ -16,7 +16,7 @@
                 <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
                     <ion-col>
                         <p>
-                            <ion-text class="bold">
+                            <ion-text color="dark-grey" class="bold">
                                 1. Give the receiver the link below
                             </ion-text>
                         </p>
@@ -31,7 +31,6 @@
                              sizeXs="12"
                     >
                         <ion-input color="black"
-                                   class="send-code-input"
                                    placeholder="receive link"
                                    readonly
                                    :value="shortLink"
@@ -52,7 +51,7 @@
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-margin-bottom  ion-padding-top ion-padding-bottom">
                     <ion-col>
-                        <ion-button color="light-grey"
+                        <ion-button color="medium-grey"
                                     @click="cancel()">
                             <ion-icon :icon="close"></ion-icon>
                             <ion-label class="ion-padding-start">cancel</ion-label>
@@ -66,6 +65,12 @@
 </template>
 
 <style lang="css" scoped>
+ion-input {
+    background-color: var(--ion-color-light-grey);
+    color: var(--ion-color-black) !important;
+    font-weight: 500;
+}
+
 .step-fade-enter-active, .step-fade-leave-active {
     transition: opacity .3s ease;
     position: absolute;
@@ -76,10 +81,6 @@
 
 .step-fade-enter-from, .step-fade-leave-to {
     opacity: 0;
-}
-
-.send-code-input {
-    background-color: var(--ion-color-light-grey);
 }
 
 .size {

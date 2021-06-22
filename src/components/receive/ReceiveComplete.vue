@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="medium-grey">
+                <ion-text class="bold" color="dark-grey">
                     Received!
                 </ion-text>
             </ion-card-title>
@@ -12,11 +12,11 @@
             <ion-grid>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-text color="medium-grey"
-                                  class="filename">
+                        <ion-text color="dark-grey"
+                                  class="bold">
                             {{ fileMeta.name }}
                         </ion-text>
-                        <ion-text color="medium-grey"
+                        <ion-text color="dark-grey"
                                   class="size">
                             ({{ fileSize }})
                         </ion-text>
@@ -33,7 +33,7 @@
                 </ion-row>
                 <ion-row>
                     <ion-col class="ion-text-center">
-                        <ion-button color="light-grey"
+                        <ion-button color="dark-grey"
                                     @click="next">
                             <ion-icon :icon="downloadOutline"></ion-icon>
                             <ion-text class="ion-padding-start">receive more</ion-text>
@@ -98,9 +98,5 @@ export default defineComponent({
 .size {
     font-size: small;
     padding-left: 6px;
-}
-
-.filename {
-    font-weight: bold;
 }
 </style>

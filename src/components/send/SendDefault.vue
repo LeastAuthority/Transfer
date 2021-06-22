@@ -3,12 +3,12 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text class="bold" color="medium-grey">
+                <ion-text class="bold" color="dark-grey">
                     Send files with ease, speed, and security
                 </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
-                <ion-text color="medium-grey">
+                <ion-text color="dark-grey">
                     No sign-ups. No snooping. No nonsense. <span class="italic">Just send</span>.
                 </ion-text>
             </ion-card-subtitle>
@@ -20,17 +20,17 @@
             >
                 <div>
                     <div class="ion-margin-vertical">
-                        <ion-text color="medium-grey" class="bold">
+                        <ion-text color="dark-grey" class="bold">
                             drop a file
                         </ion-text>
                     </div>
                     <div class="ion-margin-bottom">
-                        <ion-text color="medium-grey">
+                        <ion-text color="dark-grey">
                             or
                         </ion-text>
                     </div>
                     <ion-button class="select-button ion-margin-vertical"
-                                color="light-grey"
+                                color="medium-grey"
                                 size="large"
                                 @click="() => select()">
                         <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
@@ -93,6 +93,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.bold {
+    font-weight: bold;
+}
+
 .select-button {
     width: 135px;
     height: 135px;

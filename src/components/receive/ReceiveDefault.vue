@@ -3,12 +3,12 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="medium-grey">
+                <ion-text color="black">
                     Receive files with ease, speed, and security
                 </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
-                <ion-text color="medium-grey">
+                <ion-text color="black">
                     Always end-to-end encrypted.
                 </ion-text>
             </ion-card-subtitle>

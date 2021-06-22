@@ -1,10 +1,10 @@
 <template>
     <ion-page>
+        <div class="bg">
+            <div class="bg-circle"></div>
+        </div>
         <ion-content>
             <ion-grid>
-                <div class="bg">
-                    <div class="bg-circle"></div>
-                </div>
                 <ion-row class="header ion-align-items-end">
                     <ion-col size="6">
                         <ion-text>
@@ -14,7 +14,7 @@
                         </ion-text>
                     </ion-col>
                     <ion-col size="6" align="right">
-                        <ion-button color="light-grey"
+                        <ion-button color="medium-grey"
                                     class="ion-margin-end nav-button"
                                     @click="toggleNav()">
                             <ion-icon slot="start" :rotate="rotated"
@@ -115,16 +115,16 @@ ion-icon.nav {
 .bg {
     z-index: -100;
     overflow: hidden;
-    position: relative;
-    height: 100%;
-    width: 100%;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
 }
 
 .bg-circle {
     position: relative;
-    clip-path: circle(50%);
-    top: 25vh;
-    left: -10vw;
+    clip-path: circle(30vw);
+    top: 4vw;
+    left: -20vw;
     height: 100%;
     width: 100%;
     background: #9EE6F5;
