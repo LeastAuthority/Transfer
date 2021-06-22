@@ -111,13 +111,13 @@ async function saveFileAction(this: Store<any>, {
                 commit(RESET_CODE);
                 commit(RESET_PROGRESS);
             }).catch(async (error: string) => {
-                await dispatch('alertAction', {error});
+                await dispatch(ALERT, {error});
             });
             // return done;
         });
         return p;
     } catch (error) {
-        dispatch('alertAction', {error});
+        dispatch(ALERT, {error});
         return Promise.reject(error);
     }
 
@@ -139,7 +139,7 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
 
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
     return state.fileMeta.accept().catch((error: string) => {
-        dispatch('alertAction', {error});
+        dispatch(ALERT, {error});
     });
 }
 
