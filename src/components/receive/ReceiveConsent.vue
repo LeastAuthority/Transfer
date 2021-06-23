@@ -11,16 +11,18 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col class="ion-text-end">
-                        <ion-text color="black" class="bold">
-                            {{ fileMeta.name }}
-                        </ion-text>
-                        <ion-text color="black">
-                            ({{ fileSize }})
-                        </ion-text>
-                    </ion-col>
-                    <ion-col>
-                        <ion-button class="download-button"
+                    <ion-col class="ion-text-center"
+                             size="">
+                        <div>
+                            <ion-text color="black" class="bold">
+                                {{ fileMeta.name }}
+                            </ion-text>
+                            <ion-text color="black"
+                            class="ion-text-nowrap">
+                                ({{ fileSize }})
+                            </ion-text>
+                        </div>
+                        <ion-button class="ion-margin-start download-button"
                                     color="yellow"
                                     @click="download"
                         >

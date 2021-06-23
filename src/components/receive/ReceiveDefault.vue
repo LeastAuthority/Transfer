@@ -15,7 +15,7 @@
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
-                <ion-row class="ion-justify-content-center ion-align-items-center">
+                <ion-row class="ion-text-center ion-justify-content-center ion-align-items-center">
                     <ion-col style="display: flex;"
                              sizeLg="6"
                              sizeMd="7"
@@ -30,7 +30,7 @@
                                    v-model="_code"
                         ></ion-input>
                     </ion-col>
-                    <ion-col class="ion-text-sm-start ion-text-xs-center"
+                    <ion-col class="ion-justify-content-center"
                              style="display: flex;"
                              sizeSm="2"
                              sizeXs="4"
@@ -48,12 +48,32 @@
                             </template>
                         </WaitButton>
                     </ion-col>
+                    <ion-col
+                            sizeLg="6"
+                            sizeMd="7"
+                            sizeSm="9"
+                            sizeXs="12"
+                    >
+                        <ion-row class="ion-justify-content-center">
+                            <ion-text color="medium-grey">
+                                E.g.: 7-guitarist-revenge
+                            </ion-text>
+                        </ion-row>
+                    </ion-col>
                 </ion-row>
             </ion-grid>
         </ion-card-content>
     </div>
     <!--    </transition>-->
 </template>
+
+<style lang="css" scoped>
+@media screen and (max-width: 575px) {
+    .receive-next {
+        margin-left: 0;
+    }
+}
+</style>
 
 <script lang="ts">
 import {
@@ -130,6 +150,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style scoped>
-</style>

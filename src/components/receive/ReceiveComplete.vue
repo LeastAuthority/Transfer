@@ -15,7 +15,8 @@
                         <ion-text color="black" class="bold">
                             {{ fileMeta.name }}
                         </ion-text>
-                        <ion-text color="black" class="size">
+                        <ion-text color="black"
+                                  class="ion-margin-start ion-text-nowrap size">
                             ({{ fileSize }})
                         </ion-text>
                     </ion-col>
@@ -93,8 +94,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.size {
-    font-size: small;
-    padding-left: 6px;
-}
 </style>

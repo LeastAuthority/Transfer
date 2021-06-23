@@ -79,13 +79,14 @@ ion-card-content p ion-text {
     font-size: 14px;
     font-weight: 500;
 }
-</style>
 
-<style lang="css" scoped>
 :root {
     --max-width: 1100px;
 }
 
+</style>
+
+<style lang="css" scoped>
 .ion-page {
     align-items: center;
 }
@@ -128,12 +129,30 @@ ion-icon.nav {
 
 .bg-circle {
     position: relative;
-    clip-path: circle(30vw);
-    top: 4vw;
-    left: -20vw;
-    height: 100%;
-    width: 100%;
+    clip-path: circle(45vw);
+    top: 0vw;
+    left: -4vw;
+    height: 134vh;
+    width: 100vw;
     background: #9EE6F5;
+}
+
+@media screen and (max-width: 992px) {
+    .bg-circle {
+        clip-path: circle(55vw);
+        top: 5vw;
+        left: -48vw;
+        width: 170vw;
+        height: 103vh;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .bg-circle {
+        clip-path: circle(85vw);
+        left: -50vw;
+        width: 150vw;
+    }
 }
 </style>
 

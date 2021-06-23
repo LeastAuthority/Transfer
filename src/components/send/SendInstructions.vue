@@ -75,16 +75,14 @@
 </template>
 
 <style lang="css" scoped>
-@media screen and (max-width: 576px) {
-    .copy-button {
-        margin-left: 0;
-    }
-
+@media screen and (max-width: 575px) {
     .ion-text-xs-center {
         justify-content: center;
     }
 
-;
+    .ion-text-xs-center ion-button {
+        margin-left: 0;
+    }
 }
 
 .step-fade-enter-active, .step-fade-leave-active {
