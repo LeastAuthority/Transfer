@@ -1,7 +1,7 @@
 <template>
     <ion-button :color="color"
                 @click="_click"
-                :disabled="waiting">
+                :disabled="waiting || disabled">
         <slot v-if="waiting" name="waiting-text"></slot>
         <slot v-else name="text"></slot>
     </ion-button>
@@ -25,7 +25,7 @@ declare interface WaitButtonData {
 
 export default defineComponent({
     name: 'WaitButton',
-    props: ['text', 'waitingText', 'click'],
+    props: ['text', 'waitingText', 'click', 'disabled'],
     data(): WaitButtonData {
         return {
             waiting: false,
