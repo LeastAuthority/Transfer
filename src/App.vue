@@ -17,6 +17,7 @@
 :root * {
     font-family: 'Poppins', sans-serif !important;
     text-transform: initial;
+    letter-spacing: initial;
 }
 
 :root ion-content {
@@ -30,6 +31,22 @@
 ion-progress-bar {
     height: 40px;
 }
+
+ion-card, ion-button, ion-input {
+    border-radius: 8px;
+}
+
+ion-button {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+ion-input {
+    background-color: var(--ion-color-light-grey) !important;
+    color: var(--ion-color-black) !important;
+    font-weight: 500;
+}
+
 
 /*
 body {

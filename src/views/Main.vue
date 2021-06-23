@@ -82,6 +82,10 @@ ion-card-content p ion-text {
 </style>
 
 <style lang="css" scoped>
+:root {
+    --max-width: 1100px;
+}
+
 .ion-page {
     align-items: center;
 }
@@ -92,9 +96,11 @@ ion-footer {
     font-weight: 600;
 }
 
+ion-content, ion-footer {
+    max-width: var(--max-width);
+}
+
 ion-content {
-    /* TODO: use css variables! */
-    max-width: 1100px;
     /* min-height: 730px; */
     min-height: 33vh;
 }

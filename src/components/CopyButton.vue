@@ -2,7 +2,7 @@
     <WaitButton :click="copyLink">
             <template v-slot:text>
                 <ion-icon :icon="copy"></ion-icon>
-                <ion-label class="ion-padding-start">Copy</ion-label>
+                <ion-label style="margin-right: 6px;">Copy</ion-label>
             </template>
             <template v-slot:waiting-text>
                 <ion-label>Link copied!</ion-label>
@@ -10,7 +10,10 @@
     </WaitButton>
 </template>
 
-<style scoped lang="css">
+<style lang="css" scoped >
+    ion-icon {
+        margin-right: 6px;
+    }
 </style>
 
 <script lang="ts">

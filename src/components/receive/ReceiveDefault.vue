@@ -16,18 +16,26 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col size="8">
-                        <ion-input class="receive-code-input"
+                    <ion-col style="display: flex;"
+                             sizeLg="6"
+                             sizeMd="7"
+                             sizeSm="9"
+                             sizeXs="12"
+                    >
+                        <ion-input color="black"
                                    autofocus
                                    :clearInput="code !== ''"
-                                   style="border: 1px solid #424242; border-radius: 5px;"
                                    type="text"
                                    placeholder="Enter code here"
                                    v-model="_code"
                         ></ion-input>
                     </ion-col>
-                    <ion-col size="1">
-                        <WaitButton class="receive-next"
+                    <ion-col class="ion-text-sm-start ion-text-xs-center"
+                             style="display: flex;"
+                             sizeSm="2"
+                             sizeXs="4"
+                    >
+                        <WaitButton class="ion-margin-start receive-next"
                                     :disabled="!codeIsValid"
                                     :click="_next">
                             <template v-slot:text>

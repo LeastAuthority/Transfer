@@ -24,17 +24,27 @@
                 </ion-row>
                 <ion-row
                         class="ion-text-center ion-justify-content-center ion-margin-top ion-padding-top ion-padding-bottom">
-                    <ion-col style="display: flex;"
+                    <ion-col class="ion-align-content-end"
+                             style="display: flex;"
                              sizeLg="6"
-                             sizeMd="8"
-                             sizeSm="10"
+                             sizeMd="7"
+                             sizeSm="9"
                              sizeXs="12"
                     >
                         <ion-input color="black"
+                                   class="ion-margin-start"
+                                   style="display: flex"
                                    placeholder="receive link"
+                                   autofocus
                                    readonly
                                    :value="shortLink"
                         ></ion-input>
+                    </ion-col>
+                    <ion-col class="ion-text-sm-start ion-text-xs-center"
+                             style="display: flex;"
+                             sizeSm="2"
+                             sizeXs="4"
+                    >
                         <CopyButton class="ion-margin-start copy-button"
                                     :link="link"
                         ></CopyButton>
@@ -53,8 +63,8 @@
                     <ion-col>
                         <ion-button color="medium-grey"
                                     @click="cancel()">
-                            <ion-icon :icon="close"></ion-icon>
-                            <ion-label class="ion-padding-start">Cancel</ion-label>
+                            <ion-icon slot="start" :icon="close"></ion-icon>
+                            <ion-label slot="end">Cancel</ion-label>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -65,10 +75,16 @@
 </template>
 
 <style lang="css" scoped>
-ion-input {
-    background-color: var(--ion-color-light-grey);
-    color: var(--ion-color-black) !important;
-    font-weight: 500;
+@media screen and (max-width: 576px) {
+    .copy-button {
+        margin-left: 0;
+    }
+
+    .ion-text-xs-center {
+        justify-content: center;
+    }
+
+;
 }
 
 .step-fade-enter-active, .step-fade-leave-active {
