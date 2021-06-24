@@ -10,16 +10,10 @@
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
-                <ion-row>
-                    <ion-col class="ion-text-center">
-                        <ion-text color="black" class="bold">
-                            {{ fileMeta.name }}
-                        </ion-text>
-                        <ion-text color="black"
-                                  class="ion-margin-start ion-text-nowrap size">
-                            ({{ fileSize }})
-                        </ion-text>
-                    </ion-col>
+                <ion-row class="ion-justify-content-center ion-margin-top">
+                    <FileCard :name="fileMeta.name"
+                              :size="fileMeta.size"
+                    ></FileCard>
                 </ion-row>
                 <ion-row>
                     <ion-col>
@@ -35,7 +29,7 @@
                         <ion-button color="medium-grey"
                                     @click="next">
                             <ion-icon :icon="downloadOutline"></ion-icon>
-                            <ion-text class="ion-padding-start">receive more</ion-text>
+                            <ion-text class="ion-padding-start">Receive more</ion-text>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -62,17 +56,13 @@ import {mapState} from "vuex";
 import {downloadOutline} from 'ionicons/icons'
 import {FileMeta} from "@/store";
 import {sizeToClosestUnit} from "@/util";
+import FileCard from "@/components/FileCard.vue";
 
 export default defineComponent({
     name: "ReceiveComplete",
     props: ['active', 'next'],
     computed: {
         ...mapState(['fileMeta']),
-        fileSize() {
-            // TODO: cleanup.
-            const fileMeta = this.fileMeta as unknown as FileMeta;
-            return sizeToClosestUnit(fileMeta.size);
-        },
     },
     components: {
         IonCardContent,
@@ -84,6 +74,7 @@ export default defineComponent({
         IonText,
         IonIcon,
         IonButton,
+        FileCard,
     },
     setup() {
         return {

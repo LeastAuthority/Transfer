@@ -17,7 +17,7 @@ import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
 import {errRelay, errMailbox} from "@/errors";
-import {sizeToClosestUnit} from "@/util";
+import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
 
 const updateProgressETAFrequency = 10;
 const defaultAlertOpts: AlertOptions = {
@@ -290,4 +290,13 @@ export default createStore({
         [UPDATE_PROGRESS_ETA]: updateProgressETAAction,
         [ALERT]: alertAction,
     },
+    getters: {
+        progressStatus: state => {
+            const {progress, progressETASeconds} = state;
+            if (progress >= .999) {
+                return 'Waiting for receiver to complete transfer...'
+            }
+            return durationToClosesUnit(progressETASeconds);
+        }
+    }
 })

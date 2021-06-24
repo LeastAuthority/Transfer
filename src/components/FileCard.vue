@@ -1,7 +1,15 @@
 <template>
     <ion-card>
         <ion-icon :icon="document"></ion-icon>
-        <ion-text>{{ filename }}</ion-text>
+        <ion-text color="black"
+                  class="bold ellipsis-overflow ion-text-nowrap"
+        >
+            {{ name }}
+        </ion-text>
+        <ion-text color="black"
+                  class="ion-text-nowrap">
+            ({{ sizeWithUnit }})
+        </ion-text>
     </ion-card>
 </template>
 
@@ -9,10 +17,18 @@
 
 import {IonCard, IonIcon, IonText} from "@ionic/vue";
 import {document} from 'ionicons/icons';
+import {FileMeta} from "@/store";
+import {sizeToClosestUnit} from "@/util";
+import {defineComponent} from "vue";
 
-export default {
+export default defineComponent({
     name: "FileCard",
-    props: ['filename'],
+    props: ['name', 'size'],
+    computed: {
+        sizeWithUnit(): string {
+            return sizeToClosestUnit(this.size);
+        },
+    },
     components: {
         IonCard,
         IonIcon,
@@ -23,13 +39,18 @@ export default {
             document,
         }
     },
-}
+})
 </script>
 
 <style lang="css" scoped>
 :root ion-card {
     --padding: 0 15.4px;
     height: 36px;
+}
+
+.ellipsis-overflow {
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 ion-card {
@@ -45,16 +66,15 @@ ion-card {
 }
 
 ion-card > * {
-    padding-left: calc(var(--padding) / 2);
+    margin-left: 6px;
 }
 
 ion-card > *:first-child {
-    padding-left: initial;
+    margin-left: initial;
 }
 
 ion-icon {
     font-size: 18px;
-    padding-right: 6px;
 }
 
 ion-text {

@@ -56,7 +56,7 @@ describe('Error messaging', () => {
             });
         });
 
-        it('should show a specific error when unable to connect to the relay', () => {
+        it.only('should show a specific error when unable to connect to the relay', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.visit('/#/s')
 

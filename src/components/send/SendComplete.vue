@@ -10,7 +10,9 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
-                    <FileCard :filename="fileMeta.name"></FileCard>
+                    <FileCard :name="fileMeta.name"
+                              :size="fileMeta.size"
+                    ></FileCard>
                 </ion-row>
                 <ion-row>
                     <ion-col>

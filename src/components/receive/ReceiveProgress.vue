@@ -10,22 +10,21 @@
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
+                <ion-row class="ion-justify-content-center ion-margin-top">
+                    <FileCard :name="fileMeta.name"
+                              :size="fileMeta.size"
+                    ></FileCard>
+                </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col class="ion-text-end">
-                        <ion-text color="black" class="bold">
-                            {{ fileMeta.name }}
-                        </ion-text>
-                        <ion-text color="black">
-                            ({{ fileSize }})
-                        </ion-text>
-                    </ion-col>
-                    <ion-col>
+                    <ion-col class="ion-text-center"
+                             size="">
                         <ion-button color="yellow"
+                                    class="ion-margin-start download-button"
                                     disabled="true"
                                     @click="download"
                         >
-                            <ion-icon src="/assets/icon/download.svg"></ion-icon>
-                            <ion-label>Download</ion-label>
+                            <ion-icon slot="start" src="/assets/icon/download.svg"></ion-icon>
+                            <ion-label slot="end">Download</ion-label>
                         </ion-button>
                     </ion-col>
                 </ion-row>
@@ -39,7 +38,7 @@
                 <ion-row class="ion-text-center">
                     <ion-col>
                         <ion-text color="dark-grey">
-                            {{ progressETASeconds }} sec. remaining
+                            {{ progressStatus }}
                         </ion-text>
                     </ion-col>
                 </ion-row>
@@ -71,13 +70,14 @@ import {
     IonCardContent, IonCardHeader, IonCardTitle, IonLabel,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
-import {mapState, mapActions, mapMutations} from 'vuex';
+import {mapState, mapActions, mapMutations, mapGetters} from 'vuex';
 import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
 import router from '@/router/index.ts'
 import {sizeToClosestUnit} from "@/util";
 import {ACCEPT_FILE, NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_PROGRESS} from "@/store/actions";
 import {FileMeta} from "@/store";
+import FileCard from "@/components/FileCard.vue";
 
 declare interface ReceiveProgressData {
     done?: Promise<void>;
@@ -92,7 +92,8 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(['config', 'code', 'fileMeta', 'progress', 'progressETASeconds']),
+        ...mapState(['config', 'code', 'fileMeta', 'progress']),
+        ...mapGetters(['progressStatus']),
         fileSize() {
             // TODO: cleanup.
             const fileMeta = this.fileMeta as unknown as FileMeta;
@@ -121,6 +122,7 @@ export default defineComponent({
         IonIcon,
         IonLabel,
         IonProgressBar,
+        FileCard,
     },
     setup() {
         return {

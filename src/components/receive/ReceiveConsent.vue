@@ -10,18 +10,14 @@
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
+                <ion-row class="ion-justify-content-center ion-margin-top">
+                    <FileCard :name="fileMeta.name"
+                              :size="fileMeta.size"
+                    ></FileCard>
+                </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col class="ion-text-center"
                              size="">
-                        <div>
-                            <ion-text color="black" class="bold">
-                                {{ fileMeta.name }}
-                            </ion-text>
-                            <ion-text color="black"
-                            class="ion-text-nowrap">
-                                ({{ fileSize }})
-                            </ion-text>
-                        </div>
                         <ion-button class="ion-margin-start download-button"
                                     color="yellow"
                                     @click="download"
@@ -93,6 +89,7 @@ import {
 } from "@/store/actions";
 import {FileMeta} from "@/store";
 import {TransferProgress} from "@/go/wormhole/types";
+import FileCard from "@/components/FileCard.vue";
 
 declare interface ReceiveConsentData {
     receivingPromise?: Promise<TransferProgress>;
@@ -111,11 +108,6 @@ export default defineComponent({
     },
     computed: {
         ...mapState(['config', 'code', 'fileMeta', 'progress']),
-        fileSize() {
-            // TODO: cleanup.
-            const fileMeta = this.fileMeta as unknown as FileMeta;
-            return sizeToClosestUnit(fileMeta.size);
-        },
     },
     methods: {
         ...mapActions([ACCEPT_FILE, ALERT]),
@@ -145,6 +137,7 @@ export default defineComponent({
         IonIcon,
         IonLabel,
         IonProgressBar,
+        FileCard,
     },
     setup() {
         return {

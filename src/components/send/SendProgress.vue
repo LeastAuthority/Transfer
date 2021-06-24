@@ -11,7 +11,9 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center">
-                    <FileCard :filename="fileMeta.name"></FileCard>
+                    <FileCard :name="fileMeta.name"
+                              :size="fileMeta.size"
+                    ></FileCard>
                 </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col>
@@ -22,7 +24,9 @@
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        {{ progressETASeconds }} sec. remaining
+                        <ion-text color="dark-grey">
+                            {{ progressStatus }}
+                        </ion-text>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
@@ -56,7 +60,7 @@ import {
     IonRow,
     IonText
 } from "@ionic/vue";
-import {mapMutations, mapState} from "vuex";
+import {mapGetters, mapMutations, mapState} from "vuex";
 import {RESET_PROGRESS} from "@/store/actions";
 import {close} from 'ionicons/icons'
 import FileCard from "@/components/FileCard.vue";
@@ -65,7 +69,8 @@ export default defineComponent({
     name: "SendProgress.vue",
     props: ['active', 'back'],
     computed: {
-        ...mapState(['progress', 'fileMeta', 'progressETASeconds']),
+        ...mapState(['progress', 'fileMeta']),
+        ...mapGetters(['progressStatus']),
     },
     methods: {
         ...mapMutations([RESET_PROGRESS]),
@@ -82,6 +87,7 @@ export default defineComponent({
         IonGrid,
         IonRow,
         IonCol,
+        IonText,
         IonButton,
         IonLabel,
         IonIcon,

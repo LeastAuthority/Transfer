@@ -1,19 +1,20 @@
 <template>
-    <WaitButton :click="copyLink">
-            <template v-slot:text>
-                <ion-icon :icon="copy"></ion-icon>
-                <ion-label style="margin-right: 6px;">Copy</ion-label>
-            </template>
-            <template v-slot:waiting-text>
-                <ion-label>Link copied!</ion-label>
-            </template>
+    <WaitButton :click="copyLink"
+                :disabled="disabled">
+        <template v-slot:text>
+            <ion-icon :icon="copy"></ion-icon>
+            <ion-label style="margin-right: 6px;">Copy</ion-label>
+        </template>
+        <template v-slot:waiting-text>
+            <ion-label>Link copied!</ion-label>
+        </template>
     </WaitButton>
 </template>
 
-<style lang="css" scoped >
-    ion-icon {
-        margin-right: 6px;
-    }
+<style lang="css" scoped>
+ion-icon {
+    margin-right: 6px;
+}
 </style>
 
 <script lang="ts">
@@ -28,7 +29,7 @@ import WaitButton from './WaitButton.vue';
 
 export default defineComponent({
     name: 'CopyButton',
-    props: ['link'],
+    props: ['link', 'disabled'],
     data() {
         return {
             // disabled: !navigator.clipboard,

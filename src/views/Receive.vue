@@ -33,12 +33,7 @@
     <!--        </transition>-->
 </template>
 
-<style lang="css">
-ion-card {
-    /* TODO: use css variable! */
-    /* min-height: 730px; */
-    min-height: 33vh;
-}
+<style lang="css" scoped>
 </style>
 
 <script lang="ts">

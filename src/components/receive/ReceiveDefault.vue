@@ -16,8 +16,7 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-text-center ion-justify-content-center ion-align-items-center">
-                    <ion-col style="display: flex;"
-                             sizeLg="6"
+                    <ion-col sizeLg="6"
                              sizeMd="7"
                              sizeSm="9"
                              sizeXs="12"
@@ -30,8 +29,7 @@
                                    v-model="_code"
                         ></ion-input>
                     </ion-col>
-                    <ion-col class="ion-justify-content-center"
-                             style="display: flex;"
+                    <ion-col class="ion-text-sm-start ion-text-xs-center"
                              sizeSm="2"
                              sizeXs="4"
                     >
@@ -48,17 +46,19 @@
                             </template>
                         </WaitButton>
                     </ion-col>
-                    <ion-col
-                            sizeLg="6"
-                            sizeMd="7"
-                            sizeSm="9"
-                            sizeXs="12"
+                </ion-row>
+                <ion-row class="ion-justify-content-center">
+                    <ion-col class="flex ion-justify-content-center"
+                             sizeLg="6"
+                             sizeMd="7"
+                             sizeSm="9"
+                             sizeXs="12"
                     >
-                        <ion-row class="ion-justify-content-center">
-                            <ion-text color="medium-grey">
-                                E.g.: 7-guitarist-revenge
-                            </ion-text>
-                        </ion-row>
+                        <ion-text color="medium-grey">
+                            E.g.: 7-guitarist-revenge
+                        </ion-text>
+                    </ion-col>
+                    <ion-col sizeSm="2" sizeXs="4">
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -71,6 +71,10 @@
 @media screen and (max-width: 575px) {
     .receive-next {
         margin-left: 0;
+    }
+
+    .ion-text-xs-center {
+        justify-content: center;
     }
 }
 </style>
@@ -97,6 +101,7 @@ export default defineComponent({
     props: ['active', 'next'],
     computed: {
         ...mapState(['code']),
+        // TODO: vuex getter?
         codeIsValid(): boolean {
             return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
         },

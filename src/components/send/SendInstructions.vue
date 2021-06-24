@@ -11,9 +11,11 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-margin-top">
-                    <FileCard :filename="file && file.name"></FileCard>
+                    <FileCard :name="file && file.name"
+                              :size="file && file.size"
+                    ></FileCard>
                 </ion-row>
-                <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
+                <ion-row class="ion-text-center ion-margin-top">
                     <ion-col>
                         <p>
                             <ion-text color="dark-grey" class="bold">
@@ -23,17 +25,13 @@
                     </ion-col>
                 </ion-row>
                 <ion-row
-                        class="ion-text-center ion-justify-content-center ion-margin-top ion-padding-top ion-padding-bottom">
-                    <ion-col class="ion-align-content-end"
-                             style="display: flex;"
-                             sizeLg="6"
+                        class="ion-text-center ion-justify-content-center ion-margin-top">
+                    <ion-col sizeLg="6"
                              sizeMd="7"
                              sizeSm="9"
                              sizeXs="12"
                     >
                         <ion-input color="black"
-                                   class="ion-margin-start"
-                                   style="display: flex"
                                    placeholder="receive link"
                                    autofocus
                                    readonly
@@ -41,16 +39,16 @@
                         ></ion-input>
                     </ion-col>
                     <ion-col class="ion-text-sm-start ion-text-xs-center"
-                             style="display: flex;"
                              sizeSm="2"
                              sizeXs="4"
                     >
                         <CopyButton class="ion-margin-start copy-button"
                                     :link="link"
+                                    :disabled="!linkReady"
                         ></CopyButton>
                     </ion-col>
                 </ion-row>
-                <ion-row class="ion-text-center ion-margin-top ion-padding-top ion-padding-bottom">
+                <ion-row class="ion-text-center ion-margin-top">
                     <ion-col>
                         <p>
                             <ion-text class="bold">
@@ -59,7 +57,7 @@
                         </p>
                     </ion-col>
                 </ion-row>
-                <ion-row class="ion-text-center ion-margin-top ion-margin-bottom  ion-padding-top ion-padding-bottom">
+                <ion-row class="ion-text-center ion-margin-top ion-margin-bottom">
                     <ion-col>
                         <ion-button color="medium-grey"
                                     @click="cancel()">
@@ -135,15 +133,18 @@ export default defineComponent({
     props: ['active', 'selectFile', 'file', 'back'],
     computed: {
         ...mapState(['host', 'code', 'progress']),
-        fileSize(): string {
-            return sizeToClosestUnit(this.file.size);
-        },
+        // TODO: vuex getter?
         link(): string {
             // TODO: move to utils.
             return `${this.host}/#/${this.code}`;
         },
+        // TODO: vuex getter?
         shortLink(): string {
             return this.link.replace(/https?:\/\//, '');
+        },
+        // TODO: vuex getter?
+        linkReady(): boolean {
+            return /\/#\/\d+-(\w-?)+$/.test(this.link);
         }
     },
     methods: {

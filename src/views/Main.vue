@@ -13,7 +13,7 @@
                             </h1>
                         </ion-text>
                     </ion-col>
-                    <ion-col size="6" align="right">
+                    <ion-col size="6" class="flex ion-justify-content-end">
                         <ion-button color="medium-grey"
                                     class="ion-margin-end nav-button"
                                     @click="toggleNav()">
@@ -93,17 +93,12 @@ ion-card-content p ion-text {
 
 ion-footer {
     background: transparent;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 600;
 }
 
 ion-content, ion-footer {
     max-width: var(--max-width);
-}
-
-ion-content {
-    /* min-height: 730px; */
-    min-height: 33vh;
 }
 
 .header h1 {

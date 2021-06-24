@@ -11,7 +11,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .bold {
-    font-weight: 700;
+    font-weight: 700 !important;
 }
 
 :root * {
@@ -28,12 +28,40 @@
     background: #f1f1f1;
 }
 
+.flex {
+    display: flex;
+}
+
 ion-progress-bar {
     height: 40px;
 }
 
 ion-card, ion-button, ion-input {
     border-radius: 8px;
+}
+
+@media screen and (max-height: 379px) {
+    ion-card {
+        max-height: 55vh;
+    }
+}
+
+@media screen and (min-height: 380px) and (max-height: 499px) {
+    ion-card {
+        max-height: 60vh;
+    }
+}
+
+@media screen and (min-height: 500px) and (max-height: 649px) {
+    ion-card {
+        max-height: 70vh;
+    }
+}
+
+@media screen and (min-height: 650px) {
+    ion-card {
+        max-height: 490px;
+    }
 }
 
 ion-button {
