@@ -16,10 +16,9 @@
                     ></FileCard>
                 </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col class="ion-text-center"
-                             size="">
+                    <ion-col class="ion-text-center">
                         <ion-button color="yellow"
-                                    class="ion-margin-start download-button"
+                                    class="download-button"
                                     disabled="true"
                                     @click="download"
                         >
@@ -38,7 +37,7 @@
                 <ion-row class="ion-text-center">
                     <ion-col>
                         <ion-text color="dark-grey">
-                            {{ progressStatus }}
+                            {{ progressETA }}
                         </ion-text>
                     </ion-col>
                 </ion-row>
@@ -93,7 +92,7 @@ export default defineComponent({
     },
     computed: {
         ...mapState(['config', 'code', 'fileMeta', 'progress']),
-        ...mapGetters(['progressStatus']),
+        ...mapGetters(['progressETA']),
         fileSize() {
             // TODO: cleanup.
             const fileMeta = this.fileMeta as unknown as FileMeta;

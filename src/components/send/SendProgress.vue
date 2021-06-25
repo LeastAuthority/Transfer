@@ -25,7 +25,7 @@
                 <ion-row class="ion-text-center">
                     <ion-col>
                         <ion-text color="dark-grey">
-                            {{ progressStatus }}
+                            {{ _progressETA }}
                         </ion-text>
                     </ion-col>
                 </ion-row>
@@ -70,7 +70,12 @@ export default defineComponent({
     props: ['active', 'back'],
     computed: {
         ...mapState(['progress', 'fileMeta']),
-        ...mapGetters(['progressStatus']),
+        ...mapGetters(['progressETA']),
+        _progressETA() {
+            return (this.progressETA as unknown as string) !== '' ?
+                    this.progressETA :
+                    'Waiting for receiver to complete transfer...';
+        },
     },
     methods: {
         ...mapMutations([RESET_PROGRESS]),

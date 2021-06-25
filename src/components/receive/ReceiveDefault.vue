@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="black">
+                <ion-text color="dark-grey" class="bold">
                     Receive files with ease, speed, and security
                 </ion-text>
             </ion-card-title>

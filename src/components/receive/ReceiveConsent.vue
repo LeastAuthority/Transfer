@@ -16,9 +16,8 @@
                     ></FileCard>
                 </ion-row>
                 <ion-row class="ion-justify-content-center ion-align-items-center">
-                    <ion-col class="ion-text-center"
-                             size="">
-                        <ion-button class="ion-margin-start download-button"
+                    <ion-col class="ion-text-center">
+                        <ion-button class="download-button"
                                     color="yellow"
                                     @click="download"
                         >

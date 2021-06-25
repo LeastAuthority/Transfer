@@ -291,10 +291,10 @@ export default createStore({
         [ALERT]: alertAction,
     },
     getters: {
-        progressStatus: state => {
+        progressETA: state => {
             const {progress, progressETASeconds} = state;
-            if (progress >= .999) {
-                return 'Waiting for receiver to complete transfer...'
+            if (progress >= 1) {
+                return '';
             }
             return durationToClosesUnit(progressETASeconds);
         }
