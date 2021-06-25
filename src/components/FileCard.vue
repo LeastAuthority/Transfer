@@ -4,7 +4,11 @@
         <ion-text color="black"
                   class="bold ellipsis-overflow ion-text-nowrap"
         >
-            {{ name }}
+            {{ basename }}
+        </ion-text>
+        <ion-text color="black"
+                  class="no-margin bold ion-text-nowrap">
+            .{{ extension }}
         </ion-text>
         <ion-text color="black"
                   class="ion-text-nowrap">
@@ -17,7 +21,6 @@
 
 import {IonCard, IonIcon, IonText} from "@ionic/vue";
 import {document} from 'ionicons/icons';
-import {FileMeta} from "@/store";
 import {sizeToClosestUnit} from "@/util";
 import {defineComponent} from "vue";
 
@@ -25,6 +28,25 @@ export default defineComponent({
     name: "FileCard",
     props: ['name', 'size'],
     computed: {
+        basename(): string {
+            if (typeof(this.name) === 'undefined') {
+                return '';
+            }
+
+            return this.name
+                    .split('.')
+                    .filter((part: string) => part !== this.extension)
+                    .join('.');
+        },
+        extension(): string {
+            if (typeof(this.name) === 'undefined') {
+                return '';
+            }
+
+            return this.name
+                    .split('.')
+                    .reverse()[0];
+        },
         sizeWithUnit(): string {
             return sizeToClosestUnit(this.size);
         },
@@ -46,6 +68,10 @@ export default defineComponent({
 :root ion-card {
     --padding: 0 15.4px;
     height: 36px;
+}
+
+.no-margin {
+    margin-left: 0;
 }
 
 .ellipsis-overflow {
