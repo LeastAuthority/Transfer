@@ -95,8 +95,8 @@ export default defineComponent({
         ...mapActions([SEND_FILE, ALERT]),
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         select(file?: File) {
-            if (typeof(file) === 'undefined') {
-            (this.$refs.fileInput as HTMLInputElement).click();
+            if (typeof (file) === 'undefined') {
+                (this.$refs.fileInput as HTMLInputElement).click();
             } else {
                 this.file = file;
                 this.step = SendStep.Instructions;
@@ -108,8 +108,8 @@ export default defineComponent({
             if (fileInput.files!.length > 0) {
                 this.file = fileInput.files![0] as File;
                 this.step = SendStep.Instructions;
+                this.sendFile();
             }
-            this.sendFile();
         },
         // TODO: refactor.
         async sendFile(): Promise<void> {

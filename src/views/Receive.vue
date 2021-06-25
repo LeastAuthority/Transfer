@@ -1,12 +1,6 @@
 <template>
     <!--        <transition name="slide-right">-->
-    <!--    <ion-page>-->
-    <!--        <ion-content>-->
     <CardModal>
-        <!--            :is-open="onStep(Step.Default)"-->
-        <!--            css-class="modal"-->
-        <!--            @onDidDismiss="setOpen(false)"-->
-        <!--    >-->
         <ReceiveDefault
                 :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
@@ -28,8 +22,6 @@
                 :next="nextFrom(ReceiveStep.Complete)"
         ></ReceiveComplete>
     </CardModal>
-    <!--        </ion-content>-->
-    <!--    </ion-page>-->
     <!--        </transition>-->
 </template>
 
@@ -53,11 +45,18 @@ import ReceiveProgress from "@/components/receive/ReceiveProgress.vue";
 export default defineComponent({
     name: 'Receive',
     async beforeUpdate() {
+        console.log('Receive.vue:48| beforeUpdate() called; this.$route.query:');
+        console.log(this.$route.query);
         if (typeof (this.$route.query.hasCode) !== 'undefined') {
+            console.log('Receive.vue: 51| await this.$router.replace(\'r\')')
             await this.$router.replace('/r');
+            this.step = ReceiveStep.Consent;
+            console.log('Receive.vue: 53| done')
             try {
+                console.log(`Receive.vue:55| this.code: ${this.code}`);
+                console.log('Receive.vue: 51| await this[SAVE_FILE](this.code)');
                 await this[SAVE_FILE](this.code);
-                this.step = ReceiveStep.Consent;
+                console.log('Receive.vue: 53| done')
             } catch (error) {
                 console.error(error);
                 const opts = {

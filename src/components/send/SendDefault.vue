@@ -92,6 +92,7 @@ export default defineComponent({
 });
 </script>
 
+
 <style scoped>
 .bold {
     font-weight: bold;
@@ -121,7 +122,7 @@ export default defineComponent({
 ion-card, .drag-n-drop {
     /* TODO: use css variable! */
     /* min-height: 730px; */
-    /*min-height: 33vh;*/
+    min-height: 33vh;
 //max-height: ?;
 }
 

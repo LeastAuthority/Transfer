@@ -1,16 +1,17 @@
 <template>
     <ion-card>
-        <ion-icon :icon="document"></ion-icon>
-        <ion-text color="black"
+        <ion-spinner v-show="basename === ''" name="dots"></ion-spinner>
+        <ion-icon v-show="basename !== ''" :icon="document"></ion-icon>
+        <ion-text v-show="basename !== ''" color="black"
                   class="bold ellipsis-overflow ion-text-nowrap"
         >
             {{ basename }}
         </ion-text>
-        <ion-text color="black"
+        <ion-text v-show="basename !== ''" color="black"
                   class="no-margin bold ion-text-nowrap">
             .{{ extension }}
         </ion-text>
-        <ion-text color="black"
+        <ion-text v-show="basename !== ''" color="black"
                   class="ion-text-nowrap">
             ({{ sizeWithUnit }})
         </ion-text>
@@ -19,7 +20,7 @@
 
 <script lang="ts">
 
-import {IonCard, IonIcon, IonText} from "@ionic/vue";
+import {IonCard, IonIcon, IonSpinner, IonText} from "@ionic/vue";
 import {document} from 'ionicons/icons';
 import {sizeToClosestUnit} from "@/util";
 import {defineComponent} from "vue";
@@ -29,7 +30,7 @@ export default defineComponent({
     props: ['name', 'size'],
     computed: {
         basename(): string {
-            if (typeof(this.name) === 'undefined') {
+            if (typeof (this.name) === 'undefined') {
                 return '';
             }
 
@@ -39,7 +40,7 @@ export default defineComponent({
                     .join('.');
         },
         extension(): string {
-            if (typeof(this.name) === 'undefined') {
+            if (typeof (this.name) === 'undefined') {
                 return '';
             }
 
@@ -55,6 +56,7 @@ export default defineComponent({
         IonCard,
         IonIcon,
         IonText,
+        IonSpinner,
     },
     setup() {
         return {
@@ -79,6 +81,10 @@ export default defineComponent({
     overflow: hidden;
 }
 
+ion-spinner {
+    margin-top: 5px;
+}
+
 ion-card {
     /* TODO: be more specific with main ion-card selector and delete this */
     min-height: initial !important;
@@ -91,11 +97,11 @@ ion-card {
     padding: var(--padding);
 }
 
-ion-card > * {
+ion-card  > * {
     margin-left: 6px;
 }
 
-ion-card > *:first-child {
+ion-card  > *:first-child {
     margin-left: initial;
 }
 

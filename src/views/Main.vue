@@ -7,7 +7,8 @@
             <ion-grid>
                 <ion-row class="header ion-align-items-end">
                     <ion-col size="6">
-                        <ion-text>
+                        <ion-text class="pointer"
+                                  @click="window.location.reload()">
                             <h1 class="ion-padding-start">
                                 winden
                             </h1>
@@ -114,6 +115,10 @@ ion-icon.nav {
     transform: rotate(-90deg);
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .bg {
     z-index: -100;
     overflow: hidden;
@@ -151,13 +156,6 @@ ion-icon.nav {
 }
 </style>
 
-<style>
-.dark-label-icon {
-    color: black;
-    padding-right: 5px;
-}
-</style>
-
 <script lang="ts">
 
 import {Component, defineComponent, Transition} from "vue";
@@ -183,6 +181,7 @@ import {arrowDownSharp, arrowForwardSharp, sendSharp} from 'ionicons/icons';
 import Send from "@/views/Send.vue";
 import Receive from "@/views/Receive.vue";
 import {RouterView} from "vue-router";
+import {SendStep} from "@/types";
 
 export default defineComponent({
     computed: {
@@ -230,7 +229,8 @@ export default defineComponent({
     },
     setup() {
         return {
-            // Component,
+            SendStep,
+            window,
         }
     }
 })
