@@ -3,17 +3,17 @@
         <ion-spinner v-show="basename === ''" name="dots"></ion-spinner>
         <ion-icon v-show="basename !== ''" :icon="document"></ion-icon>
         <ion-text v-show="basename !== ''" color="black"
-                  class="bold ellipsis-overflow ion-text-nowrap"
+                  class="basename bold ellipsis-overflow ion-text-nowrap"
         >
-            {{ basename }}
+            {{ basename(name) }}
         </ion-text>
-        <ion-text v-show="basename !== ''" color="black"
-                  class="no-margin bold ion-text-nowrap">
-            .{{ extension }}
+        <ion-text v-show="basename(name) !== ''" color="black"
+                  class="extension no-margin bold ion-text-nowrap">
+            .{{ extension(name) }}
         </ion-text>
-        <ion-text v-show="basename !== ''" color="black"
-                  class="ion-text-nowrap">
-            ({{ sizeWithUnit }})
+        <ion-text v-show="basename(name) !== ''" color="black"
+                  class="size ion-text-nowrap">
+            ({{ sizeWithUnit(size) }})
         </ion-text>
     </ion-card>
 </template>
@@ -22,36 +22,12 @@
 
 import {IonCard, IonIcon, IonSpinner, IonText} from "@ionic/vue";
 import {document} from 'ionicons/icons';
-import {sizeToClosestUnit} from "@/util";
+import {basename, extension, sizeWithUnit} from "@/util";
 import {defineComponent} from "vue";
 
 export default defineComponent({
     name: "FileCard",
     props: ['name', 'size'],
-    computed: {
-        basename(): string {
-            if (typeof (this.name) === 'undefined') {
-                return '';
-            }
-
-            return this.name
-                    .split('.')
-                    .filter((part: string) => part !== this.extension)
-                    .join('.');
-        },
-        extension(): string {
-            if (typeof (this.name) === 'undefined') {
-                return '';
-            }
-
-            return this.name
-                    .split('.')
-                    .reverse()[0];
-        },
-        sizeWithUnit(): string {
-            return sizeToClosestUnit(this.size);
-        },
-    },
     components: {
         IonCard,
         IonIcon,
@@ -61,6 +37,9 @@ export default defineComponent({
     setup() {
         return {
             document,
+            basename,
+            extension,
+            sizeWithUnit,
         }
     },
 })

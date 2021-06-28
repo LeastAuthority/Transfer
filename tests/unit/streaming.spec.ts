@@ -1,5 +1,5 @@
 import Client from '@/go/wormhole/client'
-import {FileReader} from "@/go/wormhole/streaming";
+import {FileStreamReader} from "@/go/wormhole/streaming";
 import {initGo, newTestFile} from './util';
 import {mockReadFn, NewTestFile} from "../e2e/support/util";
 
@@ -81,7 +81,7 @@ describe('Reader', () => {
                 size: testFileSize,
                 read: readFn,
             };
-            const reader = new FileReader(testBufferSize, opts);
+            const reader = new FileStreamReader(testBufferSize, opts);
             const buf = new ArrayBuffer(testBufferSize);
             let readBytes = 0;
             for (let n = 0, done = false; !done;) {

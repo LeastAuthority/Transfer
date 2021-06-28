@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from '@ionic/vue-router';
 import {RouteRecordRaw} from 'vue-router';
-import {SET_CODE} from "@/store/actions";
+import {RESET_CODE, SET_CODE, SET_FILE_META} from "@/store/actions";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -42,6 +42,9 @@ router.beforeEach((to, from) => {
         typeof (to.redirectedFrom.params.code) !== 'undefined') {
         store.commit(SET_CODE, to.redirectedFrom.params.code);
         // router.replace('/r');
+    } else if (to.path !== from.path) {
+        store.commit(RESET_CODE);
+        store.commit(SET_FILE_META, {name: '', size: 0});
     }
 })
 

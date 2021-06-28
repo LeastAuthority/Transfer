@@ -41,12 +41,29 @@ class ErrRelay extends AlertError {
     }
 }
 
-export const errReceiveNoSender = new Error('no sender seen, check the code and try again.')
+class ErrInterrupt extends AlertError {
+    name = 'Connection Error'
+
+    public pattern(config: ClientConfig): RegExp {
+        // TODO: improve error messaging.
+        return new RegExp(`(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*${config.transitRelayURL}.*)`);
+    }
+
+    public matches(errorMsg: string, config: ClientConfig): boolean {
+        return this.pattern(config).test(errorMsg)
+    }
+}
+
+export const errReceiveNoSender = new Error('The code you used is not currently valid. Codes may only be used once. \n' +
+    'Please ask the sender for a new code and to stay connected until you get the file.')
 export const errMailbox = new ErrMailbox({
-    message: 'Unable to connect to the rendezvous server.',
+    message: 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.',
 })
 export const errRelay = new ErrRelay({
-    message: 'Unable to connect to the transit relay.',
+    message: 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.',
+})
+export const errInterrupt = new ErrInterrupt({
+    message: 'There was an issue with either your or the receiver\'s connection. Please try again with a new code.',
 })
 
 // export class ReceiveError extends Error {

@@ -32,6 +32,7 @@
                              sizeXs="12"
                     >
                         <ion-input color="black"
+                                   class="send-code-input"
                                    placeholder="receive link"
                                    autofocus
                                    readonly

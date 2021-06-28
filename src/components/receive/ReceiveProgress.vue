@@ -18,7 +18,6 @@
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                     <ion-col class="ion-text-center">
                         <ion-button color="yellow"
-                                    class="download-button"
                                     disabled="true"
                                     @click="download"
                         >

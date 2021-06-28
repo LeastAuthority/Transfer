@@ -21,3 +21,27 @@ export function sizeToClosestUnit(fileSizeInBytes: number): string {
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 }
 
+export function extension(name: string): string {
+    if (typeof (name) === 'undefined') {
+        return '';
+    }
+
+    return name
+        .split('.')
+        .reverse()[0];
+}
+
+export function basename(name: string): string {
+    if (typeof (name) === 'undefined') {
+        return '';
+    }
+
+    return name
+        .split('.')
+        .filter((part: string) => part !== extension(name))
+        .join('.');
+}
+
+export function sizeWithUnit(size: number): string {
+    return sizeToClosestUnit(size);
+}

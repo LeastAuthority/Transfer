@@ -2,7 +2,7 @@ import Chainable = Cypress.Chainable;
 import Client from "@/go/wormhole/client";
 import {TransferProgress, TransferOptions} from "@/go/wormhole/types";
 import Go from "../../../src/go";
-import {FileReader} from "@/go/wormhole/streaming";
+import {FileStreamReader} from "@/go/wormhole/streaming";
 
 export const TEST_DOWNLOAD_DIR = 'cypress/downloads'
 
@@ -76,10 +76,11 @@ export async function UIGetCode(filename: string): Promise<string> {
                     fileContent,
                 })
                 .get('.send-code-input>input')
-                .should('not.match', RegExp(`^(|${TEST_HOST}/#/)$`))
                 .wait(1000)
                 .then(el => {
-                    resolve((el[0] as HTMLInputElement).value);
+                    const value = (el[0] as HTMLInputElement).value;
+                    expect(value).not.match(RegExp(`^(|${TEST_HOST}/#/)$`));
+                    resolve(value);
                 })
         })
     });
@@ -92,7 +93,7 @@ export function codeFromURL(url: string): string {
     return urlObj.hash.slice(2);
 }
 
-export async function mockGetReceiveReader(code: string): Promise<FileReader> {
+export async function mockGetReceiveReader(code: string): Promise<FileStreamReader> {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);

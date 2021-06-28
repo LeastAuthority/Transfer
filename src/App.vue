@@ -40,6 +40,7 @@ ion-card, ion-button, ion-input {
     border-radius: 8px;
 }
 
+/*
 @media screen and (max-height: 379px) {
     ion-card {
         max-height: 55vh;
@@ -62,7 +63,7 @@ ion-card, ion-button, ion-input {
     ion-card {
         max-height: 490px;
     }
-}
+}*/
 
 ion-button {
     font-weight: 600;

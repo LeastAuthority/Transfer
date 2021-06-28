@@ -11,6 +11,7 @@ import {
 } from "../support/util";
 import {SET_CONFIG} from "../support/const";
 import Client from "@/go/wormhole/client";
+import {FileStreamReader} from "@/go/wormhole/streaming";
 import {errMailbox, errRelay} from "@/errors";
 
 before(initGo)
@@ -56,7 +57,7 @@ describe('Error messaging', () => {
             });
         });
 
-        it.only('should show a specific error when unable to connect to the relay', () => {
+        it('should show a specific error when unable to connect to the relay', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.visit('/#/s')
 
@@ -72,7 +73,8 @@ describe('Error messaging', () => {
                 UIGetCode(filename)
                     .then((url) => {
                         const code = codeFromURL(url);
-                        mockGetReceiveReader(code)
+                        mockGetReceiveReader(code).then((reader: FileStreamReader) => {
+                            reader.readAll(new Uint8Array(1));
                         cy.wait(100)
 
                         const alert = cy.get('.alert-wrapper').should('exist');
@@ -84,6 +86,7 @@ describe('Error messaging', () => {
                         // .then(() => {
                         //     cy.screenshot()
                         // })
+                        })
                     })
             })
         });
@@ -133,36 +136,37 @@ describe('Error messaging', () => {
                 })
 
                 cy.visit(`/#/r`)
-                        cy.window().then(window => {
-                            window.postMessage({
-                                action: SET_CONFIG,
-                                config: {
-                                    rendezvousURL: 'ws://localhost:4000/v1',
-                                    transitRelayURL: 'ws://localhost:10000',
-                                }
-                            }, '*')
-                            cy.wait(100)
+                cy.window().then(window => {
+                    window.postMessage({
+                        action: SET_CONFIG,
+                        config: {
+                            rendezvousURL: 'ws://localhost:4000/v1',
+                            transitRelayURL: 'ws://localhost:10000',
+                        }
+                    }, '*')
+                    cy.wait(100)
 
-                            cy.get('input[type="text"]')
-                                .type(code as string);
+                    cy.get('input[type="text"]')
+                        .type(code as string);
 
-                            cy.get('.receive-next')
-                                .click().wait(500)
+                    cy.get('.receive-next')
+                        .click().wait(500)
 
-                            cy.get('ion-text.filename').should('have.text', filename);
-                            cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
-                            cy.get('.download-button').click()
+                    cy.contains('ion-text.basename', 'large-file');
+                    cy.contains('ion-text.extension', '.txt');
+                    cy.contains('ion-text.size', '(1022.6 kB)');
+                    cy.get('.download-button').click()
 
-                            const alert = cy.get('.alert-wrapper').should('exist');
-                            alert.get('.alert-title').should('contain.text', errRelay.name);
-                            alert.get('.alert-message').should('contain.text', errRelay.message);
-                            alert.get('.alert-button').should('contain.text', 'OK');
-                            // TODO: use cli flag or something
-                            // .wait(250)
-                            // .then(() => {
-                            //     cy.screenshot()
-                            // })
-                    });
+                    const alert = cy.get('.alert-wrapper').should('exist');
+                    alert.get('.alert-title').should('contain.text', errRelay.name);
+                    alert.get('.alert-message').should('contain.text', errRelay.message);
+                    alert.get('.alert-button').should('contain.text', 'OK');
+                    // TODO: use cli flag or something
+                    // .wait(250)
+                    // .then(() => {
+                    //     cy.screenshot()
+                    // })
+                });
             });
         });
 

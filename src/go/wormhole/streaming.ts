@@ -6,7 +6,7 @@ export interface FileReaderOpts {
     read: ReadFn;
 }
 
-export class FileReader {
+export class FileStreamReader {
     readonly name: string;
     readonly size: number;
     readonly read: ReadFn;

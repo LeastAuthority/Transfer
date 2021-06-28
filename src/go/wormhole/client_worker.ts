@@ -22,7 +22,7 @@ import {
     SEND_TEXT,
     WASM_READY
 } from "@/store/actions";
-import {FileReader} from "@/go/wormhole/streaming";
+import {FileStreamReader} from "@/go/wormhole/streaming";
 import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
 import {errReceiveNoSender} from "@/errors";
 import {RpcProvider} from "worker-rpc";
@@ -252,11 +252,13 @@ export default class ClientWorker implements ClientInterface {
                 .then(({code}) => {
                     resolve({code, done: doneProxy});
                 })
-                .catch(reject)
+                .catch((reason) => {
+                    reject(reason);
+                })
         });
     }
 
-    public async recvFile(code: string, opts?: TransferOptions): Promise<FileReader> {
+    public async recvFile(code: string, opts?: TransferOptions): Promise<FileStreamReader> {
         return Promise.reject(new Error('not implemented'));
         // await this.ready;
         // return new Promise((resolve, reject) => {

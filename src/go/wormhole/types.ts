@@ -1,5 +1,5 @@
 // TODO: declare local interface instead of import?
-import {FileReader} from "@/go/wormhole/streaming";
+import {FileStreamReader} from "@/go/wormhole/streaming";
 
 export interface TransferProgress {
     name?: string;
@@ -36,7 +36,7 @@ export interface ClientInterface {
 
     sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress>;
 
-    recvFile(code: string, opts?: TransferOptions): Promise<FileReader>;
+    recvFile(code: string, opts?: TransferOptions): Promise<FileStreamReader>;
 
     free(): void;
 }
@@ -55,7 +55,7 @@ export interface WindowClient {
 
     recvText(goClient: number, code: string): Promise<string>;
 
-    recvFile(goClient: number, code: string, opts?: TransferOptions): Promise<FileReader>;
+    recvFile(goClient: number, code: string, opts?: TransferOptions): Promise<FileStreamReader>;
 
     free(goClient: number): string | undefined;
 }

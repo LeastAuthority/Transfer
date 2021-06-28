@@ -119,11 +119,9 @@ export default defineComponent({
 //justify-content: space-around; align-items: center;
 }
 
-ion-card, .drag-n-drop {
+.drag-n-drop {
     /* TODO: use css variable! */
-    /* min-height: 730px; */
-    min-height: 33vh;
-//max-height: ?;
+    min-height: 60vh;
 }
 
 .drag-n-drop {
