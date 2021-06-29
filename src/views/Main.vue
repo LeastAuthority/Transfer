@@ -85,6 +85,21 @@ ion-card-content p ion-text {
     --max-width: 1100px;
 }
 
+.alert-wrapper, .alert-title {
+    text-align: center;
+}
+
+.alert-wrapper {
+    background-color: var(--ion-color-light-grey) !important;
+}
+
+.alert-message {
+    color: var(--ion-color-black) !important;
+}
+
+.alert-button-group {
+    justify-content: center !important;
+}
 </style>
 
 <style lang="css" scoped>
