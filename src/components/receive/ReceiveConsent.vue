@@ -96,10 +96,7 @@ declare interface ReceiveConsentData {
 
 export default defineComponent({
     name: "ReceiveConsent",
-    props: ['active', 'back', 'next', 'complete'],
-    async beforeUpdate() {
-        // await this.saveFileOnce();
-    },
+    props: ['active', 'back', 'next', 'complete', 'reset'],
     data(): ReceiveConsentData {
         return {
             receivingPromise: undefined,
@@ -113,7 +110,11 @@ export default defineComponent({
         ...mapMutations([SET_PROGRESS, RESET_CODE, RESET_PROGRESS]),
         async download() {
             this.next();
-            this[ACCEPT_FILE]();
+            try {
+                await this[ACCEPT_FILE]();
+            } catch {
+                this.reset();
+            }
             await this.fileMeta.done
             this.complete();
         },

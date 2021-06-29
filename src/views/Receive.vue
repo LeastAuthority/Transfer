@@ -4,11 +4,13 @@
         <ReceiveDefault
                 :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
+                :reset="goToStep(ReceiveStep.Default)"
         ></ReceiveDefault>
         <ReceiveConsent
                 :active="onStep(ReceiveStep.Consent)"
                 :back="backFrom(ReceiveStep.Consent)"
                 :next="nextFrom(ReceiveStep.Consent)"
+                :reset="goToStep(ReceiveStep.Default)"
                 :complete="nextFrom(ReceiveStep.Progress)"
         ></ReceiveConsent>
 
@@ -59,14 +61,7 @@ export default defineComponent({
                 console.log('Receive.vue: 53| done')
             } catch (error) {
                 console.error(error);
-                const opts = {
-                    // cssClass: 'my-custom-class',
-                    // header: 'Error',
-                    // subHeader: 'error type',
-                    // message: error,
-                    buttons: ['OK'],
-                };
-                await this[ALERT]({error, opts})
+                this.step = ReceiveStep.Default;
             }
         }
     },

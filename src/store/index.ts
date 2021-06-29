@@ -69,27 +69,24 @@ async function sendFileAction(this: Store<any>, {
         }
     }
 
-    try {
-        const p = client.sendFile(file, opts);
-        p.then(({code, done}) => {
-            const {name, size} = file;
-            commit(SET_FILE_META, {name, size})
-            commit(SEND_FILE, {code});
-            done.then(() => {
-                commit(SET_PROGRESS, -1)
-                // TODO: remove!
-                dispatch(NEW_CLIENT);
-            }).catch(error => {
-                dispatch(ALERT, {error})
-                // return Promise.reject(error);
-            });
-            // return done;
+    const p = client.sendFile(file, opts);
+    p.then(({code, done}) => {
+        const {name, size} = file;
+        commit(SET_FILE_META, {name, size})
+        commit(SEND_FILE, {code});
+        done.then(() => {
+            commit(SET_PROGRESS, -1)
+            // TODO: remove!
+            dispatch(NEW_CLIENT);
+        }).catch(error => {
+            dispatch(ALERT, {error})
+            return Promise.reject(error);
         });
-        return p;
-    } catch (error) {
+    }).catch((error) => {
         dispatch(ALERT, {error})
         return Promise.reject(error);
-    }
+    });
+    return p;
 }
 
 // TODO: be more specific with types.
@@ -103,23 +100,23 @@ async function saveFileAction(this: Store<any>, {
             dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
         },
     }
-    try {
-        const p = client.saveFile(code, opts);
-        p.then(({name, size, accept, done}) => {
+    const p = client.saveFile(code, opts);
+    p
+        .then(({name, size, accept, done}) => {
             commit(SET_FILE_META, {name, size, accept, done});
             done.then(() => {
                 commit(RESET_CODE);
                 commit(RESET_PROGRESS);
-            }).catch(async (error: string) => {
-                await dispatch(ALERT, {error});
+            }).catch((error: string) => {
+                dispatch(ALERT, {error});
+                return Promise.reject(error);
             });
-            // return done;
+        })
+        .catch((error: string) => {
+            dispatch(ALERT, {error});
+            return Promise.reject(error);
         });
-        return p;
-    } catch (error) {
-        dispatch(ALERT, {error});
-        return Promise.reject(error);
-    }
+    return p;
 
 }
 
@@ -138,9 +135,12 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
 }
 
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
-    return state.fileMeta.accept().catch((error: string) => {
+    const p = state.fileMeta.accept()
+    p.catch((error: string) => {
+        console.log("store/index:148| acceptFileAction")
         dispatch(ALERT, {error});
     });
+    return p;
 }
 
 

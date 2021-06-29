@@ -95,14 +95,6 @@
 .step-fade-enter-from, .step-fade-leave-to {
     opacity: 0;
 }
-
-.size {
-    font-size: small;
-}
-
-.filename {
-    font-weight: bold;
-}
 </style>
 
 <script lang="ts">
@@ -123,9 +115,7 @@ import {copy, close} from 'ionicons/icons';
 import {defineComponent, Transition} from 'vue';
 import {mapState, mapActions, mapMutations} from 'vuex';
 
-import {sizeToClosestUnit} from '@/util';
-
-import {ALERT, NEW_CLIENT, RESET_PROGRESS} from "@/store/actions";
+import {NEW_CLIENT, RESET_PROGRESS} from "@/store/actions";
 import CopyButton from "@/components/CopyButton.vue";
 import FileCard from "@/components/FileCard.vue";
 
@@ -149,7 +139,7 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions([NEW_CLIENT, ALERT]),
+        ...mapActions([NEW_CLIENT]),
         ...mapMutations([RESET_PROGRESS]),
         cancel() {
             // TODO: move up to Send.vue

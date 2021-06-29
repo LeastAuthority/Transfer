@@ -29,7 +29,7 @@ const filename = 'large-file.txt';
 describe('Error messaging', () => {
     describe('Sending', () => {
         // TODO: be more specific
-        it('should show `errMailbox` when unable to connect to the mailbox server', () => {
+        it('should alert mailbox server is unavailable', (done) => {
             cy.viewport('samsung-note9', 'portrait')
             cy.visit('/#/s')
 
@@ -47,17 +47,15 @@ describe('Error messaging', () => {
                         const alert = cy.get('.alert-wrapper').should('exist');
                         alert.get('.alert-title').should('contain.text', errMailbox.name);
                         alert.get('.alert-message').should('contain.text', errMailbox.message);
-                        alert.get('.alert-button').should('contain.text', 'OK');
+                        alert.get('.alert-button').should('contain.text', 'OK')
+                            .then(() => done());
                         // TODO: use cli flag or something
-                        // .wait(250)
-                        // .then(() => {
-                        //     cy.screenshot()
-                        // })
+                        // cy.wait(250).screenshot().then(done);
                     })
             });
         });
 
-        it('should show a specific error when unable to connect to the relay', () => {
+        it('should alert when relay server is unavailable', (done) => {
             cy.viewport('samsung-note9', 'portrait')
             cy.visit('/#/s')
 
@@ -72,28 +70,26 @@ describe('Error messaging', () => {
                 cy.wait(100)
                 UIGetCode(filename)
                     .then((url) => {
+
                         const code = codeFromURL(url);
-                        mockGetReceiveReader(code).then((reader: FileStreamReader) => {
-                            reader.readAll(new Uint8Array(1));
-                        cy.wait(100)
+                        console.log(`error.spec.ts:73| code: ${code}`)
+                        mockGetReceiveReader(code)//.then(() => console.log("THEN")).catch(() => console.log("ERROR"));
+                        cy.wait(500)
 
                         const alert = cy.get('.alert-wrapper').should('exist');
                         alert.get('.alert-title').should('contain.text', errRelay.name);
                         alert.get('.alert-message').should('contain.text', errRelay.message);
-                        alert.get('.alert-button').should('contain.text', 'OK');
+                        alert.get('.alert-button').should('contain.text', 'OK')
+                            .then(() => done());
                         // TODO: use cli flag or something
-                        // .wait(250)
-                        // .then(() => {
-                        //     cy.screenshot()
-                        // })
-                        })
+                        // cy.wait(250).screenshot().then(done);
                     })
             })
         });
     })
 
     describe('Receiving', () => {
-        it('should show a specific error when unable to connect to the mailbox', () => {
+        it('should alert mailbox server is unavailable', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.fixture(filename).then(async (file: string) => {
                 cy.visit('/#/r');
@@ -116,17 +112,14 @@ describe('Error messaging', () => {
                     const alert = cy.get('.alert-wrapper').should('exist');
                     alert.get('.alert-title').should('contain.text', errMailbox.name);
                     alert.get('.alert-message').should('contain.text', errMailbox.message);
-                    alert.get('.alert-button').should('contain.text', 'OK');
+                    alert.get('.alert-button').should('contain.text', 'OK')
                     // TODO: use cli flag or something
-                    // .wait(250)
-                    // .then(() => {
-                    //     cy.screenshot()
-                    // })
+                    // cy.wait(250).screenshot().then(done);
                 });
             });
         });
 
-        it('should show a specific error when unable to connect to the relay', () => {
+        it.only('should alert relay server is unavailable', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.fixture(filename).then(async (file: string) => {
                 const {code, done} = await mockClientSend(filename, file)
@@ -154,18 +147,15 @@ describe('Error messaging', () => {
 
                     cy.contains('ion-text.basename', 'large-file');
                     cy.contains('ion-text.extension', '.txt');
-                    cy.contains('ion-text.size', '(1022.6 kB)');
+                    cy.contains('ion-text.size', /\(\d+(\.\d+)? [kKmMgG]B\)/);
                     cy.get('.download-button').click()
 
                     const alert = cy.get('.alert-wrapper').should('exist');
                     alert.get('.alert-title').should('contain.text', errRelay.name);
                     alert.get('.alert-message').should('contain.text', errRelay.message);
-                    alert.get('.alert-button').should('contain.text', 'OK');
+                    alert.get('.alert-button').should('contain.text', 'OK')
                     // TODO: use cli flag or something
-                    // .wait(250)
-                    // .then(() => {
-                    //     cy.screenshot()
-                    // })
+                    // cy.wait(250).screenshot().then(done);
                 });
             });
         });
@@ -212,11 +202,7 @@ describe('Error messaging', () => {
                         .then(() => testDone());
                 })
             // TODO: use cli flag or something
-            // .wait(250)
-            // .then(() => {
-            //     cy.screenshot()
-            // })
-
+            // cy.wait(250).screenshot()
         });
     })
 })

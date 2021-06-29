@@ -19,6 +19,8 @@ export class AlertError extends Error {
 
 
 class ErrMailbox extends AlertError {
+    name = 'Mailbox server unavailable'
+
     public pattern(config: ClientConfig): RegExp {
         return new RegExp(`.*${config.rendezvousURL}.*`)
     }
@@ -29,11 +31,11 @@ class ErrMailbox extends AlertError {
 }
 
 class ErrRelay extends AlertError {
-    name = 'Relay Error'
+    name = 'Relay server unavailable'
 
     public pattern(config: ClientConfig): RegExp {
         // TODO: improve error messaging.
-        return new RegExp(`(^websocket.Dial failed$)|(.*${config.transitRelayURL}.*)`);
+        return new RegExp(`(^websocket.Dial failed|failed to establish connection$)|(.*${config.transitRelayURL}.*)`);
     }
 
     public matches(errorMsg: string, config: ClientConfig): boolean {
@@ -42,7 +44,7 @@ class ErrRelay extends AlertError {
 }
 
 class ErrInterrupt extends AlertError {
-    name = 'Connection Error'
+    name = 'Transfer interrupted'
 
     public pattern(config: ClientConfig): RegExp {
         // TODO: improve error messaging.

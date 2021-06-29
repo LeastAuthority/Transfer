@@ -98,7 +98,7 @@ import WaitButton from "@/components/WaitButton.vue";
 
 export default defineComponent({
     name: "ReceiveDefault",
-    props: ['active', 'next'],
+    props: ['active', 'next', 'reset'],
     computed: {
         ...mapState(['code']),
         // TODO: vuex getter?
@@ -122,22 +122,12 @@ export default defineComponent({
         },
         async _next(): Promise<void> {
             try {
-                await this[SAVE_FILE](this.code);
+                const {done} = await this[SAVE_FILE](this.code);
                 this.next();
+                done.then(() => console.log("DONE")).catch(() => console.log("CATCH"));
             } catch (error) {
-                await this[ALERT]({error});
+                this.reset();
             }
-
-            // try {
-            //     this.receivingPromise = this[SAVE_FILE](this.code);
-            //     const {done} = await this.receivingPromise;
-            //     await done
-            //     this.receivingPromise = undefined;
-            //     this.next();
-            // } catch (error) {
-            //     await this[ALERT]({error});
-            //     this.cancel();
-            // }
         },
     },
     components: {

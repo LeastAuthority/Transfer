@@ -66,7 +66,7 @@ import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
 import SendComplete from "@/components/send/SendComplete.vue";
-import {ALERT, RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
+import {RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
 import {mapActions, mapMutations} from "vuex";
 
 // TODO: use proper state management.
@@ -92,7 +92,7 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions([SEND_FILE, ALERT]),
+        ...mapActions([SEND_FILE]),
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         select(file?: File) {
             if (typeof (file) === 'undefined') {
@@ -120,12 +120,10 @@ export default defineComponent({
             this.step = SendStep.Instructions;
             try {
                 const {done} = await p
-                // this.step = SendStep.Progress
                 await done;
                 this.step = SendStep.Complete;
-            } catch (error) {
+            } catch {
                 // NB: error during transfer.
-                await this[ALERT]({error});
                 this.step = SendStep.Default;
             }
         },
