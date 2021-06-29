@@ -113,6 +113,7 @@ export default defineComponent({
             try {
                 await this[ACCEPT_FILE]();
             } catch {
+                this[RESET_CODE]();
                 this.reset();
             }
             await this.fileMeta.done

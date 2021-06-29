@@ -12,7 +12,7 @@
         ></SendInstructions>
         <SendProgress
                 :active="onStep(SendStep.Progress)"
-                :back="backFrom(SendStep.Progress)"
+                :back="goToStep(SendStep.Default)"
         ></SendProgress>
         <SendComplete
                 :active="onStep(SendStep.Complete)"
@@ -60,7 +60,7 @@
 import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
 
-import {SendStep} from "@/types";
+import {ReceiveStep, SendStep} from "@/types";
 import CardModal from '@/components/CardModal.vue';
 import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
@@ -163,6 +163,11 @@ export default defineComponent({
                 if (this.step === step) {
                     this.stepBack();
                 }
+            }
+        },
+        goToStep(step: SendStep): () => void {
+            return (): void => {
+                this.step = step;
             }
         },
     },

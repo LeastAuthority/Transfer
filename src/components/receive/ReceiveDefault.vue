@@ -16,10 +16,11 @@
         <ion-card-content>
             <ion-grid>
                 <ion-row class="ion-text-center ion-justify-content-center ion-align-items-center">
-                    <ion-col sizeLg="6"
+                    <ion-col class="input-col"
+                             sizeLg="6"
                              sizeMd="7"
                              sizeSm="9"
-                             sizeXs="12"
+                             sizeXs="9"
                     >
                         <ion-input color="black"
                                    autofocus
@@ -28,12 +29,14 @@
                                    placeholder="Enter code here"
                                    v-model="_code"
                         ></ion-input>
+                        <ion-text color="medium-grey">
+                            E.g.: 7-guitarist-revenge
+                        </ion-text>
                     </ion-col>
-                    <ion-col class="ion-text-sm-start ion-text-xs-center"
-                             sizeSm="2"
-                             sizeXs="4"
+                    <ion-col class="next-col ion-align-self-start ion-text-start"
+                             sizeXs="3"
                     >
-                        <WaitButton class="ion-margin-start receive-next"
+                        <WaitButton class="ion-no-margin receive-next"
                                     :disabled="!codeIsValid"
                                     :click="_next">
                             <template v-slot:text>
@@ -47,20 +50,6 @@
                         </WaitButton>
                     </ion-col>
                 </ion-row>
-                <ion-row class="ion-justify-content-center">
-                    <ion-col class="flex ion-justify-content-center"
-                             sizeLg="6"
-                             sizeMd="7"
-                             sizeSm="9"
-                             sizeXs="12"
-                    >
-                        <ion-text color="medium-grey">
-                            E.g.: 7-guitarist-revenge
-                        </ion-text>
-                    </ion-col>
-                    <ion-col sizeSm="2" sizeXs="4">
-                    </ion-col>
-                </ion-row>
             </ion-grid>
         </ion-card-content>
     </div>
@@ -68,6 +57,18 @@
 </template>
 
 <style lang="css" scoped>
+@media screen and (max-width: 455px) {
+    .input-col {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .next-col {
+        text-align: center !important;
+    }
+}
+
 @media screen and (max-width: 575px) {
     .receive-next {
         margin-left: 0;

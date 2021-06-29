@@ -9,8 +9,8 @@
                     <ion-col size="6">
                         <ion-text class="pointer"
                                   @click="window.location.reload()">
-                            <h1 class="ion-padding-start">
-                                winden
+                            <h1 class="ion-no-margin ion-padding-start">
+                                MyFileTransfer
                             </h1>
                         </ion-text>
                     </ion-col>
@@ -85,20 +85,12 @@ ion-card-content p ion-text {
     --max-width: 1100px;
 }
 
-.alert-wrapper, .alert-title {
-    text-align: center;
-}
-
 .alert-wrapper {
     background-color: var(--ion-color-light-grey) !important;
 }
 
 .alert-message {
     color: var(--ion-color-black) !important;
-}
-
-.alert-button-group {
-    justify-content: center !important;
 }
 </style>
 
