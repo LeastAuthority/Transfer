@@ -119,7 +119,7 @@ describe('Error messaging', () => {
             });
         });
 
-        it.only('should alert relay server is unavailable', () => {
+        it('should alert relay server is unavailable', () => {
             cy.viewport('samsung-note9', 'portrait')
             cy.fixture(filename).then(async (file: string) => {
                 const {code, done} = await mockClientSend(filename, file)

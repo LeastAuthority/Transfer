@@ -23,14 +23,16 @@
                              sizeXs="9"
                     >
                         <ion-input color="black"
+                                   :class="{invalid: blurInvalid}"
                                    autofocus
                                    :clearInput="code !== ''"
                                    type="text"
                                    placeholder="Enter code here"
                                    v-model="_code"
+                                   @change="validate"
                         ></ion-input>
-                        <ion-text color="medium-grey">
-                            E.g.: 7-guitarist-revenge
+                        <ion-text :color="exampleErrorColor">
+                            {{ exampleErrorText }}
                         </ion-text>
                     </ion-col>
                     <ion-col class="next-col ion-align-self-start ion-text-start"
@@ -57,6 +59,10 @@
 </template>
 
 <style lang="css" scoped>
+.invalid {
+    border: 1px solid var(--ion-color-warning-red);
+}
+
 @media screen and (max-width: 455px) {
     .input-col {
         flex: 0 0 100% !important;
@@ -96,15 +102,30 @@ import {mapActions, mapMutations, mapState} from "vuex";
 import {ALERT, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
 import WaitButton from "@/components/WaitButton.vue";
+import {ErrBadCode, ErrInvalidCode} from "@/errors";
+
+const errorColor = 'warning-red';
+const exampleColor = 'dark-grey';
+const errorText = ErrInvalidCode.message;
+const exampleText = 'E.g.: 7-guitarist-revenge';
 
 export default defineComponent({
     name: "ReceiveDefault",
     props: ['active', 'next', 'reset'],
+    data() {
+        return {
+            exampleErrorColor: exampleColor,
+            exampleErrorText: exampleText,
+        }
+    },
     computed: {
         ...mapState(['code']),
         // TODO: vuex getter?
         codeIsValid(): boolean {
             return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
+        },
+        blurInvalid(): boolean {
+            return this.code !== '' && this.exampleErrorColor === errorColor;
         },
         _code: {
             get: function (): string {
@@ -127,9 +148,19 @@ export default defineComponent({
                 this.next();
                 done.then(() => console.log("DONE")).catch(() => console.log("CATCH"));
             } catch (error) {
+                console.error(error);
                 this.reset();
             }
         },
+        validate(): void {
+            if (/\d+(-\w+)+/.test(this._code)) {
+                this.exampleErrorText = exampleText;
+                this.exampleErrorColor = exampleColor;
+            } else {
+                this.exampleErrorText = errorText;
+                this.exampleErrorColor = errorColor;
+            }
+        }
     },
     components: {
         IonGrid,

@@ -1,9 +1,12 @@
 import Go from '../../../src/go'
 import {expectFileDownloaded, expectReceiveConsent, mobileViewport, mockClientSend, TEST_HOST} from "../support/util";
+import {SET_CONFIG} from "../support/const";
+import {ErrMailbox} from "@/errors";
 
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
+
 async function initGo() {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch(`${TEST_HOST}/assets/wormhole.wasm`), go.importObject).then((result) => {
