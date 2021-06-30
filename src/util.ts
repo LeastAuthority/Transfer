@@ -1,13 +1,16 @@
 // NB: wormhole-william relay timeout is 5s.
-export const SENDER_TIMEOUT = 5000;
+export const SENDER_TIMEOUT = 3000;
+
+export const CODE_REGEX = /^\d+-\w+-\w+$/;
 
 export function durationToClosesUnit(seconds: number): string {
     let minString = '';
     const secString = `${seconds % 60} sec. remaining`;
     if (seconds > 60) {
-        minString = `${Math.floor(seconds / 60)} min. and `;
+        minString = `${Math.round(seconds / 60)} min. remaining`;
+        return minString;
     }
-    return minString + secString;
+    return secString;
 }
 
 export function sizeToClosestUnit(fileSizeInBytes: number): string {
@@ -26,9 +29,12 @@ export function extension(name: string): string {
         return '';
     }
 
-    return name
-        .split('.')
-        .reverse()[0];
+    const parts = name.split('.')
+    if (parts.length === 1) {
+        return '';
+    }
+
+    return parts.reverse()[0];
 }
 
 export function basename(name: string): string {
@@ -36,8 +42,12 @@ export function basename(name: string): string {
         return '';
     }
 
-    return name
-        .split('.')
+    const parts = name.split('.')
+    if (parts.length === 1)  {
+        return name;
+    }
+
+    return parts
         .filter((part: string) => part !== extension(name))
         .join('.');
 }

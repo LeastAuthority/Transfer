@@ -132,7 +132,6 @@ export default defineComponent({
             this.step = SendStep.Default;
             this[RESET_PROGRESS]();
             this.$router.replace('/s');
-            this.select();
         },
         onStep(step: SendStep): boolean {
             return this.step === step;

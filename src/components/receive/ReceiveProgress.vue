@@ -100,12 +100,14 @@ export default defineComponent({
         // TODO: calculate!
     },
     methods: {
+        ...mapActions([NEW_CLIENT]),
         ...mapMutations([RESET_PROGRESS]),
         cancel() {
             // TODO: move into action.
             // TODO: *use reject here.
             this.back();
             this[RESET_PROGRESS]();
+            // this[NEW_CLIENT]();
         },
     },
     components: {

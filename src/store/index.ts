@@ -16,7 +16,7 @@ import {
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
-import {ErrRelay, ErrMailbox, ErrInterrupt} from "@/errors";
+import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
 
 const updateProgressETAFrequency = 10;
@@ -38,9 +38,18 @@ let client = new ClientWorker(defaultConfig);
 /* --- ACTIONS --- */
 
 // TODO: more specific types.
-function newClientAction(this: Store<any>, {commit}: ActionContext<any, any>, config?: ClientConfig): void {
+async function newClientAction(this: Store<any>, {
+    state,
+    commit
+}: ActionContext<any, any>, config?: ClientConfig): Promise<void> {
     // TODO: something better.
-    commit(NEW_CLIENT, config);
+    let _config = config;
+    if (typeof (config) === 'undefined') {
+        _config = {...state.config};
+    }
+
+    await client.free()
+    client = new ClientWorker(_config)
 }
 
 declare interface SendFilePayload {
@@ -77,11 +86,12 @@ async function sendFileAction(this: Store<any>, {
         done.then(() => {
             commit(SET_PROGRESS, -1)
             // TODO: remove!
-            dispatch(NEW_CLIENT);
+            // dispatch(NEW_CLIENT);
         }).catch(error => {
             dispatch(ALERT, {error})
             return Promise.reject(error);
         });
+        // return done;
     }).catch((error) => {
         dispatch(ALERT, {error})
         return Promise.reject(error);
@@ -159,23 +169,21 @@ async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, p
         opts = defaultAlertOpts;
     }
 
-    if (ErrMailbox.matches(error, state.config)) {
-        opts.header = ErrMailbox.name
-        opts.message = ErrMailbox.message
-    } else if (ErrRelay.matches(error, state.config)) {
-        opts.header = ErrRelay.name
-        opts.message = ErrRelay.message
-    } else if (ErrInterrupt.matches(error, state.config)) {
-        opts.header = ErrInterrupt.name
-        opts.message = ErrInterrupt.message
-    } else {
+    let matchFound = false;
+    for (const err of MatchableErrors) {
+        if (err.matches(error, state.config)) {
+            opts.header = err.name;
+            opts.message = err.message;
+            matchFound = true;
+        }
+    }
+
+    if (!matchFound) {
         opts.header = 'Error';
         opts.message = (error);
     }
 
-
-    const alert = await alertController
-        .create(opts);
+    const alert = await alertController.create(opts);
     await alert.present();
     await alert.onWillDismiss();
 }
@@ -201,15 +209,6 @@ function setProgressMutation(state: any, sentRatio: number): void {
 function sendFileMutation(state: any, {code, cancel}: any): void {
     state.code = code;
     state.cancel = cancel;
-}
-
-// TODO: be more specific with types.
-function newClientMutation(state: any, config?: ClientConfig): void {
-    let _config = config;
-    if (typeof (config) === 'undefined') {
-        _config = {...state.config};
-    }
-    client = new ClientWorker(_config)
 }
 
 // TODO: be more specific with types.
@@ -275,7 +274,6 @@ export default createStore({
         },
         [SET_PROGRESS]: setProgressMutation,
         [SET_FILE_META]: setFileMetaMutation,
-        [NEW_CLIENT]: newClientMutation,
         [SEND_FILE]: sendFileMutation,
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,

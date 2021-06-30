@@ -30,16 +30,24 @@
                                    placeholder="Enter code here"
                                    v-model="_code"
                                    @change="validate"
+                                   @keyup.enter="_next"
                         ></ion-input>
-                        <ion-text :color="exampleErrorColor">
-                            {{ exampleErrorText }}
-                        </ion-text>
+                        <div class="flex-col">
+                            <ion-text :color="exampleErrorColor"
+                                      v-show="blurInvalid">
+                                {{ exampleErrorText }}
+                            </ion-text>
+                            <ion-text :color="exampleErrorColor">
+                                E.g.: 7-guitarist-revenge
+                            </ion-text>
+                        </div>
                     </ion-col>
                     <ion-col class="next-col ion-align-self-start ion-text-start"
                              sizeXs="3"
                     >
                         <WaitButton class="ion-no-margin receive-next"
                                     :disabled="!codeIsValid"
+                                    :force="waiting"
                                     :click="_next">
                             <template v-slot:text>
                                 <ion-text>Next</ion-text>
@@ -101,8 +109,9 @@ import {
 import {mapActions, mapMutations, mapState} from "vuex";
 import {ALERT, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
-import WaitButton from "@/components/WaitButton.vue";
+import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
 import {ErrBadCode, ErrInvalidCode} from "@/errors";
+import {CODE_REGEX} from "@/util";
 
 const errorColor = 'warning-red';
 const exampleColor = 'dark-grey';
@@ -116,13 +125,14 @@ export default defineComponent({
         return {
             exampleErrorColor: exampleColor,
             exampleErrorText: exampleText,
+            waiting: false,
         }
     },
     computed: {
         ...mapState(['code']),
         // TODO: vuex getter?
         codeIsValid(): boolean {
-            return /^\d+-\w+-\w+$/.test(this.code as unknown as string);
+            return CODE_REGEX.test(this.code as unknown as string);
         },
         blurInvalid(): boolean {
             return this.code !== '' && this.exampleErrorColor === errorColor;
@@ -143,17 +153,22 @@ export default defineComponent({
             this[SET_CODE](code);
         },
         async _next(): Promise<void> {
+            // TODO: remove
+            window.setTimeout(() => {
+                this.waiting = false;
+            }, DefaultDuration);
+            this.waiting = true;
+
             try {
-                const {done} = await this[SAVE_FILE](this.code);
+                await this[SAVE_FILE](this.code);
                 this.next();
-                done.then(() => console.log("DONE")).catch(() => console.log("CATCH"));
             } catch (error) {
                 console.error(error);
                 this.reset();
             }
         },
         validate(): void {
-            if (/\d+(-\w+)+/.test(this._code)) {
+            if (CODE_REGEX.test(this._code)) {
                 this.exampleErrorText = exampleText;
                 this.exampleErrorColor = exampleColor;
             } else {

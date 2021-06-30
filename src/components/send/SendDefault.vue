@@ -93,11 +93,7 @@ export default defineComponent({
 </script>
 
 
-<style scoped>
-.bold {
-    font-weight: bold;
-}
-
+<style lang="css" scoped>
 .select-button {
     width: 135px;
     height: 135px;

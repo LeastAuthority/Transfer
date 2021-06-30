@@ -48,9 +48,11 @@ describe('Error messaging', () => {
                         alert.get('.alert-title').should('contain.text', ErrMailbox.name);
                         alert.get('.alert-message').should('contain.text', ErrMailbox.message);
                         alert.get('.alert-button').should('contain.text', 'OK')
-                            .then(() => done());
-                        // TODO: use cli flag or something
-                        // cy.wait(250).screenshot().then(done);
+                            .then(() => {
+                                // TODO: use cli flag or something
+                                cy.wait(250).screenshot().then(() => done())
+                                // done();
+                            });
                     })
             });
         });
@@ -80,9 +82,11 @@ describe('Error messaging', () => {
                         alert.get('.alert-title').should('contain.text', ErrRelay.name);
                         alert.get('.alert-message').should('contain.text', ErrRelay.message);
                         alert.get('.alert-button').should('contain.text', 'OK')
-                            .then(() => done());
-                        // TODO: use cli flag or something
-                        // cy.wait(250).screenshot().then(done);
+                            .then(() => {
+                                // TODO: use cli flag or something
+                                cy.wait(250).screenshot().then(() => done())
+                                // done();
+                            });
                     })
             })
         });
@@ -113,8 +117,10 @@ describe('Error messaging', () => {
                     alert.get('.alert-title').should('contain.text', ErrMailbox.name);
                     alert.get('.alert-message').should('contain.text', ErrMailbox.message);
                     alert.get('.alert-button').should('contain.text', 'OK')
-                    // TODO: use cli flag or something
-                    // cy.wait(250).screenshot().then(done);
+                        // TODO: use cli flag or something
+                        .then(() => {
+                            cy.wait(250).screenshot()
+                        });
                 });
             });
         });
@@ -154,8 +160,10 @@ describe('Error messaging', () => {
                     alert.get('.alert-title').should('contain.text', ErrRelay.name);
                     alert.get('.alert-message').should('contain.text', ErrRelay.message);
                     alert.get('.alert-button').should('contain.text', 'OK')
-                    // TODO: use cli flag or something
-                    // cy.wait(250).screenshot().then(done);
+                        // TODO: use cli flag or something
+                        .then(() => {
+                            cy.wait(250).screenshot()
+                        })
                 });
             });
         });

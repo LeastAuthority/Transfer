@@ -52,8 +52,14 @@ export const ErrInterrupt = new AlertError({
     pattern: '(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*$transitRelayURL.*)',
 })
 
-export const ErrInvalidCode = new Error('Please use a code with the number-word-word format. For example: 7-guitarist-revenge.')
+export const ErrInvalidCode = new Error('Please use a code with the number-word-word format.')
 
+export const MatchableErrors = [
+    ErrBadCode,
+    ErrMailbox,
+    ErrRelay,
+    ErrInterrupt,
+];
 // export class ReceiveError extends Error {
 //     // name = 'ReceiveError'
 //     message = 'No sender seen, check the code and try again.';

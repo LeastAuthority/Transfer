@@ -1,17 +1,17 @@
 <template>
     <ion-card>
-        <ion-spinner v-show="basename === ''" name="dots"></ion-spinner>
-        <ion-icon v-show="basename !== ''" :icon="document"></ion-icon>
-        <ion-text v-show="basename !== ''" color="black"
+        <ion-spinner v-show="name === ''" name="dots"></ion-spinner>
+        <ion-icon v-show="name !== ''" :icon="document"></ion-icon>
+        <ion-text v-show="name !== ''" color="black"
                   class="basename bold ellipsis-overflow ion-text-nowrap"
         >
             {{ basename(name) }}
         </ion-text>
-        <ion-text v-show="basename(name) !== ''" color="black"
+        <ion-text v-show="extension(name) !== ''" color="black"
                   class="extension no-margin bold ion-text-nowrap">
             .{{ extension(name) }}
         </ion-text>
-        <ion-text v-show="basename(name) !== ''" color="black"
+        <ion-text v-show="name !== ''" color="black"
                   class="size ion-text-nowrap">
             ({{ sizeWithUnit(size) }})
         </ion-text>

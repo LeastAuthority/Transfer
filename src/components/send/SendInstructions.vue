@@ -135,6 +135,7 @@ export default defineComponent({
         },
         // TODO: vuex getter?
         linkReady(): boolean {
+            // TODO: consolidate with CODE_REGEX.
             return /\/#\/\d+-(\w-?)+$/.test(this.link);
         }
     },
@@ -146,11 +147,11 @@ export default defineComponent({
             this.back();
             this[RESET_PROGRESS]();
 
-            this.reset();
+            // this.reset();
         },
         reset() {
             // TODO: remove.
-            this[NEW_CLIENT]();
+            // this[NEW_CLIENT]();
         },
     },
     components: {

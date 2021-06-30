@@ -49,6 +49,37 @@ describe('Receive', () => {
             });
         });
     });
+
+    it.only('should show bad code error when the code format is invalid', () => {
+        cy.viewport('samsung-note9', 'portrait')
+        cy.fixture(filename).then(async (file: string) => {
+            cy.visit('/#/r');
+
+            cy.window().then(window => {
+                window.postMessage({
+                    action: SET_CONFIG,
+                    config: {
+                        rendezvousURL: 'ws://localhost:10000/v1',
+                    }
+                }, '*')
+                cy.wait(100)
+
+                cy.get('input[type="text"]')
+                    .type('zz-invalid')
+                    .blur();
+
+                // cy.get('.receive-next')
+                //     .click()
+
+                // const alert = cy.get('.alert-wrapper').should('exist');
+                // alert.get('.alert-title').should('contain.text', ErrMailbox.name);
+                // alert.get('.alert-message').should('contain.text', ErrMailbox.message);
+                // alert.get('.alert-button').should('contain.text', 'OK')
+                // TODO: use cli flag or something
+                // cy.wait(250).screenshot().then(done);
+            });
+        });
+    });
 });
 
 async function UIEnterCode(code: string) {

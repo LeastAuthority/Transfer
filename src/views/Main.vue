@@ -8,9 +8,9 @@
                 <ion-row class="header ion-align-items-end">
                     <ion-col size="6">
                         <ion-text class="pointer"
-                                  @click="window.location.reload()">
+                                  @click="goToSendReload">
                             <h1 class="ion-no-margin ion-padding-start">
-                                MyFileTransfer
+                                Transfer
                             </h1>
                         </ion-text>
                     </ion-col>
@@ -216,6 +216,12 @@ export default defineComponent({
             this.$route.path === '/s' ?
                     this.$router.replace('/r') :
                     this.$router.replace('/s');
+        },
+        goToSendReload() {
+            this.$router.replace('/s');
+            setTimeout(() => {
+                window.location.reload()
+            }, 100)
         }
     },
     components: {

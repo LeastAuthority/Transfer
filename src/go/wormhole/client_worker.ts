@@ -36,15 +36,16 @@ export default class ClientWorker implements ClientInterface {
     protected ready: Promise<void>;
     protected port: MessagePort;
     protected rpc: RpcProvider | undefined = undefined;
+    protected worker: Worker | undefined = undefined;
 
     constructor(config?: ClientConfig) {
-        const wasmWorker = new Worker(`${window.location.origin}/worker/index.umd.js`);
+        this.worker = new Worker(`${window.location.origin}/worker/index.umd.js`);
 
         const channel = new MessageChannel();
         this.port = channel.port1;
 
         // NB: send client config and remote channel port to worker.
-        wasmWorker.postMessage({
+        this.worker.postMessage({
             action: NEW_CLIENT,
             id: Date.now(),
             config,
@@ -315,6 +316,9 @@ export default class ClientWorker implements ClientInterface {
     public async free(): Promise<void> {
         await this.ready
         return this.rpc!.rpc(FREE);
+        // await this.rpc!.rpc(FREE);
+        // this.worker?.terminate();
+        // return Promise.resolve();
     }
 }
 

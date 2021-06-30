@@ -1,8 +1,8 @@
 <template>
-    <ion-button :color="color"
+    <ion-button color="yellow"
                 @click="_click"
-                :disabled="waiting || disabled">
-        <slot v-if="waiting" name="waiting-text"></slot>
+                :disabled="_waiting || disabled">
+        <slot v-if="_waiting" name="waiting-text"></slot>
         <slot v-else name="text"></slot>
     </ion-button>
 </template>
@@ -19,33 +19,39 @@ import {defineComponent} from 'vue';
 
 import {IonButton} from '@ionic/vue';
 
+export const DefaultDuration = 3000;
+
 declare interface WaitButtonData {
     waiting: boolean;
 }
 
 export default defineComponent({
     name: 'WaitButton',
-    props: ['text', 'waitingText', 'click', 'disabled'],
+    props: ['text', 'waitingText', 'click', 'disabled', 'force', 'duration'],
     data(): WaitButtonData {
         return {
             waiting: false,
         }
     },
     computed: {
-        color(): string {
-            return 'yellow';
-            // return this.waiting ?
-            //         'light-yellow' : 'yellow';
+        _duration(): number {
+            return this.duration || DefaultDuration;
+        },
+        _waiting(): boolean {
+            return this.waiting || this.force;
         },
     },
     methods: {
         _click(): void {
+            this.wait();
+            this.click();
+        },
+        wait(): void {
             window.setTimeout(() => {
                 this.waiting = false;
-            }, 1000);
+            }, this._duration);
             this.waiting = true;
-            this.click();
-        }
+        },
     },
     components: {
         IonButton,

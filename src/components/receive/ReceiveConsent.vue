@@ -75,18 +75,14 @@ import {mapState, mapActions, mapMutations} from 'vuex';
 import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
 
 import router from '@/router/index.ts'
-import {sizeToClosestUnit} from "@/util";
 import {
     ACCEPT_FILE,
     ALERT,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
-    SAVE_FILE,
-    SET_CODE,
     SET_PROGRESS
 } from "@/store/actions";
-import {FileMeta} from "@/store";
 import {TransferProgress} from "@/go/wormhole/types";
 import FileCard from "@/components/FileCard.vue";
 
