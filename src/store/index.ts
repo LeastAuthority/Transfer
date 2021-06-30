@@ -16,7 +16,7 @@ import {
 import ClientWorker from "@/go/wormhole/client_worker";
 import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
-import {errRelay, errMailbox, errInterrupt} from "@/errors";
+import {ErrRelay, ErrMailbox, ErrInterrupt} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
 
 const updateProgressETAFrequency = 10;
@@ -159,15 +159,15 @@ async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, p
         opts = defaultAlertOpts;
     }
 
-    if (errMailbox.matches(error, state.config)) {
-        opts.header = errMailbox.name
-        opts.message = errMailbox.message
-    } else if (errRelay.matches(error, state.config)) {
-        opts.header = errRelay.name
-        opts.message = errRelay.message
-    } else if (errInterrupt.matches(error, state.config)) {
-        opts.header = errInterrupt.name
-        opts.message = errInterrupt.message
+    if (ErrMailbox.matches(error, state.config)) {
+        opts.header = ErrMailbox.name
+        opts.message = ErrMailbox.message
+    } else if (ErrRelay.matches(error, state.config)) {
+        opts.header = ErrRelay.name
+        opts.message = ErrRelay.message
+    } else if (ErrInterrupt.matches(error, state.config)) {
+        opts.header = ErrInterrupt.name
+        opts.message = ErrInterrupt.message
     } else {
         opts.header = 'Error';
         opts.message = (error);

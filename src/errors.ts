@@ -4,68 +4,52 @@
 import {AlertOptions} from "@ionic/core";
 import {ClientConfig} from "@/go/wormhole/types";
 
-export class AlertError extends Error {
-    public opts: AlertOptions;
+const ServerErrorMsg = 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.';
 
-    constructor(opts: AlertOptions) {
+export interface ErrAlertOptions extends AlertOptions {
+    pattern: string;
+}
+
+export class AlertError extends Error {
+    public opts: ErrAlertOptions;
+    public name = 'Oops...';
+
+    constructor(opts: ErrAlertOptions) {
         super();
         this.opts = opts;
     }
 
-    get message() {
+    get message(): string {
         return this.opts.message as string;
     }
-}
-
-
-class ErrMailbox extends AlertError {
-    name = 'Mailbox server unavailable'
-
-    public pattern(config: ClientConfig): RegExp {
-        return new RegExp(`.*${config.rendezvousURL}.*`)
-    }
 
     public matches(errorMsg: string, config: ClientConfig): boolean {
-        return this.pattern(config).test(errorMsg)
+        const pattern = this.opts.pattern
+            .replace('$rendezvousURL', config.rendezvousURL)
+            .replace('$transitRelayURL', config.transitRelayURL);
+        return (new RegExp(pattern)).test(errorMsg);
     }
 }
 
-class ErrRelay extends AlertError {
-    name = 'Relay server unavailable'
-
-    public pattern(config: ClientConfig): RegExp {
-        // TODO: improve error messaging.
-        return new RegExp(`(^websocket.Dial failed|failed to establish connection$)|(.*${config.transitRelayURL}.*)`);
-    }
-
-    public matches(errorMsg: string, config: ClientConfig): boolean {
-        return this.pattern(config).test(errorMsg)
-    }
-}
-
-class ErrInterrupt extends AlertError {
-    name = 'Transfer interrupted'
-
-    public pattern(config: ClientConfig): RegExp {
-        // TODO: improve error messaging.
-        return new RegExp(`(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*${config.transitRelayURL}.*)`);
-    }
-
-    public matches(errorMsg: string, config: ClientConfig): boolean {
-        return this.pattern(config).test(errorMsg)
-    }
-}
-
-export const errReceiveNoSender = new Error('The code you used is not currently valid. Codes may only be used once. \n' +
-    'Please ask the sender for a new code and to stay connected until you get the file.')
-export const errMailbox = new ErrMailbox({
-    message: 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.',
+export const ErrBadCode = new AlertError({
+    message: 'The code you used is not currently valid. Codes may only be used once. \n' +
+        'Please ask the sender for a new code and to stay connected until you get the file.',
+    pattern: '',
 })
-export const errRelay = new ErrRelay({
-    message: 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.',
+
+export const ErrMailbox = new AlertError({
+    message: ServerErrorMsg,
+    pattern: '.*$rendezvousURL.*',
 })
-export const errInterrupt = new ErrInterrupt({
+
+export const ErrRelay = new AlertError({
+    message: ServerErrorMsg,
+    pattern: '(^websocket.Dial failed|failed to establish connection$)|(.*$transitRelayURL.*)',
+})
+
+export const ErrInterrupt = new AlertError({
     message: 'There was an issue with either your or the receiver\'s connection. Please try again with a new code.',
+    pattern: '(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*$transitRelayURL.*)',
 })
 
 // export class ReceiveError extends Error {

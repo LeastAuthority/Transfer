@@ -12,7 +12,7 @@ import {
 import {SET_CONFIG} from "../support/const";
 import Client from "@/go/wormhole/client";
 import {FileStreamReader} from "@/go/wormhole/streaming";
-import {errMailbox, errRelay} from "@/errors";
+import {ErrMailbox, ErrRelay} from "@/errors";
 
 before(initGo)
 after(() => cy.task('clearDownloads'))
@@ -45,8 +45,8 @@ describe('Error messaging', () => {
                 UISend(filename)
                     .then(() => {
                         const alert = cy.get('.alert-wrapper').should('exist');
-                        alert.get('.alert-title').should('contain.text', errMailbox.name);
-                        alert.get('.alert-message').should('contain.text', errMailbox.message);
+                        alert.get('.alert-title').should('contain.text', ErrMailbox.name);
+                        alert.get('.alert-message').should('contain.text', ErrMailbox.message);
                         alert.get('.alert-button').should('contain.text', 'OK')
                             .then(() => done());
                         // TODO: use cli flag or something
@@ -77,8 +77,8 @@ describe('Error messaging', () => {
                         cy.wait(500)
 
                         const alert = cy.get('.alert-wrapper').should('exist');
-                        alert.get('.alert-title').should('contain.text', errRelay.name);
-                        alert.get('.alert-message').should('contain.text', errRelay.message);
+                        alert.get('.alert-title').should('contain.text', ErrRelay.name);
+                        alert.get('.alert-message').should('contain.text', ErrRelay.message);
                         alert.get('.alert-button').should('contain.text', 'OK')
                             .then(() => done());
                         // TODO: use cli flag or something
@@ -110,8 +110,8 @@ describe('Error messaging', () => {
                         .click()
 
                     const alert = cy.get('.alert-wrapper').should('exist');
-                    alert.get('.alert-title').should('contain.text', errMailbox.name);
-                    alert.get('.alert-message').should('contain.text', errMailbox.message);
+                    alert.get('.alert-title').should('contain.text', ErrMailbox.name);
+                    alert.get('.alert-message').should('contain.text', ErrMailbox.message);
                     alert.get('.alert-button').should('contain.text', 'OK')
                     // TODO: use cli flag or something
                     // cy.wait(250).screenshot().then(done);
@@ -151,8 +151,8 @@ describe('Error messaging', () => {
                     cy.get('.download-button').click()
 
                     const alert = cy.get('.alert-wrapper').should('exist');
-                    alert.get('.alert-title').should('contain.text', errRelay.name);
-                    alert.get('.alert-message').should('contain.text', errRelay.message);
+                    alert.get('.alert-title').should('contain.text', ErrRelay.name);
+                    alert.get('.alert-message').should('contain.text', ErrRelay.message);
                     alert.get('.alert-button').should('contain.text', 'OK')
                     // TODO: use cli flag or something
                     // cy.wait(250).screenshot().then(done);

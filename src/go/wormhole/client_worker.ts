@@ -24,7 +24,7 @@ import {
 } from "@/store/actions";
 import {FileStreamReader} from "@/go/wormhole/streaming";
 import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
-import {errReceiveNoSender} from "@/errors";
+import {ErrBadCode} from "@/errors";
 import {RpcProvider} from "worker-rpc";
 import {SENDER_TIMEOUT} from "@/util";
 
@@ -283,7 +283,7 @@ export default class ClientWorker implements ClientInterface {
         };
         const {name, size} = await new Promise((resolve, reject) => {
             const timeoutID = window.setTimeout(() => {
-                reject(errReceiveNoSender);
+                reject(ErrBadCode);
             }, SENDER_TIMEOUT)
             const _resolve = (...args: any[]) => {
                 window.clearTimeout(timeoutID);
