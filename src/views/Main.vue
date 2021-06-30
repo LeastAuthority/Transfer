@@ -7,7 +7,8 @@
             <ion-grid>
                 <ion-row class="header ion-align-items-end">
                     <ion-col size="6">
-                        <ion-text class="pointer"
+                        <ion-text color="black"
+                                  class="pointer"
                                   @click="goToSendReload">
                             <h1 class="ion-no-margin ion-padding-start">
                                 Transfer

@@ -13,6 +13,40 @@
     font-style: italic;
 }
 
+/* NB: disable dark mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    --ion-background-color: initial !important;
+    --ion-background-color-rgb: initial !important;
+    --ion-text-color: initial !important;
+    --ion-text-color-rgb: initial !important;
+    --ion-border-color: initial !important;
+    --ion-color-step-50: initial !important;
+    --ion-color-step-100: initial !important;
+    --ion-color-step-150: initial !important;
+    --ion-color-step-200: initial !important;
+    --ion-color-step-250: initial !important;
+    --ion-color-step-300: initial !important;
+    --ion-color-step-350: initial !important;
+    --ion-color-step-400: initial !important;
+    --ion-color-step-450: initial !important;
+    --ion-color-step-500: initial !important;
+    --ion-color-step-550: initial !important;
+    --ion-color-step-600: initial !important;
+    --ion-color-step-650: initial !important;
+    --ion-color-step-700: initial !important;
+    --ion-color-step-750: initial !important;
+    --ion-color-step-800: initial !important;
+    --ion-color-step-850: initial !important;
+    --ion-color-step-900: initial !important;
+    --ion-color-step-950: initial !important;
+    --ion-item-background: initial !important;
+    --ion-toolbar-background: initial !important;
+    --ion-tab-bar-background: initial !important;
+    --ion-card-background: initial !important;
+  }
+}
+
 .bold {
     font-weight: 700 !important;
 }
@@ -162,6 +196,15 @@ body {
     --ion-color-progress-grey-contrast-rgb: 0,0,0;
     --ion-color-progress-grey-shade: #757779;
     --ion-color-progress-grey-tint: #919395;
+}
+
+.ion-color-black {
+  --ion-color-base: var(--ion-color-black);
+  --ion-color-base-rgb: var(--ion-color-black-rgb);
+  --ion-color-contrast: var(--ion-color-black-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-black-contrast-rgb);
+  --ion-color-shade: var(--ion-color-black-shade);
+  --ion-color-tint: var(--ion-color-black-tint);
 }
 
 .ion-color-light-grey {
