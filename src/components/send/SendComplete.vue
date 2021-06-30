@@ -26,7 +26,7 @@
                 <ion-row>
                     <ion-col class="ion-text-center">
                         <ion-button color="medium-grey"
-                                    class="send-more-button"
+                                    class="large-button"
                                     @click="sendMore">
                             <ion-icon slot="icon-only" src="/assets/icon/send-more.svg"></ion-icon>
                         </ion-button>
@@ -76,16 +76,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.send-more-button {
-    width: 135px;
-    height: 135px;
-}
-
-.send-more-button ion-icon {
-    font-size: 140px;
-    position: absolute;
-    top: 0;
-    padding: 0;
-    margin: auto;
-}
 </style>

@@ -19,8 +19,8 @@
                         <ion-button color="medium-grey"
                                     class="ion-margin-end nav-button"
                                     @click="toggleNav()">
-                            <ion-icon slot="start" :rotate="rotated"
-                                      src="/assets/icon/download.svg"></ion-icon>
+                            <ion-icon slot="start"
+                                      :icon="navIcon"></ion-icon>
                             <ion-label class="ion-text-uppercase" slot="end">
                                 {{ navButtonText }}
                             </ion-label>
@@ -169,23 +169,17 @@ ion-icon.nav {
 import {Component, defineComponent, Transition} from "vue";
 import {
     IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
     IonCol,
     IonContent,
     IonGrid,
     IonIcon,
     IonLabel,
     IonPage,
-    IonRouterOutlet,
-    IonNavLink,
     IonRow,
-    IonText, IonFooter
+    IonText,
+    IonFooter
 } from "@ionic/vue";
-import {arrowDownSharp, arrowForwardSharp, sendSharp} from 'ionicons/icons';
+import {sendSharp} from 'ionicons/icons';
 import Send from "@/views/Send.vue";
 import Receive from "@/views/Receive.vue";
 import {RouterView} from "vue-router";
@@ -196,8 +190,8 @@ export default defineComponent({
         navComponent(): Component {
             return this.$route.path === '/s' ? Send : Receive;
         },
-        navDirection(): string {
-            return this.$route.path === '/s' ? 'forward' : 'back';
+        navIcon(): string {
+            return this.$route.path === '/s' ? '/assets/icon/download.svg' : sendSharp;
         },
         navButtonText(): string {
             return this.$route.path === '/s' ? 'Receive' : 'Send';
@@ -244,7 +238,6 @@ export default defineComponent({
     setup() {
         return {
             SendStep,
-            window,
         }
     }
 })

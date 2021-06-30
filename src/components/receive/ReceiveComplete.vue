@@ -27,9 +27,9 @@
                 <ion-row>
                     <ion-col class="ion-text-center">
                         <ion-button color="medium-grey"
+                                    class="large-button"
                                     @click="next">
-                            <ion-icon :icon="downloadOutline"></ion-icon>
-                            <ion-text class="ion-padding-start">Receive more</ion-text>
+                            <ion-icon slot="icon-only" src="/assets/icon/receive-more.svg"></ion-icon>
                         </ion-button>
                     </ion-col>
                 </ion-row>

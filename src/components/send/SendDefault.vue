@@ -29,9 +29,8 @@
                             or
                         </ion-text>
                     </div>
-                    <ion-button class="select-button ion-margin-vertical"
+                    <ion-button class="large-button ion-margin-vertical"
                                 color="medium-grey"
-                                size="large"
                                 @click="() => select()">
                         <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
                     </ion-button>
@@ -49,10 +48,10 @@ import {defineComponent, Transition} from "vue";
 import {
     IonButton,
     IonCardContent,
-    IonCardHeader, IonCardSubtitle,
+    IonCardHeader,
+    IonCardSubtitle,
     IonCardTitle,
     IonIcon,
-    IonLabel,
     IonText
 } from "@ionic/vue";
 
@@ -94,19 +93,6 @@ export default defineComponent({
 
 
 <style lang="css" scoped>
-.select-button {
-    width: 135px;
-    height: 135px;
-}
-
-.select-button ion-icon {
-    font-size: 140px;
-    position: absolute;
-    top: 0;
-    padding: 0;
-    margin: auto;
-}
-
 /* TODO: use ion- classes instead where possible */
 .flex-col {
     display: flex;
@@ -118,6 +104,14 @@ export default defineComponent({
 .drag-n-drop {
     /* TODO: use css variable! */
     min-height: 60vh;
+
+}
+
+@media screen and (max-height: 800px) {
+    .drag-n-drop {
+        /* TODO: use css variable! */
+        min-height: 50vh;
+    }
 }
 
 .drag-n-drop {

@@ -51,6 +51,20 @@
     font-weight: 700 !important;
 }
 
+ion-button.large-button {
+    width: 135px;
+    height: 135px;
+}
+
+ion-button.large-button ion-icon {
+    font-size: 130px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    margin: auto;
+}
+
 :root * {
     font-family: 'Poppins', sans-serif !important;
     text-transform: initial;
