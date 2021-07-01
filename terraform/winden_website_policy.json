@@ -1,13 +1,13 @@
 {
   "Version": "2012-10-17",
-  "Id": "Policy1620914213363",
+  "Id": "Policy1190918624356",
   "Statement": [
     {
-      "Sid": "Stmt1620914198356",
+      "Sid": "Stmt1190918624356",
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::test.winden.la.bryanchriswhite.com/*"
+      "Resource": "arn:aws:s3:::w.leastauthority.com/*"
     }
   ]
 }

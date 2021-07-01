@@ -2,7 +2,7 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "Stmt1621018219695",
+      "Sid": "Stmt2186162199015",
       "Action": [
         "s3:DeleteObject",
         "s3:ListBucket",
@@ -11,7 +11,7 @@
         "s3:RestoreObject"
       ],
       "Effect": "Allow",
-      "Resource": "arn:aws:s3:::test.winden.la.bryanchriswhite.com/*"
+      "Resource": "arn:aws:s3:::w.leastauthority.com/*"
     }
   ]
 }
