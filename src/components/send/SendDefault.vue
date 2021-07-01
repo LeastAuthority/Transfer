@@ -107,7 +107,7 @@ export default defineComponent({
 
 }
 
-@media screen and (max-height: 800px) {
+@media screen and (max-height: 850px) {
     .drag-n-drop {
         /* TODO: use css variable! */
         min-height: 50vh;

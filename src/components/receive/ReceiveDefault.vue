@@ -23,7 +23,7 @@
                              sizeXs="9"
                     >
                         <ion-input color="black"
-                                   :class="{invalid: blurInvalid}"
+                                   :class="{invalid: blurInvalid, 'ion-margin-bottom': true}"
                                    autofocus
                                    :clearInput="code !== ''"
                                    type="text"
@@ -168,7 +168,7 @@ export default defineComponent({
             }
         },
         validate(): void {
-            if (CODE_REGEX.test(this._code)) {
+            if (this._code === '' || CODE_REGEX.test(this._code)) {
                 this.exampleErrorText = exampleText;
                 this.exampleErrorColor = exampleColor;
             } else {

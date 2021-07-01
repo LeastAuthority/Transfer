@@ -2,16 +2,16 @@
     <ion-card>
         <ion-spinner v-show="name === ''" name="dots"></ion-spinner>
         <ion-icon v-show="name !== ''" :icon="document"></ion-icon>
-        <ion-text v-show="name !== ''" color="black"
+        <ion-text v-show="name !== ''" color="dark-grey"
                   class="basename bold ellipsis-overflow ion-text-nowrap"
         >
             {{ basename(name) }}
         </ion-text>
-        <ion-text v-show="extension(name) !== ''" color="black"
+        <ion-text v-show="extension(name) !== ''" color="dark-grey"
                   class="extension no-margin bold ion-text-nowrap">
             .{{ extension(name) }}
         </ion-text>
-        <ion-text v-show="name !== ''" color="black"
+        <ion-text v-show="name !== ''" color="dark-grey"
                   class="size ion-text-nowrap">
             ({{ sizeWithUnit(size) }})
         </ion-text>

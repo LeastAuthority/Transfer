@@ -86,6 +86,10 @@ ion-card-content p ion-text {
     --max-width: 1100px;
 }
 
+h1.party-popper {
+    font-size: 60px;
+}
+
 .alert-wrapper {
     background-color: var(--ion-color-light-grey) !important;
 }

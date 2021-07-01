@@ -17,7 +17,7 @@
                 <ion-row>
                     <ion-col>
                         <ion-text class="ion-text-center">
-                            <h1>
+                            <h1 class="party-popper">
                                 &#x1f389; <!-- party popper -->
                             </h1>
                         </ion-text>

@@ -57,7 +57,7 @@ ion-button.large-button {
 }
 
 ion-button.large-button ion-icon {
-    font-size: 130px;
+    font-size: 120px;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -294,25 +294,6 @@ body {
     --ion-color-shade: var(--ion-color-warning-red-shade);
     --ion-color-tint: var(--ion-color-warning-red-tint);
 }
-
-/*
-:root {
-    --ion-color-yellow: #ffc64e;
-    --ion-color-yellow-rgb: 255,198,78;
-    --ion-color-yellow-contrast: #000000;
-    --ion-color-yellow-contrast-rgb: 0,0,0;
-    --ion-color-yellow-shade: #e0ae45;
-    --ion-color-yellow-tint: #ffcc60;
-}
-
-.ion-color-yellow {
-    --ion-color-base: var(--ion-color-yellow);
-    --ion-color-base-rgb: var(--ion-color-yellow-rgb);
-    --ion-color-contrast: var(--ion-color-yellow-contrast);
-    --ion-color-contrast-rgb: var(--ion-color-yellow-contrast-rgb);
-    --ion-color-shade: var(--ion-color-yellow-shade);
-    --ion-color-tint: var(--ion-color-yellow-tint);
-} */
 
 .slide-right-enter-active, .slide-left-enter-active {
     transition: transform .3s ease, opacity .3s ease;
