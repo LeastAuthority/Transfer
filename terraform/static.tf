@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
       version = "~> 3.27"
     }
   }
@@ -9,12 +9,12 @@ terraform {
 
 provider "aws" {
   profile = "default"
-  region  = "eu-central-1"
+  region = "eu-central-1"
 }
 
 provider "aws" {
   profile = "default"
-  region  = "us-east-1"
+  region = "us-east-1"
   alias = "us-east-1"
 }
 
@@ -28,8 +28,29 @@ resource "aws_iam_user" "bryan_white" {
 }
 
 resource "aws_iam_user_login_profile" "bryan_white" {
-  user    = aws_iam_user.bryan_white.name
-  pgp_key = "keybase:bryanchriswhite"
+  user = aws_iam_user.bryan_white.name
+  pgp_key = "mQENBFP6FQEBCADVEjNNt2Sk3fvI51M3g5Lq/wsF5TDKsWDnbqIBJlPnpI3Nt7FosdC0bfcxzPne"+
+  "b6NpyV1vZj2xvO+cwJn/sXtZA9H+YpD1wd37TxWeLfQvHUCErafN23zFeelnWrbaFLzgAv6tDgoI"+
+  "shJ5mBb/SDxam8vZ34T4FwN9wWkKe7NtOWK2VmmZWJRbmi+8bVyjRr4tcl5b4/Yx285GpTOvYt0K"+
+  "dPQoHeD7756UxGPtl7IfcZbbVB/g79FS+d2vldEGql3bhthRpBv90Jrr3IsLSXBSp1lPyOGmFEmM"+
+  "LY34eenDKkGXpCKnyV2NA+jj97UOf49lXJAk3TAmbqhyLThIgMh9ABEBAAG0KUJyeWFuIEMgV2hp"+
+  "dGUgPGJyeWFuY2hyaXN3aGl0ZUBnbWFpbC5jb20+iQFUBBMBCgA+AhsDBQsJCAcDBRUKCQgLBRYC"+
+  "AwEAAh4BAheAFiEEFTHxe7DY+b4CVZtFhc+ybjWHL5kFAmAulcsFCQ/258oACgkQhc+ybjWHL5lA"+
+  "Swf7BU78djn550HTFahwbNhdMLQ078CUmEq2fT7BYsk/DUQ6rFfEKljazh/ltus18rdZ4dklTRyp"+
+  "XZICCQLPPR9T1zQizXHENj0Nf9Osqs3ehqmuIp+2INIxV9/Fa5uVbl56tsPtQyGyjx4hGdkznTyh"+
+  "h2EjG9ITs+Ee1rE2S482hlQ80Zl03VlUZ5A09y+BYwo4JPBf+82eKBvlQOJ1a8gbEJ8AB47s7bTL"+
+  "iZkimp4TN9vTSdmaSuDKG1YYr1oJprSKf+m9NCK39OnrHTTw3mWQodVIHWZMb5+YVdmCyg3ol1Ut"+
+  "yvQ8Mt8ugxQo+Ww6Nb36ZBzOfznoFIPXCFMzYzxk6bkBDQRT+hUBAQgAzq91M3ONROsS/4++QGQE"+
+  "WijvGGuwHpw7/4ZvTPjsIELrlczb6nenqDQOWcIMS4BN/Ika6lSJvFBCmYs6tDfV4ufrepjlOP97"+
+  "14PfAJf/guuf2+Fg5tMh663k6cRF2XCAy714bbfKTxBGReVYDAzARywMLXaNiEATWhJOpyVYX20d"+
+  "cXoAsiOq+YphUbgmT3Yxg4qGHlGSIknuYcMTgI76yAtAe1rzGZVeSipoi7OZNldTzQxAeEAT0Jlr"+
+  "et8g9SO/PgQQOTEt9Ch0Q2sAEAqAfB5VMrAOkwZa/1tKUvloiZEPBiPA5lI28+0styDCXAqIIBdO"+
+  "Vlp13wNJK1+m/n0YLwARAQABiQE8BBgBCgAmAhsMFiEEFTHxe7DY+b4CVZtFhc+ybjWHL5kFAmAu"+
+  "lecFCQ/25+YACgkQhc+ybjWHL5mGqwf/dMBv5KKL2tlajin48KYCJBcdX9u/SqPwQEkQKWBknlAe"+
+  "y2a+Fi0dZm44WATknaDNMECbPIJGS5IE4OISn8vdKQg0r1MgfJJljTHhS+rpA7dlHG/PAojYVSeu"+
+  "pPXr7QdARE2hVo3AKDq5S7VE8RuE46skHYFwUtjX5AC4jFkTIPl7s51Kt3DVVRytHJDppTlYXWRA"+
+  "I5r2yCd/LXvWfMIXPaAhDvED0vrz5MN7k9ReT0dnu0hPX6Uyzi32zEduQl6bxCsLS/JkWs38cRcs"+
+  "drmA4dDua/jk9MyL/bH61iylf2neD8F1hSUfRx1QxnDFwSVS3gbdCqRAHxIheIYLAqbmxA=="
   password_reset_required = false
 }
 
@@ -55,7 +76,7 @@ resource "aws_iam_group_membership" "production_dns_admins" {
 
 // Attach a policy to the group so membership confers some privileges.
 resource "aws_iam_group_policy_attachment" "production_dns_admins" {
-  group      = aws_iam_group.production_dns_admins.name
+  group = aws_iam_group.production_dns_admins.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
 }
 
@@ -96,9 +117,9 @@ resource "aws_acm_certificate" "winden_website" {
   // NB: CloudFront requires certificates to be in us-east-1 region.
   provider = aws.us-east-1
 
-  domain_name               = "w.leastauthority.com"
-//  subject_alternative_names =  ["www.w.leastauthority.com"]
-  validation_method         = "DNS"
+  domain_name = "w.leastauthority.com"
+  //  subject_alternative_names =  ["www.w.leastauthority.com"]
+  validation_method = "DNS"
 
   tags = {
     Environment = "production"
@@ -137,41 +158,44 @@ resource "aws_route53_record" "winden_website" {
   type    = "A"
 
   alias {
-    name = aws_cloudfront_distribution.mw4all_website_test.domain_name
-    zone_id = aws_cloudfront_distribution.mw4all_website_test.hosted_zone_id
+    name = aws_cloudfront_distribution.winden_website.domain_name
+    zone_id = aws_cloudfront_distribution.winden_website.hosted_zone_id
     evaluate_target_health = true
   }
 }
 
 resource "aws_route53_record" "winden_production_mailbox" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "mailbox.w.leastauthority.com."
-  type    = "A"
-  ttl     = "300"
-  records = ["152.228.133.151"]
+  name = "mailbox.w.leastauthority.com."
+  type = "A"
+  ttl = "300"
+  records = [
+    "152.228.133.151"]
 }
 
 resource "aws_route53_record" "winden_production_relay" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "relay.w.leastauthority.com."
-  type    = "A"
-  ttl     = "300"
-  records = ["152.228.133.151"]
+  name = "relay.w.leastauthority.com."
+  type = "A"
+  ttl = "300"
+  records = [
+    "152.228.133.151"]
 }
 
 resource "aws_route53_record" "winden_hooks_endpoint" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "hooks.w.leastauthority.com."
-  type    = "A"
-  ttl     = "300"
-  records = ["152.228.133.151"]
+  name = "hooks.w.leastauthority.com."
+  type = "A"
+  ttl = "300"
+  records = [
+    "152.228.133.151"]
 }
 
 // S3 Bucket (public)
 resource "aws_s3_bucket" "winden_website" {
   bucket = "w.leastauthority.com"
-//  region = "eu-central-1"
-  acl    = "public-read"
+  //  region = "eu-central-1"
+  acl = "public-read"
   policy = file("winden_website_policy.json")
 
   website {
