@@ -8,7 +8,7 @@
                 </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
-                <ion-text color="black">
+                <ion-text color="dark-grey">
                     Always end-to-end encrypted.
                 </ion-text>
             </ion-card-subtitle>

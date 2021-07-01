@@ -40,8 +40,8 @@ export class AlertError extends Error {
 }
 
 export const ErrBadCode = new AlertError({
-    message: 'The code you used is not currently valid. Codes may only be used once. \n' +
-        'Please ask the sender for a new code and to stay connected until you get the file.',
+    message: 'Either the sender is no longer connected, or the code was already used.\n\n' +
+        'Please ask the sender for a new code and for them to stay connected until you get the file.',
     pattern: '',
 })
 
