@@ -60,48 +60,48 @@ resource "aws_iam_group_policy_attachment" "production_dns_admins" {
 }
 
 // Support managing MW4ALL website infrastructure.
-resource "aws_iam_group" "mw4all_website" {
-  name = "mw4all-website"
+resource "aws_iam_group" "winden_website" {
+  name = "winden-website"
 }
 
-resource "aws_iam_group_membership" "m4wall_website_team" {
-  name = "m4wall-website-team"
-  group = aws_iam_group.mw4all_website.name
+resource "aws_iam_group_membership" "winden_website_team" {
+  name = "winden-website-team"
+  group = aws_iam_group.winden_website.name
   users = [
     aws_iam_user.bryan_white.name
   ]
 }
 
 // Set up the distribution / CDN
-resource "aws_iam_group_policy_attachment" "mw4all_website_cloudfront" {
-  group = aws_iam_group.mw4all_website.name
+resource "aws_iam_group_policy_attachment" "winden_website_cloudfront" {
+  group = aws_iam_group.winden_website.name
   policy_arn = "arn:aws:iam::aws:policy/CloudFrontFullAccess"
 }
 
 // Manage S3 bucket
-resource "aws_iam_group_policy" "mw4all_website_s3" {
-  group = aws_iam_group.mw4all_website.name
-  policy = file("mw4all_website_group_policy.json")
+resource "aws_iam_group_policy" "winden_website_s3" {
+  group = aws_iam_group.winden_website.name
+  policy = file("winden_website_group_policy.json")
 }
 
 // Manage certificates
-resource "aws_iam_group_policy_attachment" "mw4all_website_certificates" {
-  group = aws_iam_group.mw4all_website.name
+resource "aws_iam_group_policy_attachment" "winden_website_certificates" {
+  group = aws_iam_group.winden_website.name
   policy_arn = "arn:aws:iam::aws:policy/AWSCertificateManagerFullAccess"
 }
 
 // ACM certificates
 # https://www.terraform.io/docs/providers/aws/r/acm_certificate.html
-resource "aws_acm_certificate" "mw4all_website_test" {
+resource "aws_acm_certificate" "winden_website" {
   // NB: CloudFront requires certificates to be in us-east-1 region.
   provider = aws.us-east-1
 
-  domain_name               = "test.winden.la.bryanchriswhite.com"
-//  subject_alternative_names =  ["www.test.winden.la.bryanchriswhite.com"]
+  domain_name               = "w.leastauthority.com"
+//  subject_alternative_names =  ["www.w.leastauthority.com"]
   validation_method         = "DNS"
 
   tags = {
-    Environment = "test"
+    Environment = "production"
   }
 
   lifecycle {
@@ -114,7 +114,7 @@ data "aws_acm_certificate" "mw4all_website_test_arn" {
   // NB: CloudFront requires certificates to be in us-east-1 region.
   provider = aws.us-east-1
 
-  domain   = "test.winden.la.bryanchriswhite.com"
+  domain   = "w.leastauthority.com"
   statuses = ["ISSUED"]
 }
 
@@ -128,12 +128,12 @@ data "aws_acm_certificate" "mw4all_website_test_arn" {
 
 // DNS zone & records
 resource "aws_route53_zone" "root" {
-  name = "la.bryanchriswhite.com."
+  name = "w.leastauthority.com."
 }
 
-resource "aws_route53_record" "mw4all_website_test" {
+resource "aws_route53_record" "winden_website" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "test.winden.la.bryanchriswhite.com."
+  name    = "w.leastauthority.com."
   type    = "A"
 
   alias {
@@ -143,36 +143,36 @@ resource "aws_route53_record" "mw4all_website_test" {
   }
 }
 
-resource "aws_route53_record" "mw4all_production_mailbox" {
+resource "aws_route53_record" "winden_production_mailbox" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "mailbox.winden.la.bryanchriswhite.com."
+  name    = "mailbox.w.leastauthority.com."
   type    = "A"
   ttl     = "300"
   records = ["152.228.133.151"]
 }
 
-resource "aws_route53_record" "mw4all_production_relay" {
+resource "aws_route53_record" "winden_production_relay" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "relay.winden.la.bryanchriswhite.com."
+  name    = "relay.w.leastauthority.com."
   type    = "A"
   ttl     = "300"
   records = ["152.228.133.151"]
 }
 
-resource "aws_route53_record" "mw4all_hooks_endpoint" {
+resource "aws_route53_record" "winden_hooks_endpoint" {
   zone_id = aws_route53_zone.root.zone_id
-  name    = "hooks.winden.la.bryanchriswhite.com."
+  name    = "hooks.w.leastauthority.com."
   type    = "A"
   ttl     = "300"
   records = ["152.228.133.151"]
 }
 
 // S3 Bucket (public)
-resource "aws_s3_bucket" "mw4all_website_test" {
-  bucket = "test.winden.la.bryanchriswhite.com"
+resource "aws_s3_bucket" "winden_website" {
+  bucket = "w.leastauthority.com"
 //  region = "eu-central-1"
   acl    = "public-read"
-  policy = file("mw4all_website_test_policy.json")
+  policy = file("winden_website_policy.json")
 
   website {
     index_document = "index.html"
@@ -182,10 +182,10 @@ resource "aws_s3_bucket" "mw4all_website_test" {
 
 // CloudFront distribution
 locals {
-  origin_id = "test.winden.la.bryanchriswhite.com"
+  origin_id = "w.leastauthority.com"
   # bucket_regional_domain_name should construct the right string for us but it gives the non-regional name instead.
 //  s3_website_domain_name = aws_s3_bucket.mw4all_website_test.bucket
-  s3_website_domain_name = "${aws_s3_bucket.mw4all_website_test.id}.s3.amazonaws.com"
+  s3_website_domain_name = "${aws_s3_bucket.winden_website.id}.s3.amazonaws.com"
   acm_certificate_arn = data.aws_acm_certificate.mw4all_website_test_arn.arn
 }
 
@@ -197,9 +197,9 @@ resource "aws_cloudfront_distribution" "mw4all_website_test" {
 
   enabled = true
   is_ipv6_enabled = true
-  comment = "Test terraform deployment for Winden production (test.winden.la.bryanchriswhite.com)"
+  comment = "Winden temp production (w.leastauthority.com)"
 
-  aliases = ["test.winden.la.bryanchriswhite.com"]
+  aliases = ["w.leastauthority.com"]
 
   default_root_object = "index.html"
 
