@@ -4,12 +4,15 @@
         <ion-card-header>
             <ion-card-title>
                 <ion-text class="bold" color="dark-grey">
-                    Send files with ease, speed, and security
+                    Just send
                 </ion-text>
             </ion-card-title>
-            <ion-card-subtitle>
+            <ion-card-subtitle class="flex-col ion-align-items-start">
                 <ion-text color="dark-grey">
-                    No sign-ups. No snooping. No nonsense. <span class="italic">Just send</span>.
+                    We don’t store – <span class="italic">and can’t read</span> – your files.  We simply transfer them.
+                </ion-text>
+                <ion-text color="dark-grey">
+                    No sign-ups. No snooping. No nonsense.
                 </ion-text>
             </ion-card-subtitle>
         </ion-card-header>
@@ -19,13 +22,16 @@
                  @drop="drop"
             >
                 <div>
-                    <div class="ion-margin-vertical">
+                    <div class="flex-col ion-margin-vertical">
                         <ion-text color="dark-grey" class="bold">
-                            drop a file
+                            drop any file
+                        </ion-text>
+                        <ion-text color="dark-grey" style="font-weight: 400;">
+                            up to 4GB
                         </ion-text>
                     </div>
                     <div class="ion-margin-bottom">
-                        <ion-text color="dark-grey">
+                        <ion-text color="dark-grey" class="bold">
                             or
                         </ion-text>
                     </div>

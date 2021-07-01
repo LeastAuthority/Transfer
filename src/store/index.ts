@@ -101,19 +101,35 @@ async function sendFileAction(this: Store<any>, {
 
 // TODO: be more specific with types.
 async function saveFileAction(this: Store<any>, {
-    commit,
-    dispatch
+    state, commit, dispatch
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
     const opts = {
         progressFunc: (sentBytes: number, totalBytes: number) => {
+            // TODO: refactor
+            if (typeof (state.progressTimeoutCancel) === 'function') {
+                state.progressTimeoutCancel();
+                commit('progressHung', false);
+            }
+
             commit(SET_PROGRESS, sentBytes / totalBytes);
             dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
+
+            // TODO: refactor
+            const timeoutID = window.setTimeout(() => {
+                commit('progressHung', true);
+            }, 500);
+            const cancel = () => {
+                window.clearTimeout(timeoutID);
+            };
+            commit('progressTimeoutCancel', cancel);
         },
     }
+
     const p = client.saveFile(code, opts);
     p
         .then(({name, size, accept, done}) => {
             commit(SET_FILE_META, {name, size, accept, done});
+            // TODO: refactor
             done.then(() => {
                 commit(RESET_CODE);
                 commit(RESET_PROGRESS);
@@ -135,6 +151,10 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
     sentBytes,
     totalBytes
 }: any): void {
+    if (typeof (state.progressTimeoutCancel) !== 'undefined') {
+        state.progressTimeoutCancel();
+    }
+
     const now = Date.now()
     const secSinceBegin = (now - state.progressBegin) / 1000;
     const bytesPerSecond = sentBytes / secSinceBegin;
@@ -245,6 +265,8 @@ export interface AppState {
     progressCounter: number;
     progressBegin: number;
     progressETASeconds: number;
+    progressTimeoutCancel: () => void | undefined;
+    progressHung: boolean;
 }
 
 export default createStore({
@@ -266,6 +288,8 @@ export default createStore({
             progressCounter: 0,
             progressBegin: 0,
             progressETASeconds: 0,
+            progressTimeoutCancel: undefined,
+            progressHung: false,
         }
     },
     mutations: {
@@ -278,6 +302,13 @@ export default createStore({
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,
         [RESET_PROGRESS]: resetProgressMutation,
+        // TODO: refactor
+        progressTimeoutCancel: (state: any, cancel: () => void) => {
+            state.progressTimeoutCancel = cancel;
+        },
+        progressHung: (state: any, hung: boolean) => {
+            state.progressHung = hung;
+        },
     },
     actions: {
         setConfig({commit, dispatch}, config) {
@@ -292,12 +323,11 @@ export default createStore({
         [ALERT]: alertAction,
     },
     getters: {
-        progressETA: state => {
-            const {progress, progressETASeconds} = state;
+        progressETA: ({progress, progressETASeconds}) => {
             if (progress >= 1) {
                 return '';
             }
             return durationToClosesUnit(progressETASeconds);
-        }
+        },
     }
 })

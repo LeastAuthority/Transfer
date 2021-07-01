@@ -35,9 +35,10 @@
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col>
-                        <ion-text color="dark-grey">
+                        <ion-text v-show="!progressHung" color="dark-grey">
                             {{ progressETA }}
                         </ion-text>
+                        <ion-spinner v-show="progressHung" name="dots"></ion-spinner>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
@@ -65,7 +66,11 @@ import {
     IonButton,
     IonIcon,
     IonProgressBar,
-    IonCardContent, IonCardHeader, IonCardTitle, IonLabel,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonLabel,
+    IonSpinner,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
 import {mapState, mapActions, mapMutations, mapGetters} from 'vuex';
@@ -90,9 +95,9 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(['config', 'code', 'fileMeta', 'progress']),
+        ...mapState(['config', 'code', 'fileMeta', 'progress', 'progressHung']),
         ...mapGetters(['progressETA']),
-        fileSize() {
+        fileSize(): string {
             // TODO: cleanup.
             const fileMeta = this.fileMeta as unknown as FileMeta;
             return sizeToClosestUnit(fileMeta.size);

@@ -107,8 +107,8 @@ export default defineComponent({
             const fileInput = this.$refs.fileInput as HTMLInputElement;
             if (fileInput.files!.length > 0) {
                 this.file = fileInput.files![0] as File;
-                this.step = SendStep.Instructions;
                 this.sendFile();
+                this.step = SendStep.Instructions;
             }
         },
         // TODO: refactor.

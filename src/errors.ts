@@ -7,16 +7,24 @@ import {ClientConfig} from "@/go/wormhole/types";
 const ServerErrorMsg = 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.';
 
 export interface ErrAlertOptions extends AlertOptions {
+    name?: string;
     pattern: string;
 }
 
 export class AlertError extends Error {
     public opts: ErrAlertOptions;
-    public name = 'Oops...';
+    public _name = 'Oops...';
 
     constructor(opts: ErrAlertOptions) {
         super();
         this.opts = opts;
+    }
+
+    get name(): string {
+        const name = this.opts.name;
+        return typeof (name) !== 'undefined' &&
+        name !== '' ?
+            name : this._name;
     }
 
     get message(): string {
@@ -48,6 +56,7 @@ export const ErrRelay = new AlertError({
 })
 
 export const ErrInterrupt = new AlertError({
+    name: 'Network Trouble?',
     message: 'There was an issue with either your or the receiver\'s connection. Please try again with a new code.',
     pattern: '(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*$transitRelayURL.*)',
 })

@@ -57,7 +57,7 @@ ion-button.large-button {
 }
 
 ion-button.large-button ion-icon {
-    font-size: 120px;
+    font-size: 140px;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -76,7 +76,7 @@ ion-button.large-button ion-icon {
 }
 
 :root body {
-    background: #f1f1f1;
+    background: linear-gradient(222.19deg, #F0F0F0 23.77%, #FFFFFF 98.02%);
 }
 
 .flex {

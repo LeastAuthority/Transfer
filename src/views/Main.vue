@@ -152,10 +152,10 @@ ion-icon.nav {
 @media screen and (max-width: 992px) {
     .bg-circle {
         clip-path: circle(55vw);
-        top: 5vw;
+        top: -4vw;
         left: -48vw;
         width: 170vw;
-        height: 103vh;
+        height: 120vh;
     }
 }
 
@@ -183,7 +183,7 @@ import {
     IonText,
     IonFooter
 } from "@ionic/vue";
-import {sendSharp} from 'ionicons/icons';
+import {sendOutline, sendSharp} from 'ionicons/icons';
 import Send from "@/views/Send.vue";
 import Receive from "@/views/Receive.vue";
 import {RouterView} from "vue-router";
