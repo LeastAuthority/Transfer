@@ -29,8 +29,8 @@ let host = 'http://localhost:8080';
 let defaultConfig: ClientConfig | undefined;
 if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-    host = 'https://wormhole.bryanchriswhite.com';
-    // host = 'https://test.winden.la.bryanchriswhite.com';
+    // host = 'https://wormhole.bryanchriswhite.com';
+    host = 'https://w.leastauthority.com';
 }
 
 let client = new ClientWorker(defaultConfig);

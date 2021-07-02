@@ -14,7 +14,7 @@
     "lint": "vue-cli-service lint",
     "deploy:s3:playground": "aws s3 sync ./dist s3://wormhole.bryanchriswhite.com ",
     "deploy:s3:staging": "aws s3 sync ./dist s3://staging.transfer.leastauthority.com ",
-    "deploy:s3:production": "aws s3 sync ./dist s3://transfer.leastauthority.com ",
+    "deploy:s3:production": "aws s3 sync --profile winden ./dist s3://w.leastauthority.com ",
     "deploy:s3:test": "aws s3 sync ./dist s3://test.winden.la.bryanchriswhite.com ",
     "compose": "bash scripts/docker-compose.sh",
     "compose:logs": "bash scripts/docker-compose.sh logs -f",
