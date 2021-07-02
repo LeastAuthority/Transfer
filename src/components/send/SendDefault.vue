@@ -2,12 +2,12 @@
     <!--    <transition name="step-fade">-->
     <div v-show="active">
         <ion-card-header>
-            <ion-card-title>
+            <ion-card-title class="ion-padding-top ion-padding-horizontal">
                 <ion-text class="bold" color="dark-grey">
-                    Just send
+                    Send files in real-time
                 </ion-text>
             </ion-card-title>
-            <ion-card-subtitle class="flex-col ion-align-items-start">
+            <ion-card-subtitle class="flex-col ion-align-items-start ion-padding-horizontal">
                 <ion-text color="dark-grey">
                     We don’t store – <span class="italic">and can’t read</span> – your files.  We simply transfer them.
                 </ion-text>

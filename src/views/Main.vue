@@ -10,7 +10,7 @@
                         <ion-text color="black"
                                   class="pointer"
                                   @click="goToSendReload">
-                            <h1 class="ion-no-margin ion-padding-start">
+                            <h1 class="ion-margin-start ion-no-margin ion-padding-start">
                                 Transfer
                             </h1>
                         </ion-text>
@@ -39,28 +39,45 @@
             </ion-grid>
         </ion-content>
         <ion-footer class="ion-no-border">
-            <ion-grid>
+            <ion-grid class=" ion-margin-horizontal ion-padding-horizontal">
                 <!--                TODO: use ion- classes instead of style attr. -->
-                <ion-row class="ion-justify-content-center ion-justify-content-end ion-text-center">
-                    <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        <ion-text color="dark-grey">
-                            Security
-                        </ion-text>
+                <ion-row class="">
+                    <ion-col sizeXs="12" sizeMd="6">
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                            <a href="" target="_blank">
+                                <ion-text color="dark-grey">
+                                    Security
+                                </ion-text>
+                            </a>
+                        </ion-col>
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                            <a href="" target="_blank">
+                                <ion-text color="dark-grey">
+                                    Privacy
+                                </ion-text>
+                            </a>
+                        </ion-col>
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                            <a href="" target="_blank">
+                                <ion-text color="dark-grey">
+                                    About Us
+                                </ion-text>
+                            </a>
+                        </ion-col>
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                            <a href="" target="_blank">
+                                <ion-text color="dark-grey">
+                                    GitHub
+                                </ion-text>
+                            </a>
+                        </ion-col>
                     </ion-col>
-                    <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+
+                    <ion-col sizeXs="12" sizeMd="6" class="flex ion-justify-content-end">
                         <ion-text color="dark-grey">
-                            Privacy
+                            made with love for privacy by
                         </ion-text>
-                    </ion-col>
-                    <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        <ion-text color="dark-grey">
-                            About Us
-                        </ion-text>
-                    </ion-col>
-                    <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                        <ion-text color="dark-grey">
-                            GitHub
-                        </ion-text>
+                        <div class="la-logo"></div>
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -123,12 +140,24 @@ ion-icon.nav {
     transition: transform .3s ease;
 } */
 
+.nav-button {
+    margin-inline-end: calc(2 * 16px);
+}
+
 .nav-button ion-icon[rotate=true] {
     transform: rotate(-90deg);
 }
 
 .pointer {
     cursor: pointer;
+}
+
+.la-logo {
+    background-image: url("/assets/logos/la-logo.svg");
+    width: 143px;
+    height: 28px;
+    background-repeat: no-repeat;
+    background-size: 140px;
 }
 
 .bg {
