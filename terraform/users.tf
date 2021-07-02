@@ -28,6 +28,10 @@ resource "aws_iam_user_login_profile" "ram_muthukrishnan" {
   password_reset_required = false
 }
 
+output "password_ram_muthukrishnan" {
+  value = aws_iam_user_login_profile.ram_muthukrishnan.encrypted_password
+}
+
 resource "aws_iam_group" "all_users" {
   name = "AllUsers"
 }
