@@ -3,14 +3,14 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text class="bold" color="dark-grey">
+                <ion-text class="bold" color="black">
                     Ready to send from your device!
                 </ion-text>
             </ion-card-title>
         </ion-card-header>
         <ion-card-content>
             <ion-grid>
-                <ion-row class="ion-justify-content-center ion-margin-top">
+                <ion-row class="ion-justify-content-center">
                     <FileCard :name="file && file.name"
                               :size="file && file.size"
                     ></FileCard>
@@ -18,7 +18,7 @@
                 <ion-row class="ion-text-center ion-margin-top">
                     <ion-col>
                         <p>
-                            <ion-text color="dark-grey" class="bold">
+                            <ion-text color="black" class="bold">
                                 1. Give the receiver the link below
                             </ion-text>
                         </p>
@@ -52,13 +52,13 @@
                 <ion-row class="ion-text-center ion-margin-top">
                     <ion-col>
                         <p>
-                            <ion-text class="bold">
+                            <ion-text color="black" class="bold">
                                 2. Keep this tab open until you're notified that they have received the file
                             </ion-text>
                         </p>
                     </ion-col>
                 </ion-row>
-                <ion-row class="ion-text-center ion-margin-top ion-margin-bottom">
+                <ion-row class="ion-text-center ion-margin-top">
                     <ion-col>
                         <ion-button color="medium-grey"
                                     @click="cancel()">

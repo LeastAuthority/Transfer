@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="dark-grey" class="bold">
+                <ion-text color="black" class="bold">
                     Ready to download
                 </ion-text>
             </ion-card-title>
@@ -43,7 +43,7 @@
                         </ion-text>
                     </ion-col>
                 </ion-row>
-                <ion-row class="ion-text-center">
+                <ion-row class="ion-text-center ion-margin-bottom">
                     <ion-col>
                         <ion-button color="medium-grey"
                                     @click="cancel"

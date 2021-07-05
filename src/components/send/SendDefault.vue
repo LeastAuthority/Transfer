@@ -2,16 +2,16 @@
     <!--    <transition name="step-fade">-->
     <div v-show="active">
         <ion-card-header>
-            <ion-card-title class="ion-padding-top ion-padding-horizontal">
-                <ion-text class="bold" color="dark-grey">
+            <ion-card-title>
+                <ion-text class="bold" color="black">
                     Send files in real-time
                 </ion-text>
             </ion-card-title>
-            <ion-card-subtitle class="flex-col ion-align-items-start ion-padding-horizontal">
-                <ion-text color="dark-grey">
-                    We don’t store – <span class="italic">and can’t read</span> – your files.  We simply transfer them.
+            <ion-card-subtitle class="flex-col ion-align-items-start">
+                <ion-text color="black">
+                    We don’t store <span class="italic">and can’t read</span> your files. We simply transfer them.
                 </ion-text>
-                <ion-text color="dark-grey">
+                <ion-text color="black">
                     No sign-ups. No snooping. No nonsense.
                 </ion-text>
             </ion-card-subtitle>
