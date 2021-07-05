@@ -18,56 +18,8 @@ a {
     font-style: italic;
 }
 
-/* NB: disable dark mode */
-@media (prefers-color-scheme: dark) {
-  body {
-    --ion-background-color: initial !important;
-    --ion-background-color-rgb: initial !important;
-    --ion-text-color: initial !important;
-    --ion-text-color-rgb: initial !important;
-    --ion-border-color: initial !important;
-    --ion-color-step-50: initial !important;
-    --ion-color-step-100: initial !important;
-    --ion-color-step-150: initial !important;
-    --ion-color-step-200: initial !important;
-    --ion-color-step-250: initial !important;
-    --ion-color-step-300: initial !important;
-    --ion-color-step-350: initial !important;
-    --ion-color-step-400: initial !important;
-    --ion-color-step-450: initial !important;
-    --ion-color-step-500: initial !important;
-    --ion-color-step-550: initial !important;
-    --ion-color-step-600: initial !important;
-    --ion-color-step-650: initial !important;
-    --ion-color-step-700: initial !important;
-    --ion-color-step-750: initial !important;
-    --ion-color-step-800: initial !important;
-    --ion-color-step-850: initial !important;
-    --ion-color-step-900: initial !important;
-    --ion-color-step-950: initial !important;
-    --ion-item-background: initial !important;
-    --ion-toolbar-background: initial !important;
-    --ion-tab-bar-background: initial !important;
-    --ion-card-background: initial !important;
-  }
-}
-
 .bold {
     font-weight: 700 !important;
-}
-
-ion-button.large-button {
-    width: 135px;
-    height: 135px;
-}
-
-ion-button.large-button ion-icon {
-    font-size: 140px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    padding: 0;
-    margin: auto;
 }
 
 :root * {
@@ -93,6 +45,20 @@ ion-button.large-button ion-icon {
     flex-direction: column;
 }
 
+ion-button.large-button {
+    width: 135px;
+    height: 135px;
+}
+
+ion-button.large-button ion-icon {
+    font-size: 140px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    margin: auto;
+}
+
 ion-progress-bar {
     height: 40px;
 }
@@ -100,31 +66,6 @@ ion-progress-bar {
 ion-card, ion-button, ion-input {
     border-radius: 8px;
 }
-
-/*
-@media screen and (max-height: 379px) {
-    ion-card {
-        max-height: 55vh;
-    }
-}
-
-@media screen and (min-height: 380px) and (max-height: 499px) {
-    ion-card {
-        max-height: 60vh;
-    }
-}
-
-@media screen and (min-height: 500px) and (max-height: 649px) {
-    ion-card {
-        max-height: 70vh;
-    }
-}
-
-@media screen and (min-height: 650px) {
-    ion-card {
-        max-height: 490px;
-    }
-}*/
 
 ion-button {
     font-weight: 600;
@@ -138,15 +79,39 @@ ion-input {
 }
 
 
-/*
-body {
-    background-color: #f1f1f1;
+/* NB: disable dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        --ion-background-color: initial !important;
+        --ion-background-color-rgb: initial !important;
+        --ion-text-color: initial !important;
+        --ion-text-color-rgb: initial !important;
+        --ion-border-color: initial !important;
+        --ion-color-step-50: initial !important;
+        --ion-color-step-100: initial !important;
+        --ion-color-step-150: initial !important;
+        --ion-color-step-200: initial !important;
+        --ion-color-step-250: initial !important;
+        --ion-color-step-300: initial !important;
+        --ion-color-step-350: initial !important;
+        --ion-color-step-400: initial !important;
+        --ion-color-step-450: initial !important;
+        --ion-color-step-500: initial !important;
+        --ion-color-step-550: initial !important;
+        --ion-color-step-600: initial !important;
+        --ion-color-step-650: initial !important;
+        --ion-color-step-700: initial !important;
+        --ion-color-step-750: initial !important;
+        --ion-color-step-800: initial !important;
+        --ion-color-step-850: initial !important;
+        --ion-color-step-900: initial !important;
+        --ion-color-step-950: initial !important;
+        --ion-item-background: initial !important;
+        --ion-toolbar-background: initial !important;
+        --ion-tab-bar-background: initial !important;
+        --ion-card-background: initial !important;
+    }
 }
-
-#background-content {
-    background-color: transparent;
-}
-*/
 
 :root {
     --ion-color-black: #282f39;
