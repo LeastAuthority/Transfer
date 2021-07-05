@@ -3,7 +3,7 @@
         <slot></slot>
         <div class="version">
             <ion-text color="dark-grey">
-                v0.0.0-alpha.0
+                v0.0.1-alpha
             </ion-text>
         </div>
     </ion-card>
