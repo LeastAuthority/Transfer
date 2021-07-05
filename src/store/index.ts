@@ -1,53 +1,55 @@
 import {Action, ActionContext, createStore, Module, Store} from 'vuex'
-import {ClientConfig, Offer, TransferOptions} from "@/go/wormhole/types";
+import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
-import {NEW_CLIENT, SAVE_FILE, SEND_FILE} from "@/store/actions";
+import {
+    ACCEPT_FILE, ALERT,
+    NEW_CLIENT,
+    RESET_CODE,
+    RESET_PROGRESS,
+    SAVE_FILE,
+    SEND_FILE,
+    SET_CODE,
+    SET_FILE_META,
+    SET_PROGRESS,
+    UPDATE_PROGRESS_ETA
+} from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
+import {alertController} from "@ionic/vue";
+import {AlertOptions} from "@ionic/core";
+import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
+import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
+
+const updateProgressETAFrequency = 10;
+const defaultAlertOpts: AlertOptions = {
+    buttons: ['OK'],
+};
 
 let host = 'http://localhost:8080';
 
 let defaultConfig: ClientConfig | undefined;
-console.log(`index.ts:6| process.env['NODE_ENV']: ${process.env['NODE_ENV']}`);
 if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-    host = 'https://wormhole.bryanchriswhite.com';
+    // host = 'https://wormhole.bryanchriswhite.com';
+    host = 'https://w.leastauthority.com';
 }
 
 let client = new ClientWorker(defaultConfig);
 
-declare interface SideState {
-    open: boolean;
-    code: string;
-    progress: {
-        value: number;
-        done: boolean;
-    };
-    offer: Offer;
-}
-
 /* --- ACTIONS --- */
-function setOpenAction(this: Store<any>, {commit}: ActionContext<any, any>, open: boolean): any {
-    commit('setOpen', open);
-}
-
-
-function setOfferAction(this: Store<any>, {commit}: ActionContext<any, any>, offer: Offer) {
-    commit('setOffer', offer);
-}
-
-function setProgressAction(this: Store<any>, {commit}: ActionContext<any, any>, value: number): any {
-    commit('setProgress', value);
-}
 
 // TODO: more specific types.
-function setDoneAction(this: Store<any>, {commit}: ActionContext<any, any>, done: boolean): any {
-    commit('setDone', done);
-}
-
-function newClientAction(this: Store<any>, {commit}: ActionContext<any, any>, config?: ClientConfig): void {
+async function newClientAction(this: Store<any>, {
+    state,
+    commit
+}: ActionContext<any, any>, config?: ClientConfig): Promise<void> {
     // TODO: something better.
-    commit('setProgress', -1);
-    commit(NEW_CLIENT, config);
+    let _config = config;
+    if (typeof (config) === 'undefined') {
+        _config = {...state.config};
+    }
+
+    await client.free()
+    client = new ClientWorker(_config)
 }
 
 declare interface SendFilePayload {
@@ -55,60 +57,171 @@ declare interface SendFilePayload {
     opts?: TransferOptions;
 }
 
-async function sendFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<void> {
-    try {
-        const {code, cancel, done} = await client.sendFile(file, opts);
+async function sendFileAction(this: Store<any>, {
+    commit,
+    dispatch
+}: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
+    const progressFunc = (sentBytes: number, totalBytes: number) => {
+        commit(SET_PROGRESS, sentBytes / totalBytes);
+        dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
+    };
 
-        commit(SEND_FILE, {code, cancel});
+    if (typeof (opts) === 'undefined') {
+        opts = {progressFunc};
+    } else if (typeof (opts.progressFunc) !== 'function') {
+        opts.progressFunc = progressFunc;
+    } else {
+        const _progressFunc = opts.progressFunc;
+        opts.progressFunc = (sentBytes: number, totalBytes: number): void => {
+            _progressFunc(sentBytes, totalBytes);
+            progressFunc(sentBytes, totalBytes);
+        }
+    }
+
+    const p = client.sendFile(file, opts);
+    p.then(({code, done}) => {
+        const {name, size} = file;
+        commit(SET_FILE_META, {name, size})
+        commit(SEND_FILE, {code});
         done.then(() => {
-            commit('setDone', true);
-            commit('setOpen', false);
+            commit(SET_PROGRESS, -1)
             // TODO: remove!
-            dispatch(NEW_CLIENT);
+            // dispatch(NEW_CLIENT);
         }).catch(error => {
+            dispatch(ALERT, {error})
             return Promise.reject(error);
         });
-
-        return done;
-    } catch (error) {
+        // return done;
+    }).catch((error) => {
+        dispatch(ALERT, {error})
         return Promise.reject(error);
-    }
+    });
+    return p;
 }
 
 // TODO: be more specific with types.
-async function saveFileAction(this: Store<any>, {commit, dispatch}: ActionContext<any, any>, payload: any): Promise<void> {
-    const {code, opts} = payload;
-    return client.saveFile(code, opts);
+async function saveFileAction(this: Store<any>, {
+    state, commit, dispatch
+}: ActionContext<any, any>, code: string): Promise<TransferProgress> {
+    const opts = {
+        progressFunc: (sentBytes: number, totalBytes: number) => {
+            // TODO: refactor
+            if (typeof (state.progressTimeoutCancel) === 'function') {
+                state.progressTimeoutCancel();
+                commit('progressHung', false);
+            }
+
+            commit(SET_PROGRESS, sentBytes / totalBytes);
+            dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
+
+            // TODO: refactor
+            const timeoutID = window.setTimeout(() => {
+                commit('progressHung', true);
+            }, 500);
+            const cancel = () => {
+                window.clearTimeout(timeoutID);
+            };
+            commit('progressTimeoutCancel', cancel);
+        },
+    }
+
+    const p = client.saveFile(code, opts);
+    p
+        .then(({name, size, accept, done}) => {
+            commit(SET_FILE_META, {name, size, accept, done});
+            // TODO: refactor
+            done.then(() => {
+                commit(RESET_CODE);
+                commit(RESET_PROGRESS);
+            }).catch((error: string) => {
+                dispatch(ALERT, {error});
+                return Promise.reject(error);
+            });
+        })
+        .catch((error: string) => {
+            dispatch(ALERT, {error});
+            return Promise.reject(error);
+        });
+    return p;
+
 }
 
-function acceptOfferAction(this: Store<any>, {state, commit}: ActionContext<any, any>): void {
-    if (typeof (state.offer.accept) === 'function') {
-        // TODO: handle error returned by accept.
-        state.offer.accept();
+// TODO: use more specific types.
+function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContext<any, any>, {
+    sentBytes,
+    totalBytes
+}: any): void {
+    if (typeof (state.progressTimeoutCancel) !== 'undefined') {
+        state.progressTimeoutCancel();
     }
+
+    const now = Date.now()
+    const secSinceBegin = (now - state.progressBegin) / 1000;
+    const bytesPerSecond = sentBytes / secSinceBegin;
+    const bytesRemaining = totalBytes - sentBytes;
+    if (state.progressCounter % updateProgressETAFrequency === 0) {
+        state.progressETASeconds = Math.ceil(bytesRemaining / bytesPerSecond);
+    }
+}
+
+async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
+    const p = state.fileMeta.accept()
+    p.catch((error: string) => {
+        dispatch(ALERT, {error});
+    });
+    return p;
+}
+
+
+declare interface AlertPayload {
+    error: string;
+    opts?: AlertOptions;
+}
+
+async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
+    // TODO: types!
+    // NB: error is a string
+    const {error} = payload;
+    console.error(error);
+    let {opts} = payload;
+    if (typeof (opts) === 'undefined') {
+        opts = defaultAlertOpts;
+    }
+
+    let matchFound = false;
+    for (const err of MatchableErrors) {
+        if (err.matches(error, state.config)) {
+            opts.header = err.name;
+            opts.message = err.message;
+            matchFound = true;
+        }
+    }
+
+    if (!matchFound) {
+        opts.header = 'Error';
+        opts.message = (error);
+    }
+
+    const alert = await alertController.create(opts);
+    await alert.present();
+    await alert.onWillDismiss();
 }
 
 /* --- MUTATIONS --- */
 
 // TODO: more specific types
-function setOpenMutation(state: any, open: boolean): void {
-    state.open = open;
+function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
+    state.fileMeta = fileMeta;
 }
 
 // TODO: more specific types
-function setOfferMutation(state: any, offer: Offer): void {
-    state.offer = offer;
-}
+function setProgressMutation(state: any, sentRatio: number): void {
+    if (state.progressBegin === 0) {
+        state.progressBegin = Date.now();
+    }
 
-// TODO: more specific types
-function setProgressMutation(state: any, percent: any): void {
-    state.progress = percent;
-}
-
-// TODO: more specific types
-function setDoneMutation(state: any, done: boolean): void {
-    console.log(`index.ts:62| setting done: ${done}`);
-    state.done = done;
+    state.progress = sentRatio;
+    state.progressCounter++;
 }
 
 // TODO: be more specific with types.
@@ -118,51 +231,102 @@ function sendFileMutation(state: any, {code, cancel}: any): void {
 }
 
 // TODO: be more specific with types.
-function newClientMutation(state: any, config?: ClientConfig): void {
-    let _config = config;
-    if (typeof (config) === 'undefined') {
-        _config = {...state.config};
-    }
-    client = new ClientWorker(_config)
+function setCodeMutation(state: any, code: string): void {
+    state.code = code;
 }
 
+// TODO: be more specific with types.
+function resetCodeMutation(state: any): void {
+    state.code = '';
+}
+
+// TODO: be more specific with types.
+function resetProgressMutation(state: any): void {
+    state.progress = -1;
+    state.progressCounter = 0;
+    state.progressBegin = 0;
+}
+
+export interface FileMeta {
+    name: string;
+    size: number;
+    accept?: () => Promise<void>;
+    done?: Promise<void>;
+}
+
+export interface AppState {
+    host: string;
+    config: ClientConfig | Record<never, never>;
+    code: string;
+    done: boolean;
+    fileMeta: FileMeta;
+    progress: number;
+    progressCounter: number;
+    progressBegin: number;
+    progressETASeconds: number;
+    progressTimeoutCancel: () => void | undefined;
+    progressHung: boolean;
+}
 
 export default createStore({
     devtools: process.env['NODE_ENV'] !== 'production',
-    state() {
+    state(): any {
         return {
             host,
             config: defaultConfig || {},
             code: '',
             done: false,
-            cancel: null,
-            offer: {},
+            // cancel: null,
+            fileMeta: {
+                name: '',
+                size: 0,
+                accept: undefined,
+                done: undefined,
+            },
             progress: -1,
+            progressCounter: 0,
+            progressBegin: 0,
+            progressETASeconds: 0,
+            progressTimeoutCancel: undefined,
+            progressHung: false,
         }
     },
     mutations: {
-        setConfig(state, config: ClientConfig) {
+        setConfig(state: any, config: ClientConfig) {
             state.config = config;
         },
-        setOpen: setOpenMutation,
-        setDone: setDoneMutation,
-        setOffer: setOfferMutation,
-        setProgress: setProgressMutation,
-        [NEW_CLIENT]: newClientMutation,
+        [SET_PROGRESS]: setProgressMutation,
+        [SET_FILE_META]: setFileMetaMutation,
         [SEND_FILE]: sendFileMutation,
+        [SET_CODE]: setCodeMutation,
+        [RESET_CODE]: resetCodeMutation,
+        [RESET_PROGRESS]: resetProgressMutation,
+        // TODO: refactor
+        progressTimeoutCancel: (state: any, cancel: () => void) => {
+            state.progressTimeoutCancel = cancel;
+        },
+        progressHung: (state: any, hung: boolean) => {
+            state.progressHung = hung;
+        },
     },
     actions: {
         setConfig({commit, dispatch}, config) {
             commit('setConfig', config);
             dispatch(NEW_CLIENT, config);
         },
-        setOpen: setOpenAction,
-        setDone: setDoneAction,
-        setOffer: setOfferAction,
-        acceptOffer: acceptOfferAction,
-        setProgress: setProgressAction,
         [NEW_CLIENT]: newClientAction,
         [SEND_FILE]: sendFileAction,
         [SAVE_FILE]: saveFileAction,
+        [ACCEPT_FILE]: acceptFileAction,
+        [UPDATE_PROGRESS_ETA]: updateProgressETAAction,
+        [ALERT]: alertAction,
     },
+    getters: {
+        progressETA: ({progress, progressETASeconds}) => {
+            if (progress >= 1) {
+                return '';
+            }
+            return durationToClosesUnit(progressETASeconds);
+        },
+    }
 })

@@ -1,12 +1,9 @@
-import {ClientConfig, ClientInterface, SendResult, TransferOptions, wormhole} from "@/go/wormhole/types";
-import {Reader} from '@/go/wormhole/streaming';
-import Send from "@/views/Send.vue";
+import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
+import {FileStreamReader} from '@/go/wormhole/streaming';
 
 export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
-    // rendezvousURL: "wss://relay.magic-wormhole.io:4000/v1",
-    // transitRelayURL: "transit.magic-wormhole.io:4001",
-    rendezvousURL: "wss://mailbox.wormhole.bryanchriswhite.com/v1",
-    transitRelayURL: "wss://relay.wormhole.bryanchriswhite.com:443",
+    rendezvousURL: "wss://mailbox.w.leastauthority.com/v1",
+    transitRelayURL: "wss://relay.w.leastauthority.com:443",
     passPhraseComponentLength: 2,
 }
 
@@ -24,7 +21,7 @@ export default class Client implements ClientInterface {
         return wormhole.Client.sendText(this.goClient, message);
     }
 
-    public async sendFile(file: File, opts?: TransferOptions): Promise<SendResult> {
+    public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
         const data = new Uint8Array(await file.arrayBuffer());
         return wormhole.Client.sendFile(this.goClient, file.name, data, opts);
     }
@@ -33,13 +30,13 @@ export default class Client implements ClientInterface {
         return wormhole.Client.recvText(this.goClient, code)
     }
 
-    public async recvFile(code: string, opts?: TransferOptions): Promise<Reader> {
-            const readerObj = await wormhole.Client.recvFile(this.goClient, code, opts);
-            let bufferSizeBytes = readerObj.bufferSizeBytes;
-            if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
-                bufferSizeBytes = opts.bufferSizeBytes;
-            }
-            return new Reader(bufferSizeBytes, readerObj.read, readerObj.cancel);
+    public async recvFile(code: string, opts?: TransferOptions): Promise<FileStreamReader> {
+        const readerObj = await wormhole.Client.recvFile(this.goClient, code, opts);
+        let bufferSizeBytes = readerObj.bufferSizeBytes;
+        if (typeof (opts) !== 'undefined' && opts.bufferSizeBytes) {
+            bufferSizeBytes = opts.bufferSizeBytes;
+        }
+        return new FileStreamReader(bufferSizeBytes, readerObj);
     }
 
     public free() {

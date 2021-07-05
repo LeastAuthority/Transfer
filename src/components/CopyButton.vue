@@ -1,43 +1,55 @@
 <template>
-    <ion-button class="copy-button"
-                color="light"
-                @click="copyLink"
+    <WaitButton :click="copyLink"
                 :disabled="disabled">
-        <ion-icon :icon="linkOutline"></ion-icon>
-    </ion-button>
+        <template v-slot:text>
+            <ion-icon :icon="copy"></ion-icon>
+            <ion-label style="margin-right: 6px;">Copy</ion-label>
+        </template>
+        <template v-slot:waiting-text>
+            <ion-label>Link copied!</ion-label>
+        </template>
+    </WaitButton>
 </template>
 
-<script>
-    import {defineComponent} from 'vue';
+<style lang="css" scoped>
+ion-icon {
+    margin-right: 6px;
+}
+</style>
 
-    import {
-        IonIcon,
-        IonButton,
-    } from '@ionic/vue';
-    import {linkOutline} from 'ionicons/icons';
+<script lang="ts">
+import {defineComponent} from 'vue';
 
-    export default defineComponent({
-        name: 'CopyButton.vue',
-        props: ['host', 'code'],
-        data() {
-            return {
-                disabled: !navigator.clipboard,
-            }
-        },
-        methods: {
-            copyLink() {
-                const url = `${this.host}/#/receive/${this.code}`;
-                navigator.clipboard.writeText(url);
-            },
-        },
-        setup() {
-            return {
-                linkOutline,
-            }
-        },
-        components: {
-            IonIcon,
-            IonButton,
+import {
+    IonIcon,
+    IonLabel,
+} from '@ionic/vue';
+import {copy} from 'ionicons/icons';
+import WaitButton from './WaitButton.vue';
+
+export default defineComponent({
+    name: 'CopyButton',
+    props: ['link', 'disabled'],
+    data() {
+        return {
+            // disabled: !navigator.clipboard,
+            waiting: false,
         }
-    })
+    },
+    methods: {
+        copyLink() {
+            navigator.clipboard.writeText(this.link);
+        },
+    },
+    components: {
+        WaitButton,
+        IonIcon,
+        IonLabel,
+    },
+    setup() {
+        return {
+            copy,
+        }
+    },
+})
 </script>

@@ -13,22 +13,30 @@ export const RECV_FILE_PROGRESS = 'client/recv_file/progress';
 export const RECV_FILE_OFFER = 'client/recv_file/offer';
 export const RECV_FILE_OFFER_ACCEPT = 'client/recv_file/offer/accept';
 export const RECV_FILE_OFFER_REJECT = 'client/recv_file/offer/reject';
+export const RECV_FILE_READ = 'client/recv_file/read';
 export const RECV_FILE_DATA = 'client/recv_file/data';
 export const RECV_FILE_ERROR = 'client/recv_file/error';
 export const RECV_FILE_READ_ERROR = 'client/recv_file/read/error';
 export const FREE = 'client/free';
 export const SAVE_FILE = 'client/save_file';
-export const SET_CODE = 'client/set_code';
 
-export interface ActionMessage {
+export const SET_FILE_META = 'set_file_meta';
+export const ACCEPT_FILE = 'accept_file';
+export const SET_CODE = 'set_code';
+export const RESET_CODE = 'reset_code';
+export const SET_PROGRESS = 'set_progress';
+export const RESET_PROGRESS = 'reset_progress';
+export const NEXT_STEP = 'next_step';
+export const UPDATE_PROGRESS_ETA = 'update_progress_eta';
+export const ALERT = 'alert';
+
+export interface RPCMessage {
     id: number;
-    action: string;
-    error?: Error;
 
     // TODO: be more specific (i.e. message types w/ union)
     [name: string]: any;
 }
 
-export function isAction(data: any): data is ActionMessage {
-    return (data as ActionMessage) !== undefined;
+export function isRPCMessage(data: any): data is RPCMessage {
+    return (data as RPCMessage) !== undefined;
 }

@@ -1,20 +1,19 @@
 // TODO: declare local interface instead of import?
-import {Reader} from "@/go/wormhole/streaming";
+import {FileStreamReader} from "@/go/wormhole/streaming";
+
+export interface TransferProgress {
+    name?: string;
+    size?: number;
+    code?: string;
+    done: Promise<void>;
+    accept?: () => Promise<void>;
+    // cancel: () => void;
+}
 
 export type ProgressFunc = (sentBytes: number, totalBytes: number) => void
 
-export interface Offer {
-    name: string;
-    size: number;
-    accept?: () => Promise<Error>;
-    reject?: () => Promise<Error>;
-}
-
-export type OfferCondition = (offer: Offer) => void
-
 export interface TransferOptions {
     progressFunc?: ProgressFunc;
-    offerCondition?: OfferCondition;
     code?: string;
 
     // TODO: keep?
@@ -25,13 +24,6 @@ export interface TransferOptions {
     size?: number;
 }
 
-export interface SendResult {
-    code: string;
-    done: Promise<void>;
-
-    cancel(): void;
-}
-
 export interface ClientInterface {
     // TODO: readonly or at least protected.
     goClient: number;
@@ -40,9 +32,9 @@ export interface ClientInterface {
 
     recvText(code: string): Promise<string>;
 
-    sendFile(file: File, opts?: TransferOptions): Promise<SendResult>;
+    sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress>;
 
-    recvFile(code: string, opts?: TransferOptions): Promise<Reader>;
+    recvFile(code: string, opts?: TransferOptions): Promise<FileStreamReader>;
 
     free(): void;
 }
@@ -57,11 +49,11 @@ export interface WindowClient {
 
     sendText(goClient: number, message: string): Promise<string>;
 
-    sendFile(goClient: number, fileName: string, fileData: Uint8Array, opts?: TransferOptions): Promise<SendResult>;
+    sendFile(goClient: number, fileName: string, fileData: Uint8Array, opts?: TransferOptions): Promise<TransferProgress>;
 
     recvText(goClient: number, code: string): Promise<string>;
 
-    recvFile(goClient: number, code: string, opts?: TransferOptions): Promise<Reader>;
+    recvFile(goClient: number, code: string, opts?: TransferOptions): Promise<FileStreamReader>;
 
     free(goClient: number): string | undefined;
 }

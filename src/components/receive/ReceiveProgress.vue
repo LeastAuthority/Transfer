@@ -1,0 +1,146 @@
+<template>
+    <!--    <transition name="step-fade" mode="out-in">-->
+    <div v-show="active">
+        <ion-card-header>
+            <ion-card-title>
+                <ion-text color="dark-grey">
+                    Receiving...
+                </ion-text>
+            </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row class="ion-justify-content-center ion-margin-top">
+                    <FileCard :name="fileMeta.name"
+                              :size="fileMeta.size"
+                    ></FileCard>
+                </ion-row>
+                <ion-row class="ion-justify-content-center ion-align-items-center">
+                    <ion-col class="ion-text-center">
+                        <ion-button color="yellow"
+                                    disabled="true"
+                                    @click="download"
+                        >
+                            <ion-icon slot="start" src="/assets/icon/download.svg"></ion-icon>
+                            <ion-label slot="end">Download</ion-label>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-justify-content-center ion-align-items-center">
+                    <ion-col>
+                        <ion-progress-bar color="progress-grey"
+                                          :value="progress"
+                        ></ion-progress-bar>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center">
+                    <ion-col>
+                        <ion-text v-show="!progressHung" color="dark-grey">
+                            {{ progressETA }}
+                        </ion-text>
+                        <ion-spinner v-show="progressHung" name="dots"></ion-spinner>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center">
+                    <ion-col>
+                        <ion-button color="medium-grey"
+                                    @click="cancel"
+                        >
+                            <ion-icon slot="start" :icon="close"></ion-icon>
+                            <ion-label slot="end">Cancel</ion-label>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-card-content>
+    </div>
+    <!--    </transition>-->
+</template>
+
+<script lang="ts">
+import {
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonText,
+    IonButton,
+    IonIcon,
+    IonProgressBar,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonLabel,
+    IonSpinner,
+} from '@ionic/vue';
+import {defineComponent} from 'vue';
+import {mapState, mapActions, mapMutations, mapGetters} from 'vuex';
+import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ionicons/icons';
+
+import router from '@/router/index.ts'
+import {sizeToClosestUnit} from "@/util";
+import {ACCEPT_FILE, NEW_CLIENT, RESET_CODE, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_PROGRESS} from "@/store/actions";
+import {FileMeta} from "@/store";
+import FileCard from "@/components/FileCard.vue";
+
+declare interface ReceiveProgressData {
+    done?: Promise<void>;
+}
+
+export default defineComponent({
+    name: "ReceiveProgress",
+    props: ['active', 'back', 'next'],
+    data(): ReceiveProgressData {
+        return {
+            done: undefined,
+        }
+    },
+    computed: {
+        ...mapState(['config', 'code', 'fileMeta', 'progress', 'progressHung']),
+        ...mapGetters(['progressETA']),
+        fileSize(): string {
+            // TODO: cleanup.
+            const fileMeta = this.fileMeta as unknown as FileMeta;
+            return sizeToClosestUnit(fileMeta.size);
+        },
+        // TODO: calculate!
+    },
+    methods: {
+        ...mapActions([NEW_CLIENT]),
+        ...mapMutations([RESET_PROGRESS]),
+        cancel() {
+            // TODO: move into action.
+            // TODO: *use reject here.
+            this.back();
+            this[RESET_PROGRESS]();
+            // this[NEW_CLIENT]();
+        },
+    },
+    components: {
+        IonCardHeader,
+        IonCardTitle,
+        IonCardContent,
+        IonGrid,
+        IonRow,
+        IonCol,
+        IonText,
+        IonButton,
+        IonIcon,
+        IonLabel,
+        IonProgressBar,
+        FileCard,
+    },
+    setup() {
+        return {
+            cloudDownloadOutline,
+            close,
+            enterOutline,
+            exit,
+            exitOutline,
+            router,
+        }
+    }
+});
+</script>
+
+<style lang="css" scoped>
+</style>
