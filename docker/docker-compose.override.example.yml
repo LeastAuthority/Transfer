@@ -1,34 +1,5 @@
 version: "3.3"
 services:
-#  traefik:
-#    command:
-#      - "--log.level=DEBUG"
-#      - "--api.insecure=true"
-#      - "--providers.docker=true"
-#      - "--providers.docker.exposedbydefault=false"
-#      - "--entrypoints.websecure.address=:8443"
-#      - "--certificatesresolvers.mytlschallenge.acme.dnschallenge=true"
-#      - "--certificatesresolvers.mytlschallenge.acme.dnschallenge.provider=route53"
-#      - "--certificatesresolvers.mytlschallenge.acme.email=<youremail@address.com>"
-#      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
-#    environment:
-#      - "AWS_ACCESS_KEY_ID="
-#      - "AWS_SECRET_ACCESS_KEY="
-#    ports:
-#      - "8443:8443"
-##      - "8080:8080"
-
-  mailbox:
-#    volumes:
-#      - "../magic-wormhole-mailbox-server:/app"
-    ports:
-      - "4000:4000"
-
-  relay:
-    ports:
-      - "4001:4001"
-      - "4002:4002"
-
   frontend:
     build:
       context: ".."
