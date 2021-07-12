@@ -20,6 +20,12 @@ and then do:
 yarn serve:worker
 ```
 
+To build the wormhole-william into WASM, do:
+
+```
+yarn build:wasm
+```
+
 and now do
 
 ```
