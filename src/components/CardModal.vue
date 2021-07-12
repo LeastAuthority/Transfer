@@ -3,7 +3,7 @@
         <slot></slot>
         <div class="version">
             <ion-text color="dark-grey">
-                v0.0.1-alpha
+                {{ version }}
             </ion-text>
         </div>
     </ion-card>
@@ -12,12 +12,18 @@
 <script>
 import {defineComponent} from "vue";
 import {IonCard, IonText} from "@ionic/vue";
+import version from "@/version";
 
 export default defineComponent({
     name: "CardModal",
     components: {
         IonCard,
         IonText,
+    },
+    setup() {
+        return {
+            version,
+        }
     }
 })
 </script>
