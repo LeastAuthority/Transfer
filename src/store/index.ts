@@ -61,6 +61,9 @@ async function sendFileAction(this: Store<any>, {
     commit,
     dispatch
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
+    // NB: reset code
+    commit(SET_CODE, '');
+
     const progressFunc = (sentBytes: number, totalBytes: number) => {
         commit(SET_PROGRESS, sentBytes / totalBytes);
         dispatch(UPDATE_PROGRESS_ETA, {sentBytes, totalBytes});
