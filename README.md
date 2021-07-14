@@ -4,11 +4,15 @@ File transfer app that uses the magic wormhole protocol and ionic/vue UI framewo
 
 ## Development Setup
 
-### Getting it running on a local computer
+Follow these steps to get the whole setup running on a local computer for easy development and debugging.
 
-You need to run a local copy of mailbox server and a relay server. To do that run:
+### Cloning
+
 ```
-yarn compose:up -d
+git clone git@github.com:LeastAuthority/MyFileTransfer.git
+cd MyFileTransfer
+git submodule init
+git submodule update --recursive
 ```
 
 and then do:
