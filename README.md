@@ -15,16 +15,24 @@ git submodule init
 git submodule update --recursive
 ```
 
+### Building
+
+The code uses wormhole-william built as a Web Assembly (wasm) module. If you want
+to rebuild the wasm code do:
+
+```
+yarn build:wasm
+```
+
+You need to run a local copy of mailbox server and a relay server. To do that run:
+```
+yarn compose:up -d
+```
+
 and then do:
 
 ```
 yarn serve:worker
-```
-
-To build the wormhole-william into WASM, do:
-
-```
-yarn build:wasm
 ```
 
 and now do
