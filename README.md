@@ -2,11 +2,45 @@
 
 File transfer app that uses the magic wormhole protocol and ionic/vue UI framework.
 
-![Send](screenshots/send.png)
-![receive](screenshots/receive.png)
+## Development Setup
 
-## Getting it running:
+Follow these steps to get the whole setup running on a local computer for easy development and debugging.
+
+### Cloning
+
 ```
-npm install
-npm run serve  # (or `yarn run serve`)
+git clone git@github.com:LeastAuthority/MyFileTransfer.git
+cd MyFileTransfer
+git submodule init
+git submodule update --recursive
 ```
+
+### Building
+
+The code uses wormhole-william built as a Web Assembly (wasm) module. If you want
+to rebuild the wasm code do:
+
+```
+yarn build:wasm
+```
+
+You need to run a local copy of mailbox server and a relay server. To do that run:
+```
+yarn compose:up -d
+```
+
+and then do:
+
+```
+yarn serve:worker
+```
+
+and now do
+
+```
+yarn install
+yarn run serve
+```
+
+After this, open a browser and point it to `https://localhost:8080`.
+
