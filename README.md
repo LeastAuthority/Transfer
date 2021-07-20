@@ -13,9 +13,23 @@ git clone git@github.com:LeastAuthority/MyFileTransfer.git
 cd MyFileTransfer
 git submodule init
 git submodule update --recursive
+
+or you can do it in one step:
+
+```
+git clone --recurse-submodules git@github.com:LeastAuthority/MyFileTransfer.git
+
 ```
 
 ### Building
+
+First install all the dependencies:
+
+```
+yarn install
+```
+
+You also need `docker` installed on the system.
 
 The code uses wormhole-william built as a Web Assembly (wasm) module. If you want
 to rebuild the wasm code do:
@@ -38,7 +52,6 @@ yarn serve:worker
 and now do
 
 ```
-yarn install
 yarn run serve
 ```
 
