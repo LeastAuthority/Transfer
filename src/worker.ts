@@ -18,6 +18,16 @@ import {
     WASM_READY
 } from "@/store/actions";
 import {RpcProvider} from "worker-rpc";
+import Bowser from "bowser";
+
+const browser = Bowser.getParser(self.navigator.userAgent)
+const browserIsProbablySafari = browser.satisfies({
+    safari: '>0'
+});
+
+if (browserIsProbablySafari) {
+    alert('STOP!');
+}
 
 const wasmPromise = fetch("/assets/wormhole.wasm");
 let rpc: RpcProvider | undefined = undefined;
