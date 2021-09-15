@@ -134,7 +134,7 @@ async function saveFileAction(this: Store<any>, {
         },
     }
 
-    const p = client.saveFile(code, opts);
+    const p = client.saveFile(code.toLowerCase(), opts);
     p
         .then(({name, size, accept, done}) => {
             commit(SET_FILE_META, {name, size, accept, done});

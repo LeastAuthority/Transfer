@@ -142,7 +142,7 @@ export default defineComponent({
                 return this.code;
             },
             set: function (code: string) {
-                this[SET_CODE](code.toLowerCase());
+                this[SET_CODE](code);
             }
         }
     },
