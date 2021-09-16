@@ -1,4 +1,8 @@
-import {Action, ActionContext, createStore, Module, Store} from 'vuex'
+import {ActionContext, createStore, Store} from 'vuex'
+import {alertController, modalController} from "@ionic/vue";
+import {AlertOptions} from "@ionic/core";
+import Bowser from "bowser";
+
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
@@ -14,10 +18,9 @@ import {
     UPDATE_PROGRESS_ETA
 } from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
-import {alertController} from "@ionic/vue";
-import {AlertOptions} from "@ionic/core";
 import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
+import UnsupportedModal from '@/components/UnsupportedModal.vue';
 
 const updateProgressETAFrequency = 10;
 const defaultAlertOpts: AlertOptions = {
@@ -39,7 +42,30 @@ if (process.env['NODE_ENV'] === 'production') {
     host = 'https://wormhole.bryanchriswhite.com';
 }
 
-let client = new ClientWorker(defaultConfig);
+let client: ClientWorker;
+
+const safariNotSupportedError = Error("Safari is not supported currently but will be in future releases.")
+const browser = Bowser.getParser(self.navigator.userAgent)
+const browserIsProbablySafari = browser.satisfies({
+    safari: '>0'
+});
+if (browserIsProbablySafari) {
+    console.log('dispatching alert');
+    // store.dispatch(ALERT, {error: safariNotSupportedError})
+    const modal = modalController
+        .create({
+            component: UnsupportedModal,
+            cssClass: 'my-custom-class',
+            componentProps: {
+                title: 'Safari is not supported at this time :\'(',
+                content: safariNotSupportedError.message
+            },
+            backdropDismiss: false,
+        })
+    modal.then(m => m.present());
+} else {
+    client = new ClientWorker(defaultConfig);
+}
 
 /* --- ACTIONS --- */
 
