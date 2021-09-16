@@ -44,24 +44,17 @@ if (process.env['NODE_ENV'] === 'production') {
 
 let client: ClientWorker;
 
-const safariNotSupportedError = Error("Safari is not supported currently but will be in future releases.")
+const safariNotSupportedError = Error("Safari is currently not supported but will be in future releases.")
 const browser = Bowser.getParser(self.navigator.userAgent)
 const browserIsProbablySafari = browser.satisfies({
     safari: '>0'
 });
 if (browserIsProbablySafari) {
-    console.log('dispatching alert');
-    // store.dispatch(ALERT, {error: safariNotSupportedError})
-    const modal = modalController
-        .create({
-            component: UnsupportedModal,
-            cssClass: 'my-custom-class',
-            componentProps: {
-                title: 'Safari is not supported at this time :\'(',
-                content: safariNotSupportedError.message
-            },
-            backdropDismiss: false,
-        })
+    const modal = alertController.create({
+        header: 'Safari not supported :\'(',
+        message: safariNotSupportedError.message,
+        backdropDismiss: false,
+    });
     modal.then(m => m.present());
 } else {
     client = new ClientWorker(defaultConfig);
