@@ -1,12 +1,12 @@
 import {ActionContext, createStore, Store} from 'vuex'
-import {alertController, modalController} from "@ionic/vue";
+import {alertController} from "@ionic/vue";
 import {AlertOptions} from "@ionic/core";
 import Bowser from "bowser";
 
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
-    ACCEPT_FILE, ALERT,
+    ACCEPT_FILE, ALERT, ALERT_MATCHED_ERROR,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -116,12 +116,12 @@ async function sendFileAction(this: Store<any>, {
             // TODO: remove!
             // dispatch(NEW_CLIENT);
         }).catch(error => {
-            dispatch(ALERT, {error})
+            dispatch(ALERT_MATCHED_ERROR, {error})
             return Promise.reject(error);
         });
         // return done;
     }).catch((error) => {
-        dispatch(ALERT, {error})
+        dispatch(ALERT_MATCHED_ERROR, {error})
         return Promise.reject(error);
     });
     return p;
@@ -162,12 +162,12 @@ async function saveFileAction(this: Store<any>, {
                 commit(RESET_CODE);
                 commit(RESET_PROGRESS);
             }).catch((error: string) => {
-                dispatch(ALERT, {error});
+                dispatch(ALERT_MATCHED_ERROR, {error});
                 return Promise.reject(error);
             });
         })
         .catch((error: string) => {
-            dispatch(ALERT, {error});
+            dispatch(ALERT_MATCHED_ERROR, {error});
             return Promise.reject(error);
         });
     return p;
@@ -195,18 +195,24 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
     const p = state.fileMeta.accept()
     p.catch((error: string) => {
-        dispatch(ALERT, {error});
+        dispatch(ALERT_MATCHED_ERROR, {error});
     });
     return p;
 }
 
 
-declare interface AlertPayload {
+declare interface AlertErrorPayload {
     error: string;
     opts?: AlertOptions;
 }
 
-async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
+async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, opts: AlertOptions): Promise<void> {
+    const alert = await alertController.create(opts);
+    await alert.present();
+    await alert.onWillDismiss();
+}
+
+async function alertMatchedErrorAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>, payload: AlertErrorPayload): Promise<void> {
     // TODO: types!
     // NB: error is a string
     const {error} = payload;
@@ -230,9 +236,7 @@ async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, p
         opts.message = (error);
     }
 
-    const alert = await alertController.create(opts);
-    await alert.present();
-    await alert.onWillDismiss();
+    await dispatch(ALERT, opts);
 }
 
 /* --- MUTATIONS --- */
@@ -347,6 +351,7 @@ export default createStore({
         [SAVE_FILE]: saveFileAction,
         [ACCEPT_FILE]: acceptFileAction,
         [UPDATE_PROGRESS_ETA]: updateProgressETAAction,
+        [ALERT_MATCHED_ERROR]: alertMatchedErrorAction,
         [ALERT]: alertAction,
     },
     getters: {
