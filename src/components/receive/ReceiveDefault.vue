@@ -107,7 +107,7 @@ import {
     IonText
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
-import {ALERT, SAVE_FILE, SET_CODE} from "@/store/actions";
+import {ALERT_MATCHED_ERROR, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
 import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
 import {ErrBadCode, ErrInvalidCode} from "@/errors";
@@ -147,7 +147,7 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions([SAVE_FILE, ALERT]),
+        ...mapActions([SAVE_FILE, ALERT_MATCHED_ERROR]),
         ...mapMutations([SET_CODE]),
         _setCode(code: string): void {
             this[SET_CODE](code);
