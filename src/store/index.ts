@@ -19,6 +19,9 @@ import {AlertOptions} from "@ionic/core";
 import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
 
+const MAX_FILE_SIZE_MB = 200;
+const MB = 1000 ** 2;
+const MAX_FILE_SIZE_BYTES = MB * MAX_FILE_SIZE_MB;
 const updateProgressETAFrequency = 10;
 const defaultAlertOpts: AlertOptions = {
     buttons: ['OK'],
@@ -69,6 +72,18 @@ async function sendFileAction(this: Store<any>, {
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
     // NB: reset code
     commit(SET_CODE, '');
+
+    if (opts?.size && opts?.size > MAX_FILE_SIZE_BYTES) {
+        const alertOpts: AlertOptions = {
+            subHeader: 'Large file sizes: coming soon',
+            message: `In this development state, this product only supports file sizes of up to ${MAX_FILE_SIZE_MB} MB.
+Please select a smaller file.`,
+            buttons: [{
+                text: 'OK'
+            }],
+        };
+        return dispatch(ALERT, alertOpts);
+    }
 
     const progressFunc = (sentBytes: number, totalBytes: number) => {
         commit(SET_PROGRESS, sentBytes / totalBytes);
