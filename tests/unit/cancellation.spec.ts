@@ -13,6 +13,9 @@ beforeAll(async () => {
     });
 })
 
+// NB: cancellation is currently a workaroudn implemented in ClientWorker and
+// requires a `Worker` to test. Therefore it is an e2e test until cancellation
+// gets properly integrated with wormhole-william.
 describe.skip('Cancellation', () => {
     const filename = 'sequential.txt';
     const testFileSize = 1024 * 256 // 256 KiB

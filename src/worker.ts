@@ -51,8 +51,10 @@ async function handleSendFile({id, name, buffer}: RPCMessage): Promise<Record<st
         client.sendFile(_file as File, {progressFunc: sendProgressCb})
             .then(({code, done}: TransferProgress) => {
                 done.then(() => {
+                    console.log("DONE.THEN")
                     rpc!.signal(SEND_FILE_RESULT_OK, {id});
                 }).catch(error => {
+                    console.log("CATCH ERROR")
                     rpc!.signal(SEND_FILE_RESULT_ERROR, {id, error});
                 });
                 resolve({code});

@@ -21,18 +21,27 @@ import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormho
 import {ErrBadCode} from "@/errors";
 import {RpcProvider} from "worker-rpc";
 import {SENDER_TIMEOUT} from "@/util";
+import Client from "@/go/wormhole/client";
 
 export default class ClientWorker implements ClientInterface {
     public goClient = -1;
     // TODO: be more specific
     protected pending: Record<number, any> = {};
     protected receiving: Record<number, any> = {};
-    protected ready: Promise<void>;
-    protected port: MessagePort;
+    protected ready?: Promise<void>;
+    protected port?: MessagePort;
     protected rpc: RpcProvider | undefined = undefined;
     protected worker: Worker | undefined = undefined;
 
+    private readonly config?: ClientConfig;
+
     constructor(config?: ClientConfig) {
+        this.config = config;
+        this.initialize();
+    }
+
+    private initialize() {
+        console.log("INITIALIZEING CLIENT WORKER")
         this.worker = new Worker(`${window.location.origin}/worker/index.umd.js`);
 
         const channel = new MessageChannel();
@@ -42,12 +51,12 @@ export default class ClientWorker implements ClientInterface {
         this.worker.postMessage({
             action: NEW_CLIENT,
             id: Date.now(),
-            config,
+            config: this.config,
         }, [channel.port2])
 
         // NB: wait for wasm module to be ready before listening to all events.
         this.ready = new Promise((resolve, reject) => {
-            this.port.onmessage = (event: MessageEvent) => {
+            this.port!.onmessage = (event: MessageEvent) => {
                 if (!isRPCMessage(event.data)) {
                     reject(new Error(
                         `unexpected event: ${JSON.stringify(event, null, '  ')}`
@@ -60,12 +69,12 @@ export default class ClientWorker implements ClientInterface {
                     // TODO: look into timeout.
                     this.rpc = new RpcProvider((message, transfer) => {
                         typeof (transfer) === 'undefined' ?
-                            this.port.postMessage(message) :
-                            this.port.postMessage(message, transfer);
+                            this.port!.postMessage(message) :
+                            this.port!.postMessage(message, transfer);
                     })
                     this._registerRPCHandlers();
                     this._registerSignalHandlers();
-                    this.port.onmessage = (event) => this.rpc!.dispatch(event.data);
+                    this.port!.onmessage = (event) => this.rpc!.dispatch(event.data);
 
                     resolve();
                     return;
@@ -73,6 +82,11 @@ export default class ClientWorker implements ClientInterface {
                 reject(event.data);
             }
         });
+    }
+
+    private _reset() {
+        console.log("RESET CALLED!");
+        this.initialize();
     }
 
     protected _registerRPCHandlers() {
@@ -85,70 +99,6 @@ export default class ClientWorker implements ClientInterface {
         this.rpc!.registerSignalHandler<RPCMessage>(SEND_FILE_RESULT_OK, this._handleSendFileResultOK.bind(this));
         this.rpc!.registerSignalHandler<RPCMessage>(SEND_FILE_RESULT_ERROR, this._handleSendFileResultError.bind(this));
     }
-
-//     protected async _onMessage(event: MessageEvent): Promise<void> {
-//         await this.ready;
-//
-//         if (!isAction(event.data)) {
-//             throw new Error(`unexpected error: ${JSON.stringify(event, null, '  ')}`);
-//         }
-//
-//         const {action, id, error} = event.data;
-//         const pending = this.pending[id];
-//         if (typeof (pending) === 'undefined') {
-//             throw new Error(`pending message not found for id: ${id}
-// action: ${JSON.stringify(event.data, null, '  ')}`);
-//         }
-//
-//         const {resolve, reject} = pending;
-//         if (typeof (error) !== 'undefined') {
-//             reject(error)
-//         }
-//
-//         // TODO: Branch via union discrimination instead.
-//         switch (action) {
-//             case SEND_TEXT:
-//                 delete this.pending[id];
-//                 resolve(event.data.code);
-//                 break;
-//             case RECV_TEXT:
-//                 delete this.pending[id];
-//                 resolve(event.data.text);
-//                 break;
-//             case SEND_FILE:
-//                 this._handleSendFile(event.data)
-//                 break;
-//             case SEND_FILE_PROGRESS:
-//                 this._handleFileProgress(event.data);
-//                 break;
-//             case SEND_FILE_ERROR:
-//                 this._handleSendFileError(event.data)
-//                 break;
-//             case SEND_FILE_RESULT_OK:
-//                 this._handleSendFileResultOK(event.data)
-//                 break;
-//             case SEND_FILE_RESULT_ERROR:
-//                 this._handleSendFileResultError(event.data)
-//                 break;
-//             case RECV_FILE:
-//                 this._handleRecvFile(event.data);
-//                 break;
-//             case RECV_FILE_PROGRESS:
-//                 this._handleFileProgress(event.data);
-//                 break;
-//             case RECV_FILE_OFFER:
-//                 this._handleRecvFileOffer(event.data);
-//                 break;
-//             case RECV_FILE_DATA:
-//                 this._handleRecvFileData(event.data);
-//                 break;
-//             case RECV_FILE_READ_ERROR:
-//                 this._handleRecvFileReadError(event.data);
-//                 break;
-//             default:
-//                 throw new Error(`unexpected action: ${event.data.action}`)
-//         }
-//     }
 
     private _handleRecvFileData({id, n, done, buffer}: RPCMessage): void {
         // TODO: combine receiving and pending?
@@ -245,7 +195,7 @@ export default class ClientWorker implements ClientInterface {
                 name: file.name,
             }, [buffer])
                 .then(({code}) => {
-                    resolve({code, done: doneProxy});
+                    resolve({code, done: doneProxy, cancel: () => this._reset()});
                 })
                 .catch((reason) => {
                     reject(reason);
@@ -303,7 +253,7 @@ export default class ClientWorker implements ClientInterface {
         const accept = async (): Promise<void> => {
             return this.rpc!.rpc(RECV_FILE_DATA, {id});
         }
-        return {name, size, done, accept}
+        return {name, size, done, accept, cancel: () => this._reset()}
     }
 
     public async free(): Promise<void> {

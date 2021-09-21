@@ -25,6 +25,7 @@
     "@capacitor/core": "2.4.5",
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
+    "chai-as-promised": "^7.1.1",
     "core-js": "^3.6.5",
     "streamsaver": "^2.0.5",
     "vue": "^3.0.0-0",
