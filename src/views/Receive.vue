@@ -40,7 +40,7 @@ import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
 import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
 import {ReceiveStep} from "@/types";
-import {ALERT, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
+import {ALERT_MATCHED_ERROR, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
 import {mapActions, mapMutations, mapState} from "vuex";
 import ReceiveProgress from "@/components/receive/ReceiveProgress.vue";
 
@@ -67,7 +67,7 @@ export default defineComponent({
         ...mapState(['code']),
     },
     methods: {
-        ...mapActions([SAVE_FILE, ALERT]),
+        ...mapActions([SAVE_FILE, ALERT_MATCHED_ERROR]),
         ...mapMutations([SET_FILE_META, RESET_PROGRESS]),
         onStep(step: ReceiveStep): boolean {
             return this.step === step;

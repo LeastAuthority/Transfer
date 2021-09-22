@@ -114,7 +114,10 @@ export default defineComponent({
         // TODO: refactor.
         async sendFile(): Promise<void> {
             const progressNext = this.nextFrom(SendStep.Instructions);
-            const opts = {progressFunc: progressNext};
+            const opts = {
+                progressFunc: progressNext,
+                size: this.file?.size,
+            };
             const payload = {file: this.file, opts};
             const p = this[SEND_FILE](payload);
             this.step = SendStep.Instructions;
