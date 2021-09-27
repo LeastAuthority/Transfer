@@ -30,6 +30,7 @@
                                    placeholder="Enter code here"
                                    v-model="_code"
                                    @change="validate"
+                                   @ionInput="onInput"
                                    @keyup.enter="_next"
                         ></ion-input>
                         <div class="flex-col">
@@ -102,13 +103,18 @@ import {
     IonCardSubtitle,
     IonCardTitle,
     IonCol,
-    IonGrid, IonInput,
-    IonRow, IonSpinner,
-    IonText
+    IonGrid,
+    IonInput,
+    IonRow,
+    IonSpinner,
+    IonText,
+    popoverController,
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
 import {ALERT_MATCHED_ERROR, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
+
+import AutoComplete from "@/components/AutoComplete.vue"
 import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
 import {ErrBadCode, ErrInvalidCode} from "@/errors";
 import {CODE_REGEX} from "@/util";
@@ -118,15 +124,26 @@ const exampleColor = 'dark-grey';
 const errorText = ErrInvalidCode.message;
 const exampleText = 'E.g.: 7-guitarist-revenge';
 
+// const showPopover = ref(false);
+
+interface ReceiveDefaultData {
+    waiting: boolean;
+    exampleErrorColor: string;
+    exampleErrorText: string;
+    popover: HTMLIonPopoverElement | null;
+}
+
 export default defineComponent({
     name: "ReceiveDefault",
     props: ['active', 'next', 'reset'],
     data() {
-        return {
+        const initialData: ReceiveDefaultData = {
             exampleErrorColor: exampleColor,
             exampleErrorText: exampleText,
             waiting: false,
-        }
+            popover: null,
+        };
+        return initialData;
     },
     computed: {
         ...mapState(['code']),
@@ -166,6 +183,29 @@ export default defineComponent({
                 console.error(error);
                 this.reset();
             }
+        },
+        async onInput(event: Event): Promise<void> {
+            // TODO: currently lags behind by one character.
+            // TODO: try to use local state variable for code
+            console.log(`code: ${this._code}`);
+            if (this._code === '') {
+                return;
+            }
+
+            // showPopover.value = true;
+            if (this.popover === null) {
+                this.popover = await popoverController.create({
+                    component: AutoComplete,
+                    keyboardClose: false,
+                    showBackdrop: false,
+                    backdropDismiss: true,
+                    event,
+                });
+                this.popover.onWillDismiss().then(() => {
+                    this.popover = null;
+                })
+            }
+            await this.popover!.present();
         },
         validate(): void {
             if (this._code === '' || CODE_REGEX.test(this._code)) {
