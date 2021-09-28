@@ -2,15 +2,20 @@ import {Action, ActionContext, createStore, Module, Store} from 'vuex'
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
-    ACCEPT_FILE, ALERT, ALERT_MATCHED_ERROR,
+    ACCEPT_FILE,
+    ALERT,
+    ALERT_MATCHED_ERROR,
+    HIDE_DRAG_ELEMENTS,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
     SAVE_FILE,
     SEND_FILE,
     SET_CODE,
+    SET_DRAG_ICON_POS,
     SET_FILE_META,
     SET_PROGRESS,
+    SHOW_DRAG_ELEMENTS,
     UPDATE_PROGRESS_ETA
 } from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
@@ -240,6 +245,23 @@ async function alertMatchedErrorAction(this: Store<any>, {
 
 /* --- MUTATIONS --- */
 
+interface Coords {
+    x: number;
+    y: number;
+}
+function setDragIconPosMutation(state: any, coords: Coords): void {
+    state.dragIconPos.x = coords.x;
+    state.dragIconPos.y = coords.y;
+}
+
+function showDragElementsMutation(state: any): void {
+    state.dragElementsDisplay = 'block';
+}
+
+function hideDragElementsMutation(state: any): void {
+    state.dragElementsDisplay = 'none';
+}
+
 // TODO: more specific types
 function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
     state.fileMeta = fileMeta;
@@ -297,6 +319,13 @@ export interface AppState {
     progressETASeconds: number;
     progressTimeoutCancel: () => void | undefined;
     progressHung: boolean;
+    dragIconPos: Coords;
+    dragElementsDisplay: string;
+}
+
+const defaultDragIconPos = {
+    x: 10000,
+    y: 10000,
 }
 
 export default createStore({
@@ -320,6 +349,8 @@ export default createStore({
             progressETASeconds: 0,
             progressTimeoutCancel: undefined,
             progressHung: false,
+            dragIconPos: defaultDragIconPos,
+            dragElementsDisplay: 'display',
         }
     },
     mutations: {
@@ -332,6 +363,9 @@ export default createStore({
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,
         [RESET_PROGRESS]: resetProgressMutation,
+        [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
+        [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
+        [SET_DRAG_ICON_POS]: setDragIconPosMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;

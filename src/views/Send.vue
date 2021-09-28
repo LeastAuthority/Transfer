@@ -24,6 +24,7 @@
                @change="fileChanged"
         />
     </CardModal>
+    <DragElements :select="select"></DragElements>
     <!--    </transition>-->
 </template>
 
@@ -38,7 +39,6 @@
 }
  */
 </style>
-
 
 <style lang="css">
 /*
@@ -61,16 +61,15 @@ import {defineComponent, ref} from 'vue';
 import {add} from 'ionicons/icons';
 
 import {ReceiveStep, SendStep} from "@/types";
+import {RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
+import {mapActions, mapMutations} from "vuex";
+
 import CardModal from '@/components/CardModal.vue';
 import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
 import SendComplete from "@/components/send/SendComplete.vue";
-import {RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
-import {mapActions, mapMutations} from "vuex";
-
-// TODO: use proper state management.
-const isOpenRef = ref(false);
+import DragElements from "@/components/send/DragElements.vue";
 
 declare interface SendData {
     step: SendStep;
@@ -180,6 +179,7 @@ export default defineComponent({
         SendInstructions,
         SendProgress,
         SendComplete,
+        DragElements,
     },
     setup() {
         return {

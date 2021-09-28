@@ -119,6 +119,7 @@ ion-card {
 
 .router-view-col {
     padding-top: 0;
+    position: initial;
 }
 
 .transfer-text {

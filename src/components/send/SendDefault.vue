@@ -17,14 +17,11 @@
             </ion-card-subtitle>
         </ion-card-header>
         <ion-card-content class="ion-text-center">
-            <div class="flex-col drag-n-drop ion-justify-content-center"
-                 @dragover="dragOver"
-                 @drop="drop"
-            >
+            <div class="flex-col drag-n-drop ion-justify-content-center">
                 <div>
                     <div class="flex-col ion-margin-vertical">
                         <ion-text color="dark-grey" class="bold">
-                            drop any file
+                            Drag & drop any file
                         </ion-text>
                         <ion-text color="dark-grey" style="font-weight: 400;">
                             up to 4GB
@@ -75,19 +72,6 @@ export default defineComponent({
         // Transition,
     },
     methods: {
-        drop(event: DragEvent) {
-            event.preventDefault();
-            const files = event.dataTransfer!.files;
-            if (files.length > 0) {
-                // NB: only dropping first file in list.
-                this.select(files[0]);
-            } else {
-                console.error("no files listed in drop event")
-            }
-        },
-        dragOver(event: DragEvent) {
-            event.preventDefault();
-        }
     },
     setup() {
         return {

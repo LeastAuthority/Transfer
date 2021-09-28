@@ -29,10 +29,6 @@ export default defineComponent({
 </script>
 
 <style lang="css" scoped>
-ion-card {
-    position: relative;
-}
-
 ion-card > .version {
     position: absolute;
     bottom: 0;
