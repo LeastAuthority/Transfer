@@ -4,6 +4,9 @@ Transfer is a graphical interface, built with the ionic/vue UI framework, for do
 Transfer is cross-platform, primarily targeting web, but can be built for iOS and Android using [capacitor](https://capacitorjs.com/).
 It is also easily ported to desktop via [electron](https://www.electronjs.org/).
 
+## Status
+
+This web app is in 'alpha' state, and **not ready for production use**.
 ## Development Setup
 
 Follow these steps to get the whole setup running on a local computer for easy development and debugging.
