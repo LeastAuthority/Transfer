@@ -7,6 +7,7 @@ It is also easily ported to desktop via [electron](https://www.electronjs.org/).
 ## Status
 
 This web app is in 'alpha' state, and **not ready for production use**.
+
 ## Development Setup
 
 Follow these steps to get the whole setup running on a local computer for easy development and debugging.
