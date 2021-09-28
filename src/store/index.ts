@@ -43,7 +43,7 @@ if (process.env['NODE_ENV'] === 'production') {
 
 let client: ClientWorker;
 
-const safariNotSupportedError = Error("Safari is currently not supported but will be in future releases.")
+const safariNotSupportedError = Error("We plan to support Safari in future releases. Please try with a different browser.")
 const browser = Bowser.getParser(self.navigator.userAgent)
 const browserIsProbablySafari = browser.satisfies({
     safari: '>0'
