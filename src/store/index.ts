@@ -255,7 +255,7 @@ function setDragIconPosMutation(state: any, coords: Coords): void {
 }
 
 function showDragElementsMutation(state: any): void {
-    state.dragElementsDisplay = 'block';
+    state.dragElementsDisplay = 'all';
 }
 
 function hideDragElementsMutation(state: any): void {
@@ -350,7 +350,7 @@ export default createStore({
             progressTimeoutCancel: undefined,
             progressHung: false,
             dragIconPos: defaultDragIconPos,
-            dragElementsDisplay: 'display',
+            dragElementsDisplay: 'none',
         }
     },
     mutations: {

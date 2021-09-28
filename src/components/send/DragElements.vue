@@ -1,14 +1,15 @@
 <template>
     <div
             id="drag-icon"
-            :style="{display: dragElementsDisplay,
+            :style="{display: dragElementsDisplay === 'all' ? 'block' : 'none',
             top: `${dragIconPos.y}px`, left: `${dragIconPos.x}px`}"
     >
         <ion-icon :icon="document"></ion-icon>
     </div>
     <div
             id="drag-backdrop"
-            :style="{display: dragElementsDisplay}"
+            :style="{pointerEvents: dragElementsDisplay,
+            opacity: dragElementsDisplay === 'all' ? .6 : 0}"
             @drop="drop"
             @dragenter="(event) => event.preventDefault()"
             @dragover="updateDragIcon"
@@ -92,8 +93,11 @@ ion-icon {
     height: 100vh;
     position: absolute;
     z-index: 99;
-    background: transparent;
-    //background: rgba(255,255,255,.6);
+    //background: transparent;
+    pointer-events: none;
+    opacity: 0;
+    background: white;
+    transition: opacity 1s ease;
 }
 
 </style>
