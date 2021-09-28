@@ -22,6 +22,11 @@
                                 1. Keep this tab open
                             </ion-text>
                         </p>
+                        <p>
+                            <ion-text>
+                                Files are sent directly from your device. The link/code expires once you close the tab.
+                            </ion-text>
+                        </p>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top">
