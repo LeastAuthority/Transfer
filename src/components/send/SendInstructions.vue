@@ -22,9 +22,14 @@
                                 1. Keep this tab open
                             </ion-text>
                         </p>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center ion-margin-top">
+                    <ion-col>
                         <p>
                             <ion-text>
-                                Files are sent directly from your device. The link/code expires once you close the tab.
+                                Files are sent directly from your device. <br/>The link/code expires once you close the
+                                tab.
                             </ion-text>
                         </p>
                     </ion-col>
