@@ -20,9 +20,9 @@ describe('CodeCompleter', () => {
             expect(actual).toEqual(expectedNearestWord);
         });
 
-        it('returns an exact match', () => {
+        it('returns empty string on exact match', () => {
             const testPartialCode = '7-guitarist';
-            const expectedNearestWord = 'guitarist';
+            const expectedNearestWord = '';
 
             const actual = completer.nearestNextWord(testPartialCode);
             expect(actual).toEqual(expectedNearestWord);

@@ -81,8 +81,15 @@ export class CodeCompleter {
         const inputWords = partialCode.split(CODE_DELIMITER).splice(1);
         const previousWord = inputWords[inputWords.length - 2];
         const partialWord = inputWords[inputWords.length - 1];
+        if (typeof(partialWord) === 'undefined') {
+            return '';
+        }
 
         const nextWordTree = this._wordList.nextWordTree(previousWord);
-        return nextWordTree.lowerBound(partialWord.toLowerCase()).data() || '';
+        const word = nextWordTree.lowerBound(partialWord.toLowerCase()).data();
+        if (word === partialWord) {
+            return ''
+        }
+        return word || '';
     }
 }
