@@ -1,14 +1,14 @@
-import {WordList, CodePredictor} from "@/wordlist/wordlist";
+import {WordList, CodeCompleter} from "@/wordlist/wordlist";
 
-describe('CodePredictor', () => {
-    const predictor = new CodePredictor();
+describe('CodeCompleter', () => {
+    const completer = new CodeCompleter();
 
     describe('#nearestNextWord', () => {
         it('finds the nearest odd word', () => {
             const testPartialCode = '7-gu';
             const expectedNearestWord = 'guitarist';
 
-            const actual = predictor.nearestNextWord(testPartialCode);
+            const actual = completer.nearestNextWord(testPartialCode);
             expect(actual).toEqual(expectedNearestWord);
         });
 
@@ -16,7 +16,7 @@ describe('CodePredictor', () => {
             const testPartialCode = '7-guitarist-rev';
             const expectedNearestWord = 'revenge';
 
-            const actual = predictor.nearestNextWord(testPartialCode);
+            const actual = completer.nearestNextWord(testPartialCode);
             expect(actual).toEqual(expectedNearestWord);
         });
     })

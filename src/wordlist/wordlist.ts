@@ -2,14 +2,14 @@ import {RBTree} from 'bintrees';
 
 import words from "@/wordlist/words.json";
 
-type WordTree = RBTree<String>;
+type WordTree = RBTree<string>;
 
 const CODE_DELIMITER = '-';
 
 export class WordList {
-    private readonly _evenWords: String[];
+    private readonly _evenWords: string[];
     private readonly _evenTree: WordTree;
-    private readonly _oddWords: String[];
+    private readonly _oddWords: string[];
     private readonly _oddTree: WordTree;
 
     constructor() {
@@ -23,8 +23,7 @@ export class WordList {
         WordList._buildTree(this._oddTree, this._oddWords);
     }
 
-    public nextWordTree(previousWord: String): WordTree {
-        console.log(`previous word: ${previousWord}`);
+    public nextWordTree(previousWord: string): WordTree {
         switch (previousWord) {
             case '' || undefined:
                 return this._oddTree;
@@ -51,8 +50,8 @@ export class WordList {
         return this._oddTree;
     }
 
-    private static _buildTree(tree: WordTree, words: String[]) {
-        for (let word of words) {
+    private static _buildTree(tree: WordTree, words: string[]) {
+        for (const word of words) {
             tree.insert(word);
         }
     }
@@ -64,9 +63,9 @@ export class WordList {
         return a < b ? -1 : 1;
     }
 
-    private static _sideWords(side: 0 | 1): String[] {
+    private static _sideWords(side: 0 | 1): string[] {
         const sideWords = [];
-        for (let index in words) {
+        for (const index in words) {
             sideWords.push((words as any)[index][side]);
         }
         return sideWords;
@@ -74,17 +73,16 @@ export class WordList {
 }
 
 // NB: Odd code word comes first
-export class CodePredictor {
-    private _nextId = 0;
+export class CodeCompleter {
     private _wordList = new WordList();
 
-    public nearestNextWord(partialCode: String): String {
+    public nearestNextWord(partialCode: string): string {
         // NB: this splice drops the element containing mailbox number.
         const inputWords = partialCode.split(CODE_DELIMITER).splice(1);
         const previousWord = inputWords[inputWords.length - 2];
         const partialWord = inputWords[inputWords.length - 1];
 
         const nextWordTree = this._wordList.nextWordTree(previousWord);
-        return nextWordTree.upperBound(partialWord).data();
+        return nextWordTree.upperBound(partialWord).data() || '';
     }
 }
