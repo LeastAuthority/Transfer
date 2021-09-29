@@ -29,6 +29,7 @@ export const RESET_PROGRESS = 'reset_progress';
 export const NEXT_STEP = 'next_step';
 export const UPDATE_PROGRESS_ETA = 'update_progress_eta';
 export const ALERT = 'alert';
+export const COMPLETE_CODE_WORD = 'complete_code_word';
 export const ALERT_MATCHED_ERROR = 'alert_matched_error';
 
 export interface RPCMessage {

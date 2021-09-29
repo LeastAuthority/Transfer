@@ -6,7 +6,10 @@ import Bowser from "bowser";
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
-    ACCEPT_FILE, ALERT, ALERT_MATCHED_ERROR,
+    ACCEPT_FILE,
+    ALERT,
+    COMPLETE_CODE_WORD,
+    ALERT_MATCHED_ERROR,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -260,6 +263,15 @@ async function alertMatchedErrorAction(this: Store<any>, {
 
 /* --- MUTATIONS --- */
 
+function completeCodeWordMutation(state: any): void {
+    const codeParts = state.code.split(CODE_DELIMITER);
+    // Replace last (incomplete) word `codeWord`
+    codeParts.splice(codeParts.length - 1, 1, state.suggestedWord);
+
+    console.log(codeParts)
+    state.code = codeParts.join(CODE_DELIMITER);
+}
+
 // TODO: more specific types
 function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
     state.fileMeta = fileMeta;
@@ -358,6 +370,7 @@ export default createStore({
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,
         [RESET_PROGRESS]: resetProgressMutation,
+        [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;

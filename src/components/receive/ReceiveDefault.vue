@@ -33,6 +33,8 @@
                                        @change="validate"
                                        @ionInput="onInput"
                                        @keyup.enter="_next"
+                                       @keyup.tab="completeCodeWord"
+                                       ref="code_input"
                             ></ion-input>
                             <AutoComplete></AutoComplete>
                         </div>
@@ -117,7 +119,7 @@ import {
     IonText,
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
-import {ALERT_MATCHED_ERROR, SAVE_FILE, SET_CODE} from "@/store/actions";
+import {ALERT_MATCHED_ERROR, COMPLETE_CODE_WORD, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
 
 import AutoComplete from "@/components/AutoComplete.vue"
@@ -171,7 +173,7 @@ export default defineComponent({
     },
     methods: {
         ...mapActions([SAVE_FILE, ALERT_MATCHED_ERROR]),
-        ...mapMutations([SET_CODE]),
+        ...mapMutations([SET_CODE, COMPLETE_CODE_WORD]),
         _setCode(code: string): void {
             this[SET_CODE](code);
         },
@@ -208,7 +210,15 @@ export default defineComponent({
                 this.exampleErrorText = errorText;
                 this.exampleErrorColor = errorColor;
             }
-        }
+        },
+        completeCodeWord(event: KeyboardEvent): void {
+            event.preventDefault();
+            this[COMPLETE_CODE_WORD]();
+            window.setTimeout(() => {
+                console.log((this.$refs as any).code_input.$el);
+                (this.$refs as any).code_input.$el.querySelector('input').focus();
+            }, 50)
+        },
     },
     components: {
         IonGrid,

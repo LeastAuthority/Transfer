@@ -50,7 +50,7 @@ export default defineComponent({
     left: 0;
     right: 0;
 
-    transition: opacity 500ms ease;
+    transition: opacity 250ms ease;
     pointer-events: none;
 }
 
