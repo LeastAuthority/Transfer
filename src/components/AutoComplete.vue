@@ -27,17 +27,13 @@ import {
 import {defineComponent} from "vue";
 import {mapState} from "vuex";
 
-import {CodePredictor} from "@/wordlist/wordlist";
-
-const predictor = new CodePredictor();
-
 export default defineComponent({
     name: "AutoComplete",
     computed: {
-        ...mapState(['code']),
-        suggestedWord(): string {
-            return predictor.nearestNextWord(this.code);
-        },
+        ...mapState(['code', 'suggestedWord']),
+        opacity(): number {
+            return this.suggestedWord ? 1 : 0;
+        }
     },
     components: {
         IonCard,

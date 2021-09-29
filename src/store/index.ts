@@ -20,6 +20,7 @@ import {
 import ClientWorker from "@/go/wormhole/client_worker";
 import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
+import {CODE_DELIMITER, CodeCompleter} from "@/wordlist/wordlist";
 
 const MAX_FILE_SIZE_MB = 200;
 const MB = 1000 ** 2;
@@ -61,6 +62,7 @@ if (browserIsProbablySafari) {
 } else {
     client = new ClientWorker(defaultConfig);
 }
+const completer = new CodeCompleter();
 
 /* --- ACTIONS --- */
 
@@ -282,6 +284,12 @@ function sendFileMutation(state: any, {code, cancel}: any): void {
 // TODO: be more specific with types.
 function setCodeMutation(state: any, code: string): void {
     state.code = code;
+
+    if (code[code.length - 1] === CODE_DELIMITER) {
+        state.suggestedWord = '';
+    } else {
+        state.suggestedWord = completer.nearestNextWord(code);
+    }
 }
 
 // TODO: be more specific with types.
