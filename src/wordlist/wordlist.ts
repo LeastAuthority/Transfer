@@ -4,7 +4,7 @@ import words from "@/wordlist/words.json";
 
 type WordTree = RBTree<string>;
 
-const CODE_DELIMITER = '-';
+export const CODE_DELIMITER = '-';
 
 export class WordList {
     private readonly _evenWords: string[];
@@ -83,6 +83,6 @@ export class CodeCompleter {
         const partialWord = inputWords[inputWords.length - 1];
 
         const nextWordTree = this._wordList.nextWordTree(previousWord);
-        return nextWordTree.upperBound(partialWord).data() || '';
+        return nextWordTree.lowerBound(partialWord.toLowerCase()).data() || '';
     }
 }

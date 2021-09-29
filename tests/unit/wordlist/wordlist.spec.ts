@@ -19,6 +19,22 @@ describe('CodeCompleter', () => {
             const actual = completer.nearestNextWord(testPartialCode);
             expect(actual).toEqual(expectedNearestWord);
         });
+
+        it('returns an exact match', () => {
+            const testPartialCode = '7-guitarist';
+            const expectedNearestWord = 'guitarist';
+
+            const actual = completer.nearestNextWord(testPartialCode);
+            expect(actual).toEqual(expectedNearestWord);
+        })
+
+        it('is case insensitive', () => {
+            const testPartialCode = '7-GU';
+            const expectedNearestWord = 'guitarist';
+
+            const actual = completer.nearestNextWord(testPartialCode);
+            expect(actual).toEqual(expectedNearestWord);
+        })
     })
 })
 
