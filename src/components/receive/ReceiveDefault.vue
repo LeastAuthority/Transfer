@@ -106,7 +106,6 @@
 
 <script lang="ts">
 import {
-    IonButton,
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
@@ -124,7 +123,7 @@ import {defineComponent} from "vue";
 
 import AutoComplete from "@/components/AutoComplete.vue"
 import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
-import {ErrBadCode, ErrInvalidCode} from "@/errors";
+import {ErrInvalidCode} from "@/errors";
 import {CODE_REGEX} from "@/util";
 
 const errorColor = 'warning-red';
@@ -132,26 +131,15 @@ const exampleColor = 'dark-grey';
 const errorText = ErrInvalidCode.message;
 const exampleText = 'E.g.: 7-guitarist-revenge';
 
-// const showPopover = ref(false);
-
-interface ReceiveDefaultData {
-    waiting: boolean;
-    exampleErrorColor: string;
-    exampleErrorText: string;
-    popover: HTMLIonPopoverElement | null;
-}
-
 export default defineComponent({
     name: "ReceiveDefault",
     props: ['active', 'next', 'reset'],
     data() {
-        const initialData: ReceiveDefaultData = {
+        return {
             exampleErrorColor: exampleColor,
             exampleErrorText: exampleText,
             waiting: false,
-            popover: null,
         };
-        return initialData;
     },
     computed: {
         ...mapState(['code']),
@@ -193,14 +181,9 @@ export default defineComponent({
             }
         },
         async onInput(event: Event): Promise<void> {
-            // TODO: currently lags behind by one character.
-            // TODO: try to use local state variable for code
-            console.log(`code: ${this._code}`);
             if (this._code === '') {
                 return;
             }
-
-            // showPopover.value = true;
         },
         validate(): void {
             if (this._code === '' || CODE_REGEX.test(this._code)) {
@@ -215,7 +198,6 @@ export default defineComponent({
             event.preventDefault();
             this[COMPLETE_CODE_WORD]();
             window.setTimeout(() => {
-                console.log((this.$refs as any).code_input.$el);
                 (this.$refs as any).code_input.$el.querySelector('input').focus();
             }, 50)
         },
