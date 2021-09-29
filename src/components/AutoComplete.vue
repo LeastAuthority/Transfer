@@ -1,6 +1,9 @@
 <template>
-    <ion-card class="container flex ion-justify-content-center ion-align-items-center">
-        <ion-card-content class="ion-padding">
+    <ion-card
+            class="container"
+            :style="{opacity}"
+    >
+        <ion-card-content class="ion-padding flex ion-justify-content-center ion-align-items-center">
             <ion-text>
                 {{ suggestedWord }}
             </ion-text>
@@ -50,6 +53,9 @@ export default defineComponent({
     margin: 0 auto !important;
     left: 0;
     right: 0;
+
+    transition: opacity 500ms ease;
+    pointer-events: none;
 }
 
 .tab {
