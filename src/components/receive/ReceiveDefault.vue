@@ -22,17 +22,20 @@
                              sizeSm="9"
                              sizeXs="9"
                     >
-                        <ion-input color="black"
-                                   :class="{invalid: blurInvalid, 'ion-margin-bottom': true}"
-                                   autofocus
-                                   :clearInput="code !== ''"
-                                   type="text"
-                                   placeholder="Enter code here"
-                                   v-model="_code"
-                                   @change="validate"
-                                   @ionInput="onInput"
-                                   @keyup.enter="_next"
-                        ></ion-input>
+                        <div class="relative">
+                            <ion-input color="black"
+                                       :class="{invalid: blurInvalid, 'ion-margin-bottom': true}"
+                                       autofocus
+                                       :clearInput="code !== ''"
+                                       type="text"
+                                       placeholder="Enter code here"
+                                       v-model="_code"
+                                       @change="validate"
+                                       @ionInput="onInput"
+                                       @keyup.enter="_next"
+                            ></ion-input>
+                            <AutoComplete></AutoComplete>
+                        </div>
                         <div class="flex-col">
                             <ion-text :color="exampleErrorColor"
                                       v-show="blurInvalid">
@@ -68,6 +71,10 @@
 </template>
 
 <style lang="css" scoped>
+.relative {
+    position: relative;
+}
+
 .invalid {
     border: 1px solid var(--ion-color-warning-red);
 }
@@ -108,7 +115,6 @@ import {
     IonRow,
     IonSpinner,
     IonText,
-    popoverController,
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
 import {ALERT_MATCHED_ERROR, SAVE_FILE, SET_CODE} from "@/store/actions";
@@ -193,19 +199,6 @@ export default defineComponent({
             }
 
             // showPopover.value = true;
-            if (this.popover === null) {
-                this.popover = await popoverController.create({
-                    component: AutoComplete,
-                    keyboardClose: false,
-                    showBackdrop: false,
-                    backdropDismiss: true,
-                    event,
-                });
-                this.popover.onWillDismiss().then(() => {
-                    this.popover = null;
-                })
-            }
-            await this.popover!.present();
         },
         validate(): void {
             if (this._code === '' || CODE_REGEX.test(this._code)) {
@@ -229,6 +222,7 @@ export default defineComponent({
         IonCardContent,
         IonSpinner,
         WaitButton,
+        AutoComplete,
     }
 })
 </script>
