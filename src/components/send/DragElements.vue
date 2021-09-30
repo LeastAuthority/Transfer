@@ -8,6 +8,7 @@
 <!--    </div>-->
     <div
             id="drag-backdrop"
+            class="flex ion-justify-content-center ion-align-items-center"
             :style="{
                 // display: showDragElements ? 'block' : 'none',
                 width: showDragElements ? '100%' : 0,
@@ -92,6 +93,11 @@ export default defineComponent({
 ion-icon {
     width: 50px;
     height: 50px;
+}
+
+
+h1 {
+    //font-size: ;
 }
 
 #drag-icon {
