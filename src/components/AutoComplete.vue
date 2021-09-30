@@ -7,7 +7,7 @@
             <ion-text>
                 {{ suggestedWord }}
             </ion-text>
-            <ion-card color="medium" class="tab">
+            <ion-card color="light" class="tab">
                 <ion-card-content>
                     <ion-text>
                         Tab ->|
