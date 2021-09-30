@@ -18,6 +18,7 @@
         </ion-card-header>
         <ion-card-content class="ion-text-center">
             <div class="flex-col drag-n-drop ion-justify-content-center">
+                <DragElements :select="select"></DragElements>
                 <div>
                     <div class="flex-col ion-margin-vertical">
                         <ion-text color="dark-grey" class="bold">
@@ -58,6 +59,8 @@ import {
     IonText
 } from "@ionic/vue";
 
+import DragElements from "@/components/send/DragElements.vue";
+
 export default defineComponent({
     name: "SendDefault",
     props: ['select', 'active'],
@@ -70,6 +73,7 @@ export default defineComponent({
         IonIcon,
         IonText,
         // Transition,
+        DragElements,
     },
     methods: {
     },
