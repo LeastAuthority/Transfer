@@ -1,6 +1,12 @@
-# MyFileTransfer
+# Transfer
 
-File transfer app that uses the magic wormhole protocol and ionic/vue UI framework.
+Transfer is a graphical interface, built with the ionic/vue UI framework, for doing file transfer via the Magic Wormhole protocol.
+Transfer is cross-platform, primarily targeting web, but can be built for iOS and Android using [capacitor](https://capacitorjs.com/).
+It is also easily ported to desktop via [electron](https://www.electronjs.org/).
+
+## Status
+
+This web app is in 'alpha' state, and **not ready for production use**.
 
 ## Development Setup
 
@@ -16,20 +22,31 @@ git submodule update --recursive
 
 or you can do it in one step:
 
-```
 git clone --recurse-submodules git@github.com:LeastAuthority/MyFileTransfer.git
 
 ```
 
-### Building
+### Building / Running (Web)
 
-First install all the dependencies:
+#### System Dependencies
+- `docker`
+- `docker-compose`
+
+_(See [docker documentation]() for installation instructions)_
+
+Install yarn globally:
+
+```bash
+npm install -g yarn
+```
+
+#### App dependencies
+Install using `yarn`:
 
 ```
 yarn install
 ```
 
-You also need `docker` installed on the system.
 
 The code uses wormhole-william built as a Web Assembly (wasm) module. If you want
 to rebuild the wasm code do:
@@ -38,18 +55,19 @@ to rebuild the wasm code do:
 yarn build:wasm
 ```
 
-You need to run a local copy of mailbox server and a relay server. To do that run:
+To run local mailbox and relay servers (using docker-compose):
+
 ```
 yarn compose:up -d
 ```
 
-and then do:
+Serve the web worker entrypoint:
 
 ```
 yarn serve:worker
 ```
 
-and now do
+Serve the app:
 
 ```
 yarn run serve
