@@ -18,8 +18,27 @@
                 <ion-row class="ion-text-center ion-margin-top">
                     <ion-col>
                         <p>
+                            <ion-text class="bold">
+                                1. Keep this tab open
+                            </ion-text>
+                        </p>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center ion-margin-top">
+                    <ion-col>
+                        <p>
+                            <ion-text>
+                                Files are sent directly from your device. <br/>The link/code expires once you close the
+                                tab.
+                            </ion-text>
+                        </p>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center ion-margin-top">
+                    <ion-col>
+                        <p>
                             <ion-text color="dark-grey" class="bold">
-                                1. Give the receiver the link below
+                                2. Give the receiver the link below
                             </ion-text>
                         </p>
                     </ion-col>
@@ -47,15 +66,6 @@
                                     :link="link"
                                     :disabled="!linkReady"
                         ></CopyButton>
-                    </ion-col>
-                </ion-row>
-                <ion-row class="ion-text-center ion-margin-top">
-                    <ion-col>
-                        <p>
-                            <ion-text class="bold">
-                                2. Keep this tab open until you're notified that they have received the file
-                            </ion-text>
-                        </p>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center ion-margin-top ion-margin-bottom">
