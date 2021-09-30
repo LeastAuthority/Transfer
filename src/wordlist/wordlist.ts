@@ -81,12 +81,20 @@ export class CodeCompleter {
         const inputWords = partialCode.split(CODE_DELIMITER).splice(1);
         const previousWord = inputWords[inputWords.length - 2];
         const partialWord = inputWords[inputWords.length - 1];
-        if (typeof(partialWord) === 'undefined') {
+        if (typeof (partialWord) === 'undefined') {
             return '';
         }
 
         const nextWordTree = this._wordList.nextWordTree(previousWord);
-        const word = nextWordTree.lowerBound(partialWord.toLowerCase()).data();
+        const iter = nextWordTree.lowerBound(partialWord.toLowerCase())
+        const word = iter.data();
+
+        iter.next();
+        const nextWord = iter.data();
+        if (typeof(nextWord) === 'string' && nextWord.startsWith(partialWord)) {
+            return '';
+        }
+
         if (word === partialWord) {
             return ''
         }

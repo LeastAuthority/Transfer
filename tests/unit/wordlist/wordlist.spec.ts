@@ -35,6 +35,17 @@ describe('CodeCompleter', () => {
             const actual = completer.nearestNextWord(testPartialCode);
             expect(actual).toEqual(expectedNearestWord);
         })
+
+        it('only returns a word when there is a single match', () => {
+            const testAmbiguousCode = '7-un';
+            const testUnambiguousCode = '7-unde';
+            const expectedNearestWord = 'underfoot';
+
+            const actualAmbiguous = completer.nearestNextWord(testAmbiguousCode);
+            const actualUnambiguous = completer.nearestNextWord(testUnambiguousCode);
+            expect(actualAmbiguous).toEqual('');
+            expect(actualUnambiguous).toEqual(expectedNearestWord);
+        })
     })
 })
 
