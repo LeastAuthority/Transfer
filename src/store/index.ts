@@ -48,9 +48,9 @@ let client: ClientWorker;
 
 const safariNotSupportedError = Error("We plan to support Safari in future releases. Please try with a different browser.")
 const browser = Bowser.getParser(self.navigator.userAgent)
-if (!alertIfInSafari()) {
-    client = new ClientWorker(defaultConfig);
-}
+const noop = () => {
+    console.error(safariNotSupportedError);
+};
 
 function alertIfInSafari(): boolean {
     const browserIsProbablySafari = browser.satisfies({
@@ -65,7 +65,11 @@ function alertIfInSafari(): boolean {
         });
         modal.then(m => m.present());
     }
-    return browserIsProbablySafari;
+    return browserIsProbablySafari || false;
+}
+
+if (!alertIfInSafari()) {
+    client = new ClientWorker(defaultConfig);
 }
 
 /* --- ACTIONS --- */
@@ -99,7 +103,7 @@ async function sendFileAction(this: Store<any>, {
     dispatch
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
     if (alertIfInSafari()) {
-        return {code: '', done: new Promise(() => {})};
+        return {code: '', done: new Promise(noop)};
     }
 
     // NB: reset code
@@ -160,7 +164,7 @@ async function saveFileAction(this: Store<any>, {
     state, commit, dispatch
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
     if (alertIfInSafari()) {
-        return {code: '', done: new Promise(() => {})};
+        return {code: '', done: new Promise(noop)};
     }
 
     const opts = {
