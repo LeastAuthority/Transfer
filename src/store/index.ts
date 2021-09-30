@@ -255,11 +255,11 @@ function setDragIconPosMutation(state: any, coords: Coords): void {
 }
 
 function showDragElementsMutation(state: any): void {
-    state.dragElementsDisplay = 'block';
+    state.showDragElements = true;
 }
 
 function hideDragElementsMutation(state: any): void {
-    state.dragElementsDisplay = 'none';
+    state.showDragElements = false;
 }
 
 // TODO: more specific types
@@ -320,7 +320,7 @@ export interface AppState {
     progressTimeoutCancel: () => void | undefined;
     progressHung: boolean;
     dragIconPos: Coords;
-    dragElementsDisplay: string;
+    showDragElements: boolean;
 }
 
 const defaultDragIconPos = {
@@ -350,7 +350,7 @@ export default createStore({
             progressTimeoutCancel: undefined,
             progressHung: false,
             dragIconPos: defaultDragIconPos,
-            dragElementsDisplay: 'display',
+            showDragElements: false,
         }
     },
     mutations: {

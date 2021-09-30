@@ -109,6 +109,7 @@ export default defineComponent({
 }
 
 .drag-n-drop {
+    position: relative;
     align-items: center;
     border: 4px dashed #858789;
     border-radius: 4px;

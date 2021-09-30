@@ -1,40 +1,50 @@
 <template>
-    <div
-            id="drag-icon"
-            :style="{display: dragElementsDisplay,
-            top: `${dragIconPos.y}px`, left: `${dragIconPos.x}px`}"
-    >
-        <ion-icon :icon="document"></ion-icon>
-    </div>
+<!--    <div-->
+<!--            id="drag-icon"-->
+<!--            :style="{display: dragElementsDisplay,-->
+<!--            top: `${dragIconPos.y}px`, left: `${dragIconPos.x}px`}"-->
+<!--    >-->
+<!--        <ion-icon :icon="document"></ion-icon>-->
+<!--    </div>-->
     <div
             id="drag-backdrop"
-            :style="{display: dragElementsDisplay}"
+            :style="{
+                // display: showDragElements ? 'block' : 'none',
+                width: showDragElements ? '100%' : 0,
+                height: showDragElements ? '100%' : 0,
+                ['border-radius']: showDragElements ? 0 : '10000px',
+            }"
             @drop="drop"
-            @dragenter="(event) => event.preventDefault()"
-            @dragover="updateDragIcon"
-    ></div>
+            @dragover="dragOver"
+            @dragleave="dragLeave"
+    >
+        <ion-text>
+            <h1>Drop here!</h1>
+        </ion-text>
+    </div>
 </template>
 
 <script lang="ts">
 import {defineComponent} from "vue";
-import {IonIcon} from "@ionic/vue";
+import {IonIcon,IonText} from "@ionic/vue";
 import {document} from "ionicons/icons";
 import {mapMutations, mapState} from "vuex";
 import {HIDE_DRAG_ELEMENTS, SET_DRAG_ICON_POS, SHOW_DRAG_ELEMENTS} from "@/store/actions";
 
 import store from '@/store';
 
-window.addEventListener('dragenter', (event: DragEvent) => {
-    console.log("dragenter window")
+function windowDragEnter (event: DragEvent): void {
     event.preventDefault();
     store.commit(SHOW_DRAG_ELEMENTS);
-});
+}
+window.addEventListener('dragenter', windowDragEnter);
+// TODO: window.removeEventListener('dragenter', windowDragEnter);
 
 export default defineComponent({
     name: "DragElements",
     props: ['select'],
     computed: {
-        ...mapState(['dragElementsDisplay', 'dragIconPos']),
+        ...mapState(['showDragElements', 'dragIconPos']),
     },
     methods: {
         ...mapMutations([HIDE_DRAG_ELEMENTS, SET_DRAG_ICON_POS]),
@@ -50,16 +60,25 @@ export default defineComponent({
                 console.error("no files listed in drop event")
             }
         },
-        updateDragIcon(event: DragEvent) {
+        dragOver(event: DragEvent) {
             event.preventDefault();
-            this[SET_DRAG_ICON_POS]({
-                x: event.clientX + 5,
-                y: event.clientY + 5,
-            })
+            // this[SET_DRAG_ICON_POS]({
+            //     x: event.clientX + 5,
+            //     y: event.clientY + 5,
+            // });
+        },
+        // dragEnter(event: DragEvent): void {
+        //     event.preventDefault();
+        //     this[SHOW_DRAG_ELEMENTS]();
+        // },
+        dragLeave(event: DragEvent): void {
+            event.preventDefault();
+            // delayed hide
         },
     },
     components: {
-        IonIcon,
+        // IonIcon,
+        IonText,
     },
     setup() {
         return {
@@ -83,17 +102,15 @@ ion-icon {
 }
 
 #drag-backdrop {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
     position: absolute;
+    margin: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    border-radius: 10000px;
+    transition: width 250ms ease, height 250ms ease, border-radius 300ms ease;
     z-index: 99;
-    background: transparent;
-    //background: rgba(255,255,255,.6);
+    background: var(--ion-color-yellow);
 }
 
 </style>
