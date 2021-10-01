@@ -25,7 +25,7 @@
                 @dragleave="dragLeave"
         >
             <div id="drag-content"
-                 class="flex ion-justify-content-center ion-align-items-center"
+                 class="no-pointer-events flex ion-justify-content-center ion-align-items-center"
             >
                 <ion-text>
                     <h1>Drop here!</h1>
