@@ -268,8 +268,9 @@ function completeCodeWordMutation(state: any): void {
     // Replace last (incomplete) word `codeWord`
     codeParts.splice(codeParts.length - 1, 1, state.suggestedWord);
 
-    console.log(codeParts)
-    state.code = codeParts.join(CODE_DELIMITER);
+    if (state.suggestedWord !== '') {
+        state.code = codeParts.join(CODE_DELIMITER);
+    }
 }
 
 // TODO: more specific types
