@@ -265,12 +265,13 @@ async function alertMatchedErrorAction(this: Store<any>, {
 
 function completeCodeWordMutation(state: any): void {
     const codeParts = state.code.split(CODE_DELIMITER);
-    // Replace last (incomplete) word `codeWord`
-    codeParts.splice(codeParts.length - 1, 1, state.suggestedWord);
-
-    if (state.suggestedWord !== '') {
+    const partialWordIndex = codeParts.length-1;
+    if (state.suggestedWord.startsWith(codeParts[partialWordIndex])) {
+        // Replace last (incomplete) word `codeWord`
+        codeParts.splice(partialWordIndex, 1, state.suggestedWord);
         state.code = codeParts.join(CODE_DELIMITER);
     }
+
 }
 
 // TODO: more specific types
