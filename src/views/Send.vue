@@ -69,7 +69,7 @@ import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
 import SendComplete from "@/components/send/SendComplete.vue";
-import DragElements from "@/components/send/DragElements.vue";
+import DropZone from "@/components/send/DragElements.vue";
 
 declare interface SendData {
     step: SendStep;

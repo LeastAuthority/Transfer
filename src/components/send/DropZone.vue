@@ -1,54 +1,60 @@
 <template>
-<!--    <div-->
-<!--            id="drag-icon"-->
-<!--            :style="{display: dragElementsDisplay,-->
-<!--            top: `${dragIconPos.y}px`, left: `${dragIconPos.x}px`}"-->
-<!--    >-->
-<!--        <ion-icon :icon="document"></ion-icon>-->
-<!--    </div>-->
-    <div
-            id="drag-backdrop"
-            class="flex ion-justify-content-center ion-align-items-center"
-            :style="{
+    <div class="flex-col drag-n-drop ion-justify-content-center"
+         @drop="drop"
+         @dragover="(event) => event.preventDefault()"
+         @dragenter="dragEnter"
+    >
+        <div
+                id="drag-icon"
+                :style="{display: showDragElements ? 'block' : 'none',
+                        top: `${dragIconPos.y - 15}px`, left: `${dragIconPos.x - 30}px`}"
+        >
+            <ion-icon :icon="document"></ion-icon>
+        </div>
+        <div
+                id="drag-backdrop"
+                class="relative"
+                :style="{
                 // display: showDragElements ? 'block' : 'none',
                 width: showDragElements ? '100%' : 0,
                 height: showDragElements ? '100%' : 0,
                 ['border-radius']: showDragElements ? 0 : '10000px',
             }"
-            @drop="drop"
-            @dragover="dragOver"
-            @dragleave="dragLeave"
-    >
-        <ion-text>
-            <h1>Drop here!</h1>
-        </ion-text>
+                @drop="drop"
+                @dragover="dragOver"
+                @dragleave="dragLeave"
+        >
+            <div id="drag-content"
+                 class="flex ion-justify-content-center ion-align-items-center"
+            >
+                <ion-text>
+                    <h1>Drop here!</h1>
+                </ion-text>
+            </div>
+        </div>
+        <slot></slot>
     </div>
 </template>
 
 <script lang="ts">
 import {defineComponent} from "vue";
-import {IonIcon,IonText} from "@ionic/vue";
+import {IonIcon, IonText} from "@ionic/vue";
 import {document} from "ionicons/icons";
 import {mapMutations, mapState} from "vuex";
 import {HIDE_DRAG_ELEMENTS, SET_DRAG_ICON_POS, SHOW_DRAG_ELEMENTS} from "@/store/actions";
 
-import store from '@/store';
-
-function windowDragEnter (event: DragEvent): void {
-    event.preventDefault();
-    store.commit(SHOW_DRAG_ELEMENTS);
-}
-window.addEventListener('dragenter', windowDragEnter);
-// TODO: window.removeEventListener('dragenter', windowDragEnter);
-
 export default defineComponent({
-    name: "DragElements",
-    props: ['select'],
+    name: "DropZone",
+    props: ['select', 'dropRef'],
     computed: {
         ...mapState(['showDragElements', 'dragIconPos']),
     },
     methods: {
-        ...mapMutations([HIDE_DRAG_ELEMENTS, SET_DRAG_ICON_POS]),
+        ...mapMutations([
+            HIDE_DRAG_ELEMENTS,
+            SHOW_DRAG_ELEMENTS,
+            SET_DRAG_ICON_POS
+        ]),
         drop(event: DragEvent) {
             event.preventDefault();
             this[HIDE_DRAG_ELEMENTS]();
@@ -61,24 +67,25 @@ export default defineComponent({
                 console.error("no files listed in drop event")
             }
         },
+        dragEnter(event: DragEvent): void {
+            event.preventDefault();
+            console.log('dragEnter');
+            this[SHOW_DRAG_ELEMENTS]();
+        },
         dragOver(event: DragEvent) {
             event.preventDefault();
-            // this[SET_DRAG_ICON_POS]({
-            //     x: event.clientX + 5,
-            //     y: event.clientY + 5,
-            // });
+            this[SET_DRAG_ICON_POS]({
+                x: event.offsetX,
+                y: event.offsetY,
+            });
         },
-        // dragEnter(event: DragEvent): void {
-        //     event.preventDefault();
-        //     this[SHOW_DRAG_ELEMENTS]();
-        // },
         dragLeave(event: DragEvent): void {
             event.preventDefault();
-            // delayed hide
+            this[HIDE_DRAG_ELEMENTS]();
         },
     },
     components: {
-        // IonIcon,
+        IonIcon,
         IonText,
     },
     setup() {
@@ -97,7 +104,13 @@ ion-icon {
 
 
 h1 {
-    //font-size: ;
+//font-size: ;
+}
+
+#drag-content {
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
 }
 
 #drag-icon {
