@@ -18,7 +18,7 @@
                 // display: showDragElements ? 'block' : 'none',
                 width: showDragElements ? '100%' : 0,
                 height: showDragElements ? '100%' : 0,
-                ['border-radius']: showDragElements ? 0 : '10000px',
+                ['border-radius']: showDragElements ? 0 : '500px',
             }"
                 @drop="drop"
                 @dragover="dragOver"
@@ -126,7 +126,7 @@ h1 {
     width: 0;
     height: 0;
     overflow: hidden;
-    border-radius: 10000px;
+    border-radius: 500px;
     transition: width 250ms ease, height 250ms ease, border-radius 300ms ease;
     z-index: 99;
     background: var(--ion-color-yellow);
