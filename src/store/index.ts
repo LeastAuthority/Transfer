@@ -270,6 +270,10 @@ function completeCodeWordMutation(state: any): void {
         // Replace last (incomplete) word `codeWord`
         codeParts.splice(partialWordIndex, 1, state.suggestedWord);
         state.code = codeParts.join(CODE_DELIMITER);
+        // NB: codeParts.length includes the mailbox number
+        if (codeParts.length - 1 < DEFAULT_PROD_CLIENT_CONFIG.passPhraseComponentLength) {
+            state.code += CODE_DELIMITER;
+        }
     }
 
 }
