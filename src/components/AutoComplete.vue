@@ -4,13 +4,13 @@
             :style="{opacity}"
     >
         <ion-card-content class="ion-padding flex ion-justify-content-center ion-align-items-center">
-            <ion-text>
+            <ion-text color="black">
                 {{ suggestedWord }}
             </ion-text>
-            <ion-card color="light" class="tab">
+            <ion-card color="light-grey" class="tab">
                 <ion-card-content>
-                    <ion-text>
-                        Tab ->|
+                    <ion-text color="darker-grey" class="ion-text-nowrap">
+                        Press space to complete
                     </ion-text>
                 </ion-card-content>
             </ion-card>
@@ -56,7 +56,6 @@ export default defineComponent({
 
 .tab {
     position: relative;
-    width: 75px;
     margin: 0 0 0 10px !important;
 }
 </style>
