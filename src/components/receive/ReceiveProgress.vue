@@ -3,7 +3,7 @@
     <div v-show="active">
         <ion-card-header>
             <ion-card-title>
-                <ion-text color="dark-grey">
+                <ion-text class="bold" color="dark-grey">
                     Receiving...
                 </ion-text>
             </ion-card-title>
