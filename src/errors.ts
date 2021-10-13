@@ -40,7 +40,7 @@ export class AlertError extends Error {
 }
 
 export const ErrBadCode = new AlertError({
-    message: 'If you’re sure this is the right code: Either the sender is no longer connected, or the code was already used.\n\n;' +
+    message: 'If you’re sure this is the right code: Either the sender is no longer connected, or the code was already used. ' +
     'Please ask the sender for a new code and for them to stay connected until you get the file.',
     pattern: '',
 })
@@ -56,7 +56,7 @@ export const ErrRelay = new AlertError({
 })
 
 export const ErrInterrupt = new AlertError({
-    name: 'Network Trouble?',
+    name: 'Network trouble?',
     message: 'There was an issue with either your or the receiver\'s connection. Please try again with a new code.',
     pattern: '(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*$transitRelayURL.*)',
 })
