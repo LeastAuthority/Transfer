@@ -4,7 +4,7 @@
         <ion-card-header>
             <ion-card-title>
                 <ion-text color="dark-grey" class="bold">
-                    Receive files with ease, speed, and security
+                    Receive files in real-time
                 </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
