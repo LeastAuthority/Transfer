@@ -103,7 +103,7 @@ async function sendFileAction(this: Store<any>, {
     dispatch
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
     if (alertIfInSafari()) {
-        return {code: '', done: new Promise(noop)};
+        return Promise.reject(safariNotSupportedError);
     }
 
     // NB: reset code
@@ -164,7 +164,7 @@ async function saveFileAction(this: Store<any>, {
     state, commit, dispatch
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
     if (alertIfInSafari()) {
-        return {code: '', done: new Promise(noop)};
+        return Promise.reject(safariNotSupportedError);
     }
 
     const opts = {
