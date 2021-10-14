@@ -1,25 +1,18 @@
 <template>
     <div class="flex-col drag-n-drop ion-justify-content-center"
+         :style="{
+            borderStyle: showDragElements ? 'solid' : 'dashed',
+         }"
          @drop="drop"
          @dragover="(event) => event.preventDefault()"
          @dragenter="dragEnter"
     >
         <div
-                id="drag-icon"
-                :style="{display: showDragElements ? 'block' : 'none',
-                        top: `${dragIconPos.y - 15}px`, left: `${dragIconPos.x - 30}px`}"
-        >
-            <ion-icon :icon="document"></ion-icon>
-        </div>
-        <div
                 id="drag-backdrop"
                 class="relative"
                 :style="{
-                // display: showDragElements ? 'block' : 'none',
-                width: showDragElements ? '100%' : 0,
-                height: showDragElements ? '100%' : 0,
-                ['border-radius']: showDragElements ? 0 : '500px',
-            }"
+                    opacity: showDragElements ? 1 : 0,
+                }"
                 @drop="drop"
                 @dragover="dragOver"
                 @dragleave="dragLeave"
@@ -27,8 +20,8 @@
             <div id="drag-content"
                  class="no-pointer-events flex ion-justify-content-center ion-align-items-center"
             >
-                <ion-text>
-                    <h1>Drop here!</h1>
+                <ion-text color="black">
+                    <h1>Drop here! &#x1F60E;</h1>
                 </ion-text>
             </div>
         </div>
@@ -38,10 +31,10 @@
 
 <script lang="ts">
 import {defineComponent} from "vue";
-import {IonIcon, IonText} from "@ionic/vue";
+import {IonText} from "@ionic/vue";
 import {document} from "ionicons/icons";
 import {mapMutations, mapState} from "vuex";
-import {HIDE_DRAG_ELEMENTS, SET_DRAG_ICON_POS, SHOW_DRAG_ELEMENTS} from "@/store/actions";
+import {HIDE_DRAG_ELEMENTS, SHOW_DRAG_ELEMENTS} from "@/store/actions";
 
 export default defineComponent({
     name: "DropZone",
@@ -53,7 +46,6 @@ export default defineComponent({
         ...mapMutations([
             HIDE_DRAG_ELEMENTS,
             SHOW_DRAG_ELEMENTS,
-            SET_DRAG_ICON_POS
         ]),
         drop(event: DragEvent) {
             event.preventDefault();
@@ -74,10 +66,6 @@ export default defineComponent({
         },
         dragOver(event: DragEvent) {
             event.preventDefault();
-            this[SET_DRAG_ICON_POS]({
-                x: event.offsetX,
-                y: event.offsetY,
-            });
         },
         dragLeave(event: DragEvent): void {
             event.preventDefault();
@@ -85,7 +73,6 @@ export default defineComponent({
         },
     },
     components: {
-        IonIcon,
         IonText,
     },
     setup() {
@@ -104,7 +91,30 @@ ion-icon {
 
 
 h1 {
-//font-size: ;
+    font-size: 40px;
+}
+
+.drag-n-drop {
+    overflow: hidden;
+}
+
+.drag-n-drop {
+    min-height: 60vh;
+
+}
+
+@media screen and (max-height: 850px) {
+    .drag-n-drop {
+        min-height: 50vh;
+    }
+}
+
+.drag-n-drop {
+    position: relative;
+    align-items: center;
+    border: 4px dashed #858789;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 #drag-content {
@@ -113,23 +123,15 @@ h1 {
     white-space: nowrap;
 }
 
-#drag-icon {
-    position: absolute;
-    display: none;
-    pointer-events: none;
-    z-index: 100;
-}
-
 #drag-backdrop {
     position: absolute;
     margin: 0;
-    width: 0;
-    height: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    border-radius: 500px;
-    transition: width 250ms ease, height 250ms ease, border-radius 300ms ease;
+    transition: opacity 100ms;
     z-index: 99;
-    background: var(--ion-color-yellow);
+    background: var(--ion-color-tertiary);
 }
 
 </style>

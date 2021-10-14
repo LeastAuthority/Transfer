@@ -12,7 +12,6 @@ import {
     SAVE_FILE,
     SEND_FILE,
     SET_CODE,
-    SET_DRAG_ICON_POS,
     SET_FILE_META,
     SET_PROGRESS,
     SHOW_DRAG_ELEMENTS,
@@ -349,7 +348,6 @@ export default createStore({
             progressETASeconds: 0,
             progressTimeoutCancel: undefined,
             progressHung: false,
-            dragIconPos: defaultDragIconPos,
             showDragElements: false,
         }
     },
@@ -365,7 +363,7 @@ export default createStore({
         [RESET_PROGRESS]: resetProgressMutation,
         [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
         [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
-        [SET_DRAG_ICON_POS]: setDragIconPosMutation,
+        [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;

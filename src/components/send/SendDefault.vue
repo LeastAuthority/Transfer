@@ -92,25 +92,4 @@ export default defineComponent({
     flex-grow: 1;
 //justify-content: space-around; align-items: center;
 }
-
-.drag-n-drop {
-    /* TODO: use css variable! */
-    min-height: 60vh;
-
-}
-
-@media screen and (max-height: 850px) {
-    .drag-n-drop {
-        /* TODO: use css variable! */
-        min-height: 50vh;
-    }
-}
-
-.drag-n-drop {
-    position: relative;
-    align-items: center;
-    border: 4px dashed #858789;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.05);
-}
 </style>
