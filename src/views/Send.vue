@@ -24,7 +24,6 @@
                @change="fileChanged"
         />
     </CardModal>
-<!--    <DragElements :select="select"></DragElements>-->
     <!--    </transition>-->
 </template>
 
@@ -179,7 +178,6 @@ export default defineComponent({
         SendInstructions,
         SendProgress,
         SendComplete,
-        // DragElements,
     },
     setup() {
         return {
