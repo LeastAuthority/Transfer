@@ -248,11 +248,6 @@ interface Coords {
     x: number;
     y: number;
 }
-function setDragIconPosMutation(state: any, coords: Coords): void {
-    state.dragIconPos.x = coords.x;
-    state.dragIconPos.y = coords.y;
-}
-
 function showDragElementsMutation(state: any): void {
     state.showDragElements = true;
 }
