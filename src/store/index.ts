@@ -48,9 +48,6 @@ let client: ClientWorker;
 
 const safariNotSupportedError = Error("We plan to support Safari in future releases. Please try with a different browser.")
 const browser = Bowser.getParser(self.navigator.userAgent)
-const noop = () => {
-    console.error(safariNotSupportedError);
-};
 
 function alertIfInSafari(): boolean {
     const browserIsProbablySafari = browser.satisfies({
