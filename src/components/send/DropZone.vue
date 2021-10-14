@@ -12,6 +12,7 @@
                 class="relative"
                 :style="{
                     opacity: showDragElements ? 1 : 0,
+                    ['pointer-events']: showDragElements ? 'all' : 'none',
                 }"
                 @drop="drop"
                 @dragover="dragOver"
@@ -32,15 +33,14 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import {IonText} from "@ionic/vue";
-import {document} from "ionicons/icons";
 import {mapMutations, mapState} from "vuex";
 import {HIDE_DRAG_ELEMENTS, SHOW_DRAG_ELEMENTS} from "@/store/actions";
 
 export default defineComponent({
     name: "DropZone",
-    props: ['select', 'dropRef'],
+    props: ['select'],
     computed: {
-        ...mapState(['showDragElements', 'dragIconPos']),
+        ...mapState(['showDragElements']),
     },
     methods: {
         ...mapMutations([
@@ -61,7 +61,6 @@ export default defineComponent({
         },
         dragEnter(event: DragEvent): void {
             event.preventDefault();
-            console.log('dragEnter');
             this[SHOW_DRAG_ELEMENTS]();
         },
         dragOver(event: DragEvent) {
@@ -75,11 +74,6 @@ export default defineComponent({
     components: {
         IonText,
     },
-    setup() {
-        return {
-            document,
-        }
-    }
 })
 </script>
 
@@ -94,15 +88,6 @@ h1 {
     font-size: 40px;
 }
 
-.drag-n-drop {
-    overflow: hidden;
-}
-
-.drag-n-drop {
-    min-height: 60vh;
-
-}
-
 @media screen and (max-height: 850px) {
     .drag-n-drop {
         min-height: 50vh;
@@ -110,6 +95,8 @@ h1 {
 }
 
 .drag-n-drop {
+    overflow: hidden;
+    min-height: 60vh;
     position: relative;
     align-items: center;
     border: 4px dashed #858789;

@@ -93,6 +93,10 @@ ion-button.large-button ion-icon {
     flex-direction: column;
 }
 
+.no-pointer-events {
+    pointer-events: none;
+}
+
 ion-progress-bar {
     height: 40px;
 }
