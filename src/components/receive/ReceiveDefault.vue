@@ -162,9 +162,6 @@ export default defineComponent({
     methods: {
         ...mapActions([SAVE_FILE, ALERT_MATCHED_ERROR]),
         ...mapMutations([SET_CODE, COMPLETE_CODE_WORD]),
-        _setCode(code: string): void {
-            this[SET_CODE](code);
-        },
         async _next(): Promise<void> {
             // TODO: remove
             window.setTimeout(() => {

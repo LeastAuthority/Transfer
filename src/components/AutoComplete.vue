@@ -1,6 +1,6 @@
 <template>
     <ion-card
-            class="container"
+            class="container no-pointer-events"
             :style="{opacity}"
     >
         <ion-card-content class="ion-padding flex ion-justify-content-center ion-align-items-center">
@@ -51,7 +51,6 @@ export default defineComponent({
     right: 0;
 
     transition: opacity 250ms ease;
-    pointer-events: none;
 }
 
 .tab {
