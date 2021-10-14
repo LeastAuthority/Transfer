@@ -48,17 +48,27 @@ let client: ClientWorker;
 
 const safariNotSupportedError = Error("We plan to support Safari in future releases. Please try with a different browser.")
 const browser = Bowser.getParser(self.navigator.userAgent)
-const browserIsProbablySafari = browser.satisfies({
-    safari: '>0'
-});
-if (browserIsProbablySafari) {
-    const modal = alertController.create({
-        header: 'Safari not supported :\'(',
-        message: safariNotSupportedError.message,
-        backdropDismiss: false,
+const noop = () => {
+    console.error(safariNotSupportedError);
+};
+
+function alertIfInSafari(): boolean {
+    const browserIsProbablySafari = browser.satisfies({
+        safari: '>0'
     });
-    modal.then(m => m.present());
-} else {
+    if (browserIsProbablySafari) {
+        const modal = alertController.create({
+            header: 'Safari not supported :\'(',
+            message: safariNotSupportedError.message,
+            backdropDismiss: true,
+            buttons: ['OK'],
+        });
+        modal.then(m => m.present());
+    }
+    return browserIsProbablySafari || false;
+}
+
+if (!alertIfInSafari()) {
     client = new ClientWorker(defaultConfig);
 }
 
@@ -69,6 +79,10 @@ async function newClientAction(this: Store<any>, {
     state,
     commit
 }: ActionContext<any, any>, config?: ClientConfig): Promise<void> {
+    if (alertIfInSafari()) {
+        return;
+    }
+
     // TODO: something better.
     let _config = config;
     if (typeof (config) === 'undefined') {
@@ -88,6 +102,10 @@ async function sendFileAction(this: Store<any>, {
     commit,
     dispatch
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
+    if (alertIfInSafari()) {
+        return Promise.reject(safariNotSupportedError);
+    }
+
     // NB: reset code
     commit(SET_CODE, '');
 
@@ -145,6 +163,10 @@ Please select a smaller file.`,
 async function saveFileAction(this: Store<any>, {
     state, commit, dispatch
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
+    if (alertIfInSafari()) {
+        return Promise.reject(safariNotSupportedError);
+    }
+
     const opts = {
         progressFunc: (sentBytes: number, totalBytes: number) => {
             // TODO: refactor
