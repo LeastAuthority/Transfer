@@ -197,9 +197,6 @@ export default defineComponent({
         completeCodeWord(event: KeyboardEvent): void {
             event.preventDefault();
             this[COMPLETE_CODE_WORD]();
-            window.setTimeout(() => {
-                (this.$refs as any).code_input.$el.querySelector('input').focus();
-            }, 50)
         },
     },
     components: {
