@@ -66,7 +66,7 @@ export class WordList {
     private static _sideWords(side: 0 | 1): string[] {
         const sideWords = [];
         for (const index in words) {
-            sideWords.push((words as any)[index][side]);
+            sideWords.push((words as any)[index][side].toLowerCase());
         }
         return sideWords;
     }

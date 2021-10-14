@@ -6,7 +6,10 @@ import Bowser from "bowser";
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
-    ACCEPT_FILE, ALERT, ALERT_MATCHED_ERROR,
+    ACCEPT_FILE,
+    ALERT,
+    COMPLETE_CODE_WORD,
+    ALERT_MATCHED_ERROR,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -20,6 +23,7 @@ import {
 import ClientWorker from "@/go/wormhole/client_worker";
 import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
+import {CODE_DELIMITER, CodeCompleter} from "@/wordlist/wordlist";
 
 const MAX_FILE_SIZE_MB = 200;
 const MB = 1000 ** 2;
@@ -71,6 +75,7 @@ function alertIfInSafari(): boolean {
 if (!alertIfInSafari()) {
     client = new ClientWorker(defaultConfig);
 }
+const completer = new CodeCompleter();
 
 /* --- ACTIONS --- */
 
@@ -280,6 +285,21 @@ async function alertMatchedErrorAction(this: Store<any>, {
 
 /* --- MUTATIONS --- */
 
+function completeCodeWordMutation(state: any): void {
+    const codeParts = state.code.split(CODE_DELIMITER);
+    const partialWordIndex = codeParts.length-1;
+    if (state.suggestedWord.startsWith(codeParts[partialWordIndex])) {
+        // Replace last (incomplete) word `codeWord`
+        codeParts.splice(partialWordIndex, 1, state.suggestedWord);
+        state.code = codeParts.join(CODE_DELIMITER);
+        // NB: codeParts.length includes the mailbox number
+        if (codeParts.length - 1 < DEFAULT_PROD_CLIENT_CONFIG.passPhraseComponentLength) {
+            state.code += CODE_DELIMITER;
+        }
+    }
+
+}
+
 // TODO: more specific types
 function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
     state.fileMeta = fileMeta;
@@ -304,6 +324,12 @@ function sendFileMutation(state: any, {code, cancel}: any): void {
 // TODO: be more specific with types.
 function setCodeMutation(state: any, code: string): void {
     state.code = code;
+
+    if (code[code.length - 1] === CODE_DELIMITER) {
+        state.suggestedWord = '';
+    } else {
+        state.suggestedWord = completer.nearestNextWord(code);
+    }
 }
 
 // TODO: be more specific with types.
@@ -372,6 +398,7 @@ export default createStore({
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,
         [RESET_PROGRESS]: resetProgressMutation,
+        [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;

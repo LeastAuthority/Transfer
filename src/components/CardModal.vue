@@ -31,6 +31,7 @@ export default defineComponent({
 <style lang="css" scoped>
 ion-card {
     position: relative;
+    overflow: initial;
 }
 
 ion-card > .version {
