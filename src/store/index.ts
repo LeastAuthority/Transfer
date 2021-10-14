@@ -363,7 +363,6 @@ export default createStore({
         [RESET_PROGRESS]: resetProgressMutation,
         [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
         [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
-        [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;
