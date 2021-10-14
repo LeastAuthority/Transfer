@@ -33,7 +33,7 @@
                                        @change="validate"
                                        @ionInput="onInput"
                                        @keyup.enter="_next"
-                                       @keyup.tab="completeCodeWord"
+                                       @keypress.space="completeCodeWord"
                                        ref="code_input"
                             ></ion-input>
                             <AutoComplete></AutoComplete>
