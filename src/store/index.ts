@@ -287,10 +287,6 @@ async function alertMatchedErrorAction(this: Store<any>, {
 
 /* --- MUTATIONS --- */
 
-interface Coords {
-    x: number;
-    y: number;
-}
 function showDragElementsMutation(state: any): void {
     state.showDragElements = true;
 }
@@ -376,13 +372,7 @@ export interface AppState {
     progressETASeconds: number;
     progressTimeoutCancel: () => void | undefined;
     progressHung: boolean;
-    dragIconPos: Coords;
     showDragElements: boolean;
-}
-
-const defaultDragIconPos = {
-    x: 10000,
-    y: 10000,
 }
 
 export default createStore({

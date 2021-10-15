@@ -29,7 +29,6 @@ export default defineComponent({
 </script>
 
 <style lang="css" scoped>
-
 ion-card {
     overflow: initial;
 }
