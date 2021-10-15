@@ -1,10 +1,15 @@
-import {Action, ActionContext, createStore, Module, Store} from 'vuex'
+import {ActionContext, createStore, Store} from 'vuex'
+import {alertController, modalController} from "@ionic/vue";
+import {AlertOptions} from "@ionic/core";
+import Bowser from "bowser";
+
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
     ACCEPT_FILE,
     ALERT,
     ALERT_MATCHED_ERROR,
+    COMPLETE_CODE_WORD,
     HIDE_DRAG_ELEMENTS,
     NEW_CLIENT,
     RESET_CODE,
@@ -18,10 +23,9 @@ import {
     UPDATE_PROGRESS_ETA
 } from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
-import {alertController} from "@ionic/vue";
-import {AlertOptions} from "@ionic/core";
 import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
+import {CODE_DELIMITER, CodeCompleter} from "@/wordlist/wordlist";
 
 const MAX_FILE_SIZE_MB = 200;
 const MB = 1000 ** 2;
@@ -46,7 +50,34 @@ if (process.env['NODE_ENV'] === 'production') {
     host = 'https://wormhole.bryanchriswhite.com';
 }
 
-let client = new ClientWorker(defaultConfig);
+let client: ClientWorker;
+
+const safariNotSupportedError = Error("We plan to support Safari in future releases. Please try with a different browser.")
+const browser = Bowser.getParser(self.navigator.userAgent)
+const noop = () => {
+    console.error(safariNotSupportedError);
+};
+
+function alertIfInSafari(): boolean {
+    const browserIsProbablySafari = browser.satisfies({
+        safari: '>0'
+    });
+    if (browserIsProbablySafari) {
+        const modal = alertController.create({
+            header: 'Safari not supported :\'(',
+            message: safariNotSupportedError.message,
+            backdropDismiss: true,
+            buttons: ['OK'],
+        });
+        modal.then(m => m.present());
+    }
+    return browserIsProbablySafari || false;
+}
+
+if (!alertIfInSafari()) {
+    client = new ClientWorker(defaultConfig);
+}
+const completer = new CodeCompleter();
 
 /* --- ACTIONS --- */
 
@@ -55,6 +86,10 @@ async function newClientAction(this: Store<any>, {
     state,
     commit
 }: ActionContext<any, any>, config?: ClientConfig): Promise<void> {
+    if (alertIfInSafari()) {
+        return;
+    }
+
     // TODO: something better.
     let _config = config;
     if (typeof (config) === 'undefined') {
@@ -74,6 +109,10 @@ async function sendFileAction(this: Store<any>, {
     commit,
     dispatch
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
+    if (alertIfInSafari()) {
+        return Promise.reject(safariNotSupportedError);
+    }
+
     // NB: reset code
     commit(SET_CODE, '');
 
@@ -131,6 +170,10 @@ Please select a smaller file.`,
 async function saveFileAction(this: Store<any>, {
     state, commit, dispatch
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
+    if (alertIfInSafari()) {
+        return Promise.reject(safariNotSupportedError);
+    }
+
     const opts = {
         progressFunc: (sentBytes: number, totalBytes: number) => {
             // TODO: refactor
@@ -254,6 +297,20 @@ function showDragElementsMutation(state: any): void {
 
 function hideDragElementsMutation(state: any): void {
     state.showDragElements = false;
+
+function completeCodeWordMutation(state: any): void {
+    const codeParts = state.code.split(CODE_DELIMITER);
+    const partialWordIndex = codeParts.length-1;
+    if (state.suggestedWord.startsWith(codeParts[partialWordIndex])) {
+        // Replace last (incomplete) word `codeWord`
+        codeParts.splice(partialWordIndex, 1, state.suggestedWord);
+        state.code = codeParts.join(CODE_DELIMITER);
+        // NB: codeParts.length includes the mailbox number
+        if (codeParts.length - 1 < DEFAULT_PROD_CLIENT_CONFIG.passPhraseComponentLength) {
+            state.code += CODE_DELIMITER;
+        }
+    }
+
 }
 
 // TODO: more specific types
@@ -280,6 +337,12 @@ function sendFileMutation(state: any, {code, cancel}: any): void {
 // TODO: be more specific with types.
 function setCodeMutation(state: any, code: string): void {
     state.code = code;
+
+    if (code[code.length - 1] === CODE_DELIMITER) {
+        state.suggestedWord = '';
+    } else {
+        state.suggestedWord = completer.nearestNextWord(code);
+    }
 }
 
 // TODO: be more specific with types.
@@ -358,6 +421,7 @@ export default createStore({
         [RESET_PROGRESS]: resetProgressMutation,
         [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
         [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
+        [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;

@@ -195,6 +195,12 @@ body {
     --ion-color-danger-contrast-rgb: 255, 255, 255;
     --ion-color-danger-shade: #cf3c4f;
     --ion-color-danger-tint: #ed576b;
+    --ion-color-darker-grey: #4f4f4f;
+    --ion-color-darker-grey-rgb: 79,79,79;
+    --ion-color-darker-grey-contrast: #ffffff;
+    --ion-color-darker-grey-contrast-rgb: 255,255,255;
+    --ion-color-darker-grey-shade: #464646;
+    --ion-color-darker-grey-tint: #616161;
     --ion-color-dark-grey: #6d6d6d;
     --ion-color-dark-grey-rgb: 109, 109, 109;
     --ion-color-dark-grey-contrast: #ffffff;
@@ -266,6 +272,15 @@ body {
     --ion-color-contrast-rgb: var(--ion-color-blue-contrast-rgb);
     --ion-color-shade: var(--ion-color-blue-shade);
     --ion-color-tint: var(--ion-color-blue-tint);
+}
+
+.ion-color-darker-grey {
+    --ion-color-base: var(--ion-color-darker-grey);
+    --ion-color-base-rgb: var(--ion-color-darker-grey-rgb);
+    --ion-color-contrast: var(--ion-color-darker-grey-contrast);
+    --ion-color-contrast-rgb: var(--ion-color-darker-grey-contrast-rgb);
+    --ion-color-shade: var(--ion-color-darker-grey-shade);
+    --ion-color-tint: var(--ion-color-darker-grey-tint);
 }
 
 .ion-color-dark-grey {
