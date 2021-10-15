@@ -40,28 +40,40 @@
             <ion-grid class=" ion-margin-horizontal ion-padding-horizontal">
                 <ion-row>
                     <ion-col class="footer" sizeXs="12" sizeMd="6">
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="1" sizeXs="3">
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     Security
                                 </ion-text>
                             </a>
                         </ion-col>
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="1" sizeXs="3">
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     Privacy
                                 </ion-text>
                             </a>
                         </ion-col>
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="1" sizeXs="3">
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     About Us
                                 </ion-text>
                             </a>
                         </ion-col>
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
+                        <ion-col sizeSm="2" sizeXs="3"
+                                 class="ion-hide-md-up">
+                            <a href="" target="_blank">
+                                <ion-icon :icon="logoGithub">GitHub</ion-icon>
+                            </a>
+                        </ion-col>
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="1" sizeXs="3"
+                                 class="ion-hide-md-up">
+                            <ion-icon src="/assets/logos/la-logo-2.svg"
+                               style="width: 28px; height: 28px; display: inline-block;"></ion-icon>
+                        </ion-col>
+                        <ion-col sizeLg="1" sizeMd="2" sizeSm="1" sizeXs="3"
+                                 class="ion-hide-md-down">
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     GitHub
@@ -69,7 +81,8 @@
                             </a>
                         </ion-col>
                     </ion-col>
-                    <ion-col sizeXs="12" sizeMd="6" class="made-with-love flex ion-justify-content-end">
+                    <ion-col sizeMd="6"
+                             class="made-with-love ion-hide-md-down flex ion-justify-content-end">
                         <ion-text color="dark-grey">
                             made with love for privacy by
                         </ion-text>
@@ -196,6 +209,14 @@ ion-icon.nav {
     cursor: pointer;
 }
 
+.footer ion-icon {
+    font-size: 19px;
+}
+
+.footer a {
+    color: inherit;
+}
+
 .footer > ion-col {
     margin-right: calc(var(--spacing-interval) * 2);
 }
@@ -279,7 +300,7 @@ import {
     IonText,
     IonFooter
 } from "@ionic/vue";
-import {sendOutline, sendSharp} from 'ionicons/icons';
+import {logoGithub, sendSharp} from 'ionicons/icons';
 import Send from "@/views/Send.vue";
 import Receive from "@/views/Receive.vue";
 import {RouterView} from "vue-router";
@@ -336,6 +357,7 @@ export default defineComponent({
     setup() {
         return {
             SendStep,
+            logoGithub,
         }
     }
 })
