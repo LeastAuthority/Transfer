@@ -293,6 +293,7 @@ function showDragElementsMutation(state: any): void {
 
 function hideDragElementsMutation(state: any): void {
     state.showDragElements = false;
+}
 
 function completeCodeWordMutation(state: any): void {
     const codeParts = state.code.split(CODE_DELIMITER);
@@ -306,7 +307,6 @@ function completeCodeWordMutation(state: any): void {
             state.code += CODE_DELIMITER;
         }
     }
-
 }
 
 // TODO: more specific types
