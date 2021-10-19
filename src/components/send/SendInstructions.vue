@@ -4,7 +4,7 @@
         <ion-card-header>
             <ion-card-title>
                 <ion-text class="bold" color="dark-grey">
-                    Ready to send from your device!
+                    Ready to send!
                 </ion-text>
             </ion-card-title>
         </ion-card-header>

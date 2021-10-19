@@ -148,6 +148,8 @@ ion-card {
 
     --header-margin-left: calc(var(--card-margin) + var(--card-padding) + 16px);
     --header-margin-right: calc(var(--card-margin) + var(--card-padding) + 4px);
+
+    --spacing-interval: 15px;
 }
 
 h1.party-popper {
@@ -195,6 +197,14 @@ ion-icon.nav {
     cursor: pointer;
 }
 
+.footer > ion-col {
+    margin-right: calc(var(--spacing-interval) * 2);
+}
+
+.footer > ion-col:last-child {
+    margin-right: initial;
+}
+
 .la-logo {
     background-image: url("/assets/logos/la-logo.svg");
     width: 143px;
@@ -235,6 +245,10 @@ ion-icon.nav {
     .footer {
         order: 1;
         text-align: center;
+    }
+
+    .footer > ion-col {
+        margin-right: var(--spacing-interval);
     }
 
     .made-with-love.ion-justify-content-end {
