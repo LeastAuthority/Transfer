@@ -40,7 +40,7 @@
                     </ion-button>
                 </div>
             </DropZone>
-            <ion-button class="ion-hide-md-up ion-margin-bottom"
+            <ion-button class="ion-hide-sm-up ion-margin-bottom"
                         color="medium-grey"
                         @click="() => select()"
             >
