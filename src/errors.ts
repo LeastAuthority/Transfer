@@ -57,7 +57,8 @@ export const ErrRelay = new AlertError({
 
 export const ErrInterrupt = new AlertError({
     name: 'Network trouble?',
-    message: 'There was an issue with either your or the receiver\'s connection. Please try again with a new code.',
+    message: '<p>There was an issue with either your or the receiver\'s connection.</p> 
+    <p>Please try again with a new code.</p>',
     pattern: '(^failed to read: WebSocket closed: unclean connection.*status = StatusAbnormalClosure.*reason = ""$)|(.*$transitRelayURL.*)',
 })
 
