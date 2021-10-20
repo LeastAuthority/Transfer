@@ -68,11 +68,6 @@ yarn serve:worker
 ```
 
 Serve the app:
-Build the wormhole-william into WASM:
-
-```
-yarn build:wasm
-```
 
 ```
 yarn run serve
