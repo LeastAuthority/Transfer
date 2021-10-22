@@ -40,14 +40,10 @@
                     </ion-button>
                 </div>
             </DropZone>
-            <ion-button class="ion-hide-sm-up ion-margin-bottom"
+            <ion-button class="large-button ion-margin-bottom"
                         color="medium-grey"
-                        @click="() => select()"
-            >
-                <ion-icon slot="start" :icon="add"></ion-icon>
-                <ion-text slot="end">
-                    Select any file up to 4GB
-                </ion-text>
+                        @click="() => select()">
+                <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>
             </ion-button>
         </ion-card-content>
     </div>
