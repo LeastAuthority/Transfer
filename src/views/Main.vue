@@ -43,7 +43,7 @@
                         <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
                             <a href="" target="_blank">
                                 <ion-text color="black">
-                                    Security
+                                    FAQ
                                 </ion-text>
                             </a>
                         </ion-col>
