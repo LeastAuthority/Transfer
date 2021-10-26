@@ -157,14 +157,6 @@ ion-icon.nav {
     cursor: pointer;
 }
 
-.footer > ion-col {
-    margin-right: calc(var(--spacing-interval) * 2);
-}
-
-.footer > ion-col:last-child {
-    margin-right: initial;
-}
-
 .bg {
     z-index: -100;
     overflow: hidden;
