@@ -108,8 +108,6 @@ ion-card {
 
     --header-margin-left: calc(var(--card-margin) + var(--card-padding) + 16px);
     --header-margin-right: calc(var(--card-margin) + var(--card-padding) + 4px);
-
-    --spacing-interval: 15px;
 }
 
 h1.party-popper {

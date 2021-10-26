@@ -2,7 +2,7 @@
     <ion-footer class="ion-no-border">
         <ion-grid>
             <ion-row class="ion-align-items-center">
-                <ion-col class="footer ion-padding" sizeXs="12" sizeMd="6">
+                <ion-col class="footer" sizeXs="12" sizeMd="6">
                     <ion-row>
                         <ion-col size="3">
                             <a href="" target="_blank">
@@ -82,8 +82,12 @@ export default {
 }
 
 @media screen and (max-width: 767px) {
+    .footer {
+        margin-bottom: var(--md-margin);
+    }
+
     .footer > ion-col {
-        margin-right: var(--spacing-interval);
+        margin-right: var(--md-margin);
     }
 
     .made-with-love.ion-justify-content-end {
