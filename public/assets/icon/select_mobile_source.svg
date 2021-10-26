@@ -43,65 +43,50 @@
      id="namedview94"
      showgrid="false"
      inkscape:zoom="4.1703042"
-     inkscape:cx="79.511586"
-     inkscape:cy="94.780441"
+     inkscape:cx="76.769251"
+     inkscape:cy="115.63661"
      inkscape:window-x="1280"
      inkscape:window-y="38"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg92"
      inkscape:document-rotation="0" />
   <g
-     id="g1186"
-     transform="translate(0,7.2999739)">
-    <g
-       style="fill:none"
-       id="g114"
-       transform="matrix(0.63754888,0,0,0.63754888,51.41056,14.03241)">
-      <path
-         d="M 37,0.98291 V 74.9345"
-         stroke="#000000"
-         stroke-width="4"
-         id="path100" />
-      <line
-         x1="0.0244141"
-         y1="37.958698"
-         x2="73.975998"
-         y2="37.958698"
-         stroke="#000000"
-         stroke-width="4"
-         id="line102" />
-    </g>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;line-height:1.25;font-family:sans-serif;word-spacing:0px"
-       x="5.4757891"
-       y="-41.060719"
-       id="text16"><tspan
-         sodipodi:role="line"
-         id="tspan14"
-         x="5.4757891"
-         y="-41.060719" /></text>
-    <text
-       xml:space="preserve"
-       style="font-size:20px;line-height:1.25;font-family:sans-serif;word-spacing:0px"
-       x="45.350052"
-       y="92.762962"
-       id="text94"><tspan
-         sodipodi:role="line"
-         id="tspan92"
-         x="45.350052"
-         y="92.762962"
-         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:20px;font-family:Poppins;-inkscape-font-specification:'Poppins Light';fill:#000000">select</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;line-height:1.25;font-family:sans-serif;word-spacing:0px"
-       x="23.094124"
-       y="118.64499"
-       id="text94-7"><tspan
-         sodipodi:role="line"
-         id="tspan92-5"
-         x="23.094124"
-         y="118.64499"
-         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:12px;font-family:Poppins;-inkscape-font-specification:'Poppins Light';fill:#000000">any file up to 4GB</tspan></text>
+     style="fill:none"
+     id="g114"
+     transform="translate(37.999794,24.274235)">
+    <path
+       d="M 37,0.98291 V 74.9345"
+       stroke="#000000"
+       stroke-width="4"
+       id="path100" />
+    <line
+       x1="0.0244141"
+       y1="37.958698"
+       x2="73.975998"
+       y2="37.958698"
+       stroke="#000000"
+       stroke-width="4"
+       id="line102" />
   </g>
+  <text
+     xml:space="preserve"
+     style="font-size:40px;line-height:1.25;font-family:sans-serif;word-spacing:0px"
+     x="5.4757891"
+     y="-41.060719"
+     id="text16"><tspan
+       sodipodi:role="line"
+       id="tspan14"
+       x="5.4757891"
+       y="-41.060719" /></text>
+  <text
+     xml:space="preserve"
+     style="font-size:20px;line-height:1.25;font-family:sans-serif;word-spacing:0px"
+     x="19.200151"
+     y="128.645"
+     id="text94"><tspan
+       sodipodi:role="line"
+       id="tspan92"
+       x="19.200151"
+       y="128.645"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:20px;font-family:Poppins;-inkscape-font-specification:'Poppins Light';fill:#000000">select a file</tspan></text>
 </svg>
