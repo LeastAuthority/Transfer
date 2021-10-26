@@ -35,8 +35,9 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
+            <Footer class="ion-hide-sm-up"></Footer>
         </ion-content>
-        <Footer></Footer>
+        <Footer class="ion-hide-sm-down"></Footer>
     </ion-page>
 </template>
 
