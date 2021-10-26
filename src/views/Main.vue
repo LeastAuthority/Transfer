@@ -243,7 +243,6 @@ ion-icon.nav {
 
 @media screen and (max-width: 767px) {
     .footer {
-        order: 1;
         text-align: center;
     }
 
