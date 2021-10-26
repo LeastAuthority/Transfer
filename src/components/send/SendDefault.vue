@@ -40,7 +40,7 @@
                     </ion-button>
                 </div>
             </DropZone>
-            <ion-button class="large-button ion-margin-bottom"
+            <ion-button class="large-button ion-margin-bottom ion-hide-sm-up"
                         color="medium-grey"
                         @click="() => select()">
                 <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>
