@@ -70,7 +70,7 @@
                         </ion-col>
                     </ion-col>
                     <ion-col sizeXs="12" sizeMd="6" class="made-with-love flex ion-justify-content-end">
-                        <ion-text color="dark-grey">
+                        <ion-text color="dark-grey" class="ion-hide-sm-down">
                             made with love for privacy by
                         </ion-text>
                         <div class="la-logo"></div>
