@@ -23,7 +23,7 @@ describe('Cancellation', () => {
 
     describe('Send-side cancellation', () => {
         it('should do things', async () => {
-            const readLimit = 1024 * 8; // 16 KiB
+            const readLimit = 1024 * 16; // 16 KiB
             const sender = new Client();
             const file = NewTestFile(filename, testFileSize);
             const {code, cancel, done} = await sender.sendFile(file as unknown as File);
@@ -53,9 +53,9 @@ describe('Cancellation', () => {
                 expect(readByteCount).toEqual(readLimit);
 
                 try {
-                const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
-                await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
-                await expect(done).rejects.toThrow('context cancelled');
+                    const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
+                    await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
+                    await expect(done).rejects.toThrow('context cancelled');
                 } catch (error) {
                     reject(error);
                 }
@@ -97,7 +97,7 @@ describe('Cancellation', () => {
             expect(readByteCount).toEqual(readLimit);
 
 
-            const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
+            const buffer = new Uint8Array(new ArrayBuffer(1024 * 20));
             await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF')
 
             // Send-side should be cancelled as well.
