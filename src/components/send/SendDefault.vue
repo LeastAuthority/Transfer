@@ -17,28 +17,34 @@
             </ion-card-subtitle>
         </ion-card-header>
         <ion-card-content class="ion-text-center">
-                <DropZone :select="select">
-                    <div>
-                        <div class="flex-col ion-margin-vertical">
-                            <ion-text color="dark-grey" class="bold">
-                                Drag & drop any file
-                            </ion-text>
-                            <ion-text color="dark-grey" style="font-weight: 400;">
-                                up to 4GB
-                            </ion-text>
-                        </div>
-                        <div class="ion-margin-bottom">
-                            <ion-text color="dark-grey" class="bold">
-                                or
-                            </ion-text>
-                        </div>
-                        <ion-button class="large-button ion-margin-vertical"
-                                    color="medium-grey"
-                                    @click="() => select()">
-                            <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
-                        </ion-button>
+            <DropZone class="ion-hide-sm-down"
+                      :select="select">
+                <div>
+                    <div class="flex-col ion-margin-vertical">
+                        <ion-text color="dark-grey" class="bold">
+                            Drag & drop any file
+                        </ion-text>
+                        <ion-text color="dark-grey" style="font-weight: 400;">
+                            up to 4GB
+                        </ion-text>
                     </div>
-                </DropZone>
+                    <div class="ion-margin-bottom">
+                        <ion-text color="dark-grey" class="bold">
+                            or
+                        </ion-text>
+                    </div>
+                    <ion-button class="large-button ion-margin-vertical"
+                                color="medium-grey"
+                                @click="() => select()">
+                        <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
+                    </ion-button>
+                </div>
+            </DropZone>
+            <ion-button class="large-button ion-margin-bottom ion-hide-sm-up"
+                        color="medium-grey"
+                        @click="() => select()">
+                <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>
+            </ion-button>
         </ion-card-content>
     </div>
     <!--    </transition>-->
