@@ -64,7 +64,7 @@
 }
 
 .transfer-text {
-    font-size: 36px;
+    font-size: 2rem;
     margin: 0 0 0 var(--main-left-margin);
 }
 
