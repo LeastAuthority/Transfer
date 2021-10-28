@@ -60,7 +60,7 @@
 }
 
 .transfer-text {
-    font-size: 36px;
+    font-size: 2rem;
     margin: 0 0 0 var(--main-left-margin);
 }
 
@@ -156,6 +156,10 @@ ion-icon.nav {
         clip-path: circle(85vw);
         left: -50vw;
         width: 150vw;
+    }
+
+    .transfer-text {
+        font-size: 1.7rem;
     }
 }
 </style>

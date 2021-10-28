@@ -56,8 +56,6 @@ ion-card-title {
 }
 
 ion-card-subtitle {
-//margin-left: var(--md-margin); margin-right: var(--md-margin);
-
     font-size: 14px;
     font-weight: 500;
 }
