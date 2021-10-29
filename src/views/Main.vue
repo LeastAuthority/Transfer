@@ -99,6 +99,7 @@ ion-card {
 }
 
 :root {
+    --main-margin: 2.5rem;
     --max-width: 1100px;
     --sm-margin: 8px;
     --md-margin: calc(2 * var(--sm-margin));

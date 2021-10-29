@@ -2,40 +2,43 @@
     <ion-footer class="ion-no-border">
         <ion-grid>
             <ion-row class="ion-align-items-center">
-                <ion-col class="footer" sizeXs="12" sizeMd="6">
-                    <ion-row>
-                        <ion-col size="3">
+                <ion-col class="footer flex" size="5">
+                    <div class="links flex">
+                        <div>
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     FAQ
                                 </ion-text>
                             </a>
-                        </ion-col>
-                        <ion-col size="3">
+                        </div>
+                        <div>
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     Privacy
                                 </ion-text>
                             </a>
-                        </ion-col>
-                        <ion-col size="3">
+                        </div>
+                        <div>
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     About Us
                                 </ion-text>
                             </a>
-                        </ion-col>
-                        <ion-col size="3">
+                        </div>
+                        <div>
                             <a href="" target="_blank">
                                 <ion-text color="black">
                                     GitHub
                                 </ion-text>
                             </a>
-                        </ion-col>
-                    </ion-row>
+                        </div>
+                    </div>
+                    <div class="mobile-la-logo flex ion-justify-content-center">
+                        <div class="la-logo"></div>
+                    </div>
                 </ion-col>
-                <ion-col sizeXs="12" sizeMd="6" class="made-with-love flex ion-justify-content-end">
-                    <ion-text color="dark-grey" class="ion-hide-sm-down">
+                <ion-col class="made-with-love-container flex ion-justify-content-end">
+                    <ion-text color="dark-grey" class="made-with-love">
                         made with love for privacy by
                     </ion-text>
                     <div class="la-logo"></div>
@@ -81,17 +84,60 @@ export default {
     text-align: center;
 }
 
-@media screen and (max-width: 767px) {
+.links > * {
+    margin-right: 1rem;
+}
+
+@media screen and (max-width: 716px) {
     .footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex-basis: 100% !important;
+
+        justify-content: center;
+    }
+
+    .links {
+        justify-content: center;
+    }
+
+    .made-with-love-container {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 716px) {
+    .mobile-la-logo {
+        display: none;
+    }
+
+    .links:first-child {
+        margin-left: var(--main-margin);
+    }
+
+    .made-with-love-container:last-child {
+        margin-right: var(--main-margin);
+    }
+}
+
+@media screen and (max-width: 448px) {
+    .links {
         margin-bottom: var(--md-margin);
     }
 
-    .footer > ion-col {
-        margin-right: var(--md-margin);
+    .made-with-love-container {
+        display: flex;
+        justify-content: center !important;
     }
 
-    .made-with-love.ion-justify-content-end {
-        justify-content: center !important;
+    .mobile-la-logo {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 359px) {
+    .made-with-love {
+        display: none;
     }
 }
 
