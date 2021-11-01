@@ -26,7 +26,7 @@ describe('Cancellation', () => {
     //         const readLimit = 1024 * 8; // 8 KiB
     //         const sender = new Client();
     //         const file = NewTestFile(filename, testFileSize);
-    //         const {code, cancel, done} = await sender.sendFile(file as unknown as File);
+    //         const {code, cancel, senderDone} = await sender.sendFile(file as unknown as File);
 
     //         const receiver = new Client();
     //         const reader = await receiver.recvFile(code);
@@ -51,6 +51,7 @@ describe('Cancellation', () => {
     //         expect(readByteCount).toEqual(readLimit);
     //         cancel();
     //         console.log('[test] cancelled by the sender')
+    //         // expect(senderDone).rejects.toThrow('context cancelled');
 
     //         const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
     //         await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
