@@ -81,8 +81,8 @@ describe('Cancellation', () => {
             for (let n = 0, done = false; !done;) {
                 const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
                 try {
-		    let otherDone;
-                    [n, otherDone] = await reader.read(buffer);
+        	    let rxDone;
+                    [n, rxDone] = await reader.read(buffer);
                     result.set(buffer.slice(0, n), readByteCount);
                     readByteCount += n;
 
@@ -95,17 +95,17 @@ describe('Cancellation', () => {
             }
 
             expect(readByteCount).toEqual(readLimit);
-	    reader.cancel!();
-	    console.log('[test] cancelled reader')
+            reader.cancel!();
+            console.log('[test] cancelled reader')
 
             const buffer = new Uint8Array(new ArrayBuffer(1024 * 20));
             await expect(reader.read(buffer)).rejects.toEqual("context canceled")
 
-		console.log("this didn't make it fail");
+            console.log("this didn't make it fail");
 
             // Send-side should be cancelled as well.
             // TODO: use `toThrow(<err msg>)`
-            //await expect(done).rejects.toBeDefined();
+            await expect(done).rejects.toEqual("failed to read: WebSocket closed: status = StatusAbnormalClosure and reason = \"\"");
 
         });
     })
