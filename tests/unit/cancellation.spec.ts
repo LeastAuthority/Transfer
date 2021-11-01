@@ -85,10 +85,10 @@ describe('Cancellation', () => {
             // const readByteCount = await reader.readAll(result)
 
             let readByteCount = 0;
-            for (let n = 0, done = false; !done;) {
+            let rxDone = false;
+            for (let n = 0, rxDone = false; !rxDone;) {
                 const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
                 try {
-        	    let rxDone;
                     [n, rxDone] = await reader.read(buffer);
                     result.set(buffer.slice(0, n), readByteCount);
                     readByteCount += n;
@@ -107,8 +107,6 @@ describe('Cancellation', () => {
 
             const buffer = new Uint8Array(new ArrayBuffer(1024 * 20));
             await expect(reader.read(buffer)).rejects.toEqual("context canceled")
-
-            console.log("this didn't make it fail");
 
             // Send-side should be cancelled as well.
             // TODO: use `toThrow(<err msg>)`
