@@ -2,8 +2,8 @@
     <ion-footer class="ion-no-border">
         <ion-grid>
             <ion-row class="ion-align-items-center">
-                <ion-col class="footer flex" size="5">
-                    <div class="links flex">
+                <ion-col class="footer flex">
+                    <div class="links flex ion-justify-content-around">
                         <div>
                             <a href="" target="_blank">
                                 <ion-text color="black">
@@ -80,8 +80,19 @@ export default {
     background-size: 140px;
 }
 
+.made-with-love-container {
+    flex: 0 0 362px;
+    width: 362px;
+    max-width: 362px;
+}
+
 .footer {
     text-align: center;
+}
+
+.links {
+    width: 100%;
+    max-width: 380px;
 }
 
 .links > * {
@@ -97,37 +108,38 @@ export default {
         justify-content: center;
     }
 
-    .links {
-        justify-content: center;
-    }
-
     .made-with-love-container {
         display: none;
     }
 }
 
-@media screen and (min-width: 716px) {
+.links {
+    margin-left: var(--main-margin);
+}
+
+.la-logo, .mobile-la-logo {
+    margin-right: calc(var(--main-margin) / 3);
+}
+
+@media screen and (min-width: 717px) {
     .mobile-la-logo {
         display: none;
     }
-
-    .links:first-child {
-        margin-left: var(--main-margin);
-    }
-
-    .made-with-love-container:last-child {
-        margin-right: var(--main-margin);
-    }
 }
 
-@media screen and (max-width: 448px) {
+@media screen and (max-width: 474px) {
     .links {
         margin-bottom: var(--md-margin);
+        justify-content: space-between !important;
+        margin-right: var(--main-margin);
     }
 
     .made-with-love-container {
         display: flex;
         justify-content: center !important;
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: 100%;
     }
 
     .mobile-la-logo {
@@ -135,7 +147,14 @@ export default {
     }
 }
 
-@media screen and (max-width: 359px) {
+@media screen and (max-width: 346px) {
+    .links {
+        margin-left: calc(var(--main-margin) / 2);
+        margin-right: calc(var(--main-margin) / 2);
+    }
+}
+
+@media screen and (max-width: 387px) {
     .made-with-love {
         display: none;
     }
