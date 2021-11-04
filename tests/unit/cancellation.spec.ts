@@ -21,55 +21,41 @@ describe('Cancellation', () => {
     const testFileSize = 1024 * 256 // 256 KiB
     const testBufferSize = 1024 * 4
 
-    // describe('Send-side cancellation', () => {
-    //     it('should do things', async () => {
-    //         const readLimit = 1024 * 8; // 8 KiB
-    //         const sender = new Client();
-    //         const file = NewTestFile(filename, testFileSize);
-    //         const {code, cancel, senderDone} = await sender.sendFile(file as unknown as File);
+    describe('Send-side cancellation', () => {
+        it('should do things', async () => {
+            const readLimit = 1024 * 4; // 8 KiB
+            const sender = new Client();
+            const file = NewTestFile(filename, testFileSize);
+            const {code, cancel, done} = await sender.sendFile(file as unknown as File);
+            const receiver = new Client();
+            const reader = await receiver.recvFile(code);
+            const result = new Uint8Array(testFileSize)
 
-    //         const receiver = new Client();
-    //         const reader = await receiver.recvFile(code);
-    //         const result = new Uint8Array(testFileSize)
+            let readByteCount = 0;
+            for (let n = 0, rxDone = false; !rxDone;) {
+                const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
+                try {
+                    [n, rxDone] = await reader.read(buffer);
+                    result.set(buffer.slice(0, n), readByteCount);
+                    readByteCount += n;
 
-    //         let readByteCount = 0;
-    //         for (let n = 0, done = false; !done;) {
-    //             const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
-    //             try {
-    //                 [n, done] = await reader.read(buffer);
-    //                 result.set(buffer.slice(0, n), readByteCount);
-    //                 readByteCount += n;
+                    if (readByteCount >= readLimit) {
+                        break;
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
 
-    //                 if (readByteCount >= readLimit) {
-    //                     break;
-    //                 }
-    //             } catch (error) {
-    //                 console.error(error);
-    //             }
-    //         }
+            cancel();
 
-    //         expect(readByteCount).toEqual(readLimit);
-    //         cancel();
-    //         console.log('[test] cancelled by the sender')
-    //         // expect(senderDone).rejects.toThrow('context cancelled');
-
-    //         const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
-    //         await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
-
-    //         // await new Promise(async (resolve, reject) => {
-    //         //     expect(readByteCount).toEqual(readLimit);
-
-    //         //     try {
-    //         //         const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
-    //         //         await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
-    //         //         await expect(done).rejects.toThrow('context cancelled');
-    //         //     } catch (error) {
-    //         //         reject(error);
-    //         //     }
-    //         //     resolve();
-    //         // });
-    //     });
-    // })
+            const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
+            expect(readByteCount).toEqual(readLimit);
+            expect(done).rejects.toThrow('context cancelled');
+            // TODO: get reader to reject with context cancellation error
+            expect(reader.read(buffer)).rejects.toThrow('context cancelled');
+        });
+    })
 
     describe('Receive-side cancellation', () => {
         it('should do things', async () => {

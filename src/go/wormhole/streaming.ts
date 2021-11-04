@@ -4,6 +4,7 @@ export interface FileReaderOpts {
     name: string;
     size: number;
     read: ReadFn;
+    cancel: () => void;
 }
 
 export class FileStreamReader {
@@ -11,7 +12,7 @@ export class FileStreamReader {
     readonly size: number;
     readonly read: ReadFn;
     readonly bufferSizeBytes: number;
-    readonly cancel: () => Promise<void>;
+    readonly cancel: () => void;
 
     constructor(bufferSizeBytes: number, opts: FileReaderOpts) {
         const {name, size, read, cancel} = opts;
