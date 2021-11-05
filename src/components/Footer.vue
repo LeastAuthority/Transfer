@@ -3,7 +3,7 @@
         <ion-grid>
             <ion-row class="ion-align-items-center">
                 <ion-col class="footer flex">
-                    <div class="links flex ion-justify-content-around">
+                    <div class="links flex ion-justify-content-between">
                         <div>
                             <a href="" target="_blank">
                                 <ion-text color="black">
@@ -81,22 +81,36 @@ export default {
 }
 
 .made-with-love-container {
-    flex: 0 0 362px;
-    width: 362px;
-    max-width: 362px;
+    flex: 0 0 357px;
+    width: 357px;
+    max-width: 357px;
 }
 
 .footer {
     text-align: center;
 }
 
+.footer {
+    padding-right: 0;
+}
+
+.made-with-love-container {
+    padding-left: 0;
+}
+
 .links {
     width: 100%;
     max-width: 380px;
+    margin-left: var(--main-margin);
+    margin-right: 4vw;
+}
+
+.la-logo, .mobile-la-logo {
+    margin-right: calc(var(--main-margin) / 3);
 }
 
 .links > * {
-    margin-right: 1rem;
+    text-align: center;
 }
 
 @media screen and (max-width: 716px) {
@@ -108,17 +122,13 @@ export default {
         justify-content: center;
     }
 
+    .links {
+        margin-right: 6vw;
+    }
+
     .made-with-love-container {
         display: none;
     }
-}
-
-.links {
-    margin-left: var(--main-margin);
-}
-
-.la-logo, .mobile-la-logo {
-    margin-right: calc(var(--main-margin) / 3);
 }
 
 @media screen and (min-width: 717px) {
