@@ -100,6 +100,7 @@ ion-card {
 
 :root {
     --main-left-margin: 2.5rem;
+    --main-right-margin: 1rem;
     --max-width: 1100px;
     --sm-margin: 8px;
     --md-margin: calc(2 * var(--sm-margin));
@@ -145,7 +146,7 @@ ion-icon.nav {
 } */
 
 .nav-button {
-    margin-right: var(--header-margin-right);
+    margin-right: var(--main-right-margin);
 }
 
 .nav-button ion-icon[rotate=true] {
