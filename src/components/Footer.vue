@@ -81,9 +81,9 @@ export default {
 }
 
 .made-with-love-container {
-    flex: 0 0 357px;
-    width: 357px;
-    max-width: 357px;
+    flex: 0 0 360px;
+    width: 360px;
+    max-width: 360px;
 }
 
 .footer {
