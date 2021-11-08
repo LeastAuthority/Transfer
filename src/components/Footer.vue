@@ -90,10 +90,6 @@ export default {
     text-align: center;
 }
 
-.footer {
-    padding-right: 0;
-}
-
 .made-with-love-container {
     padding-left: 0;
 }
@@ -160,7 +156,7 @@ export default {
 @media screen and (max-width: 346px) {
     .links {
         margin-left: calc(var(--main-left-margin) / 2);
-        margin-right: calc(var(--main-right-margin) / 2);
+        margin-right: var(--main-right-margin);
     }
 }
 
