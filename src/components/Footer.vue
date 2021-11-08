@@ -106,7 +106,7 @@ export default {
 }
 
 .la-logo, .mobile-la-logo {
-    margin-right: calc(var(--main-margin) / 3);
+    margin-right: var(--main-right-margin);
 }
 
 .links > * {
@@ -141,7 +141,7 @@ export default {
     .links {
         margin-bottom: var(--md-margin);
         justify-content: space-between !important;
-        margin-right: var(--main-margin);
+        margin-right: var(--main-right-margin);
     }
 
     .made-with-love-container {
@@ -160,7 +160,7 @@ export default {
 @media screen and (max-width: 346px) {
     .links {
         margin-left: calc(var(--main-left-margin) / 2);
-        margin-right: calc(var(--main-margin) / 2);
+        margin-right: calc(var(--main-right-margin) / 2);
     }
 }
 
