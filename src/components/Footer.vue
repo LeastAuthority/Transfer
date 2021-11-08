@@ -97,7 +97,7 @@ export default {
 .links {
     width: 100%;
     max-width: 380px;
-    margin-left: var(--main-margin);
+    margin-left: var(--main-left-margin);
     margin-right: 4vw;
 }
 
@@ -160,7 +160,7 @@ export default {
 
 @media screen and (max-width: 346px) {
     .links {
-        margin-left: calc(var(--main-margin) / 2);
+        margin-left: calc(var(--main-left-margin) / 2);
         margin-right: calc(var(--main-margin) / 2);
     }
 }
