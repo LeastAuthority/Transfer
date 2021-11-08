@@ -95,11 +95,11 @@ ion-card {
 
 .transfer-text {
     font-size: 36px;
-    margin: 0 0 0 var(--header-margin-left);
+    margin: 0 0 0 var(--main-left-margin);
 }
 
 :root {
-    --main-margin: 2.5rem;
+    --main-left-margin: 2.5rem;
     --max-width: 1100px;
     --sm-margin: 8px;
     --md-margin: calc(2 * var(--sm-margin));
