@@ -37,7 +37,7 @@
                         <div class="la-logo"></div>
                     </div>
                 </ion-col>
-                <ion-col class="made-with-love-container flex ion-justify-content-end">
+                <ion-col class="made-with-love-container flex ion-justify-content-end ion-align-items-center">
                     <ion-text color="dark-grey" class="made-with-love">
                         made with love for privacy by
                     </ion-text>
