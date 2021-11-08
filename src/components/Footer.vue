@@ -161,7 +161,7 @@ export default {
 @media screen and (max-width: 346px) {
     .links {
         margin-left: calc(var(--main-left-margin) / 2);
-        margin-right: calc(var(--main-right-margin) / 2);
+        margin-right: var(--main-right-margin);
     }
 }
 
