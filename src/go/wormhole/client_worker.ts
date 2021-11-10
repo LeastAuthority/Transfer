@@ -125,17 +125,20 @@ export default class ClientWorker implements ClientInterface {
     }
 
     private _handleSendFileResultOK({id}: RPCMessage): void {
+        console.log('client_worker.ts:127 | _handleSendFileResultOK');
         const {result: {resolve}} = this.pending[id];
         resolve();
     }
 
     private _handleSendFileResultError({id, error}: RPCMessage): void {
+        console.log('client_worker.ts:133 | _handleSendFileResultError');
         const {result: {reject}} = this.pending[id];
         reject(error);
     }
 
     private _handleFileProgress({id, sentBytes, totalBytes}: RPCMessage): void {
         const {opts} = this.pending[id];
+        console.log('.');
         if (typeof (opts) === 'undefined' || typeof (opts.progressFunc) === 'undefined') {
             return;
         }
@@ -175,9 +178,21 @@ export default class ClientWorker implements ClientInterface {
     }
 
     public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
+        console.log("in client worker sendFile");
         await this.ready;
         const id = Date.now()
         const buffer = await file.arrayBuffer();
+        // const done = new Promise<void>((resolve, reject) => {
+        //     this.pending[id] = {
+        //         ...this.pending[id],
+        //         opts,
+        //         result: {
+        //             resolve,
+        //             reject,
+        //         }
+        //     };
+        // })
+
         const done: Promise<void> = new Promise((resolve, reject) => {
             this.pending[id].done = {resolve, reject};
         });
@@ -193,6 +208,7 @@ export default class ClientWorker implements ClientInterface {
                     resolve({code, cancel, done});
                 })
                 .catch((reason) => {
+                    console.log(reason);
                     reject(reason);
                 })
         });
