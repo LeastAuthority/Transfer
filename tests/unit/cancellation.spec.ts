@@ -50,10 +50,8 @@ describe('Cancellation', () => {
                 }
             }
 
-            console.log(senderObj.cancel);
             try {
                 senderObj.cancel();
-                console.log('[test] cancelled by the sender');
             } catch (error) {
                 console.log("ERROR");
                 console.error(error);
@@ -104,7 +102,7 @@ describe('Cancellation', () => {
             console.log('[test] cancelled reader')
 
             const buffer = new Uint8Array(new ArrayBuffer(1024 * 20));
-            await expect(reader.read(buffer)).rejects.toEqual("context canceled")
+            await expect(reader.read(buffer)).rejects.toBe("context canceled")
 
             // // Send-side should be cancelled as well.
             // // TODO: use `toThrow(<err msg>)`
