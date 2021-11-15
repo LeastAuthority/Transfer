@@ -46,6 +46,14 @@ describe('CodeCompleter', () => {
             expect(actualAmbiguous).toEqual('');
             expect(actualUnambiguous).toEqual(expectedNearestWord);
         })
+
+        it('returns empty string on no match', () => {
+            const testPartialCode = '7-gun';
+            const expectedNearestWord = '';
+
+            const actual = completer.nearestNextWord(testPartialCode);
+            expect(actual).toEqual(expectedNearestWord);
+        })
     })
 })
 
