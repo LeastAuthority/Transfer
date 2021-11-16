@@ -1,6 +1,6 @@
 <template>
     <!--        <transition name="slide-right">-->
-    <CardModal>
+    <ion-card>
         <ReceiveDefault
                 :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
@@ -23,7 +23,8 @@
                 :active="onStep(ReceiveStep.Complete)"
                 :next="nextFrom(ReceiveStep.Complete)"
         ></ReceiveComplete>
-    </CardModal>
+        <Version></Version>
+    </ion-card>
     <!--        </transition>-->
 </template>
 
@@ -35,7 +36,7 @@ import {clipboardOutline} from 'ionicons/icons'
 import {defineComponent, Transition} from 'vue';
 
 import router from '@/router/index.ts'
-import CardModal from "@/components/CardModal.vue";
+import Version from "@/components/Version.vue";
 import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
 import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
@@ -107,7 +108,7 @@ export default defineComponent({
         },
     },
     components: {
-        CardModal,
+        Version,
         ReceiveDefault,
         ReceiveConsent,
         ReceiveProgress,

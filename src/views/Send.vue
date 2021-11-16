@@ -1,6 +1,6 @@
 <template>
     <!--    <transition name="slide-left">-->
-    <CardModal>
+    <ion-card>
         <SendDefault
                 :active="onStep(SendStep.Default)"
                 :select="select"
@@ -23,7 +23,8 @@
                class="ion-hide"
                @change="fileChanged"
         />
-    </CardModal>
+        <Version></Version>
+    </ion-card>
     <!--    </transition>-->
 </template>
 
@@ -63,7 +64,7 @@ import {ReceiveStep, SendStep} from "@/types";
 import {RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
 import {mapActions, mapMutations} from "vuex";
 
-import CardModal from '@/components/CardModal.vue';
+import Version from '@/components/Version.vue';
 import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
@@ -173,7 +174,7 @@ export default defineComponent({
     },
     components: {
         // Transition,
-        CardModal,
+        Version,
         SendDefault,
         SendInstructions,
         SendProgress,

@@ -1,23 +1,19 @@
 <template>
-    <ion-card>
-        <slot></slot>
-        <div class="version">
-            <ion-text color="dark-grey">
-                {{ version }}
-            </ion-text>
-        </div>
-    </ion-card>
+    <div class="version">
+        <ion-text color="dark-grey">
+            {{ version }}
+        </ion-text>
+    </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
-import {IonCard, IonText} from "@ionic/vue";
+import {IonText} from "@ionic/vue";
 import version from "@/version";
 
 export default defineComponent({
-    name: "CardModal",
+    name: "Version",
     components: {
-        IonCard,
         IonText,
     },
     setup() {
@@ -29,11 +25,7 @@ export default defineComponent({
 </script>
 
 <style lang="css" scoped>
-ion-card {
-    overflow: initial;
-}
-
-ion-card > .version {
+.version {
     position: absolute;
     bottom: 0;
     right: 0;
