@@ -13,7 +13,7 @@ beforeAll(async () => {
     });
 })
 
-describe.skip('Cancellation', () => {
+describe('Cancellation', () => {
     const filename = 'sequential.txt';
     const testFileSize = 1024 * 256 // 256 KiB
     const testBufferSize = 1024 * 4

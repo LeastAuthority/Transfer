@@ -226,7 +226,7 @@ export default class ClientWorker implements ClientInterface {
     public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
         await this.ready;
         const id = Date.now()
-        const buffer = await file.arrayBuffer();
+        // const buffer = await file.arrayBuffer();
         const doneProxy = new Promise<void>((resolve, reject) => {
             this.pending[id] = {
                 ...this.pending[id],
@@ -239,11 +239,13 @@ export default class ClientWorker implements ClientInterface {
         })
         return new Promise<TransferProgress>((resolve, reject) => {
             // TODO: be more specific with types!
+            console.log(" ********************************************* ")
+            console.log(`[debug] client_worker.ts:sendFile(): ${file}`)
             this.rpc!.rpc<RPCMessage, any>(SEND_FILE, {
                 id,
-                buffer,
-                name: file.name,
-            }, [buffer])
+                file,
+                // name: file.name,
+            })
                 .then(({code}) => {
                     resolve({code, done: doneProxy});
                 })

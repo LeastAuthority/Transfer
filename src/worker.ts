@@ -36,7 +36,8 @@ let client: Client;
 const receiving: Record<number, any> = {};
 
 // TODO: be more specific about types!
-async function handleSendFile({id, name, buffer}: RPCMessage): Promise<Record<string, any>> {
+async function handleSendFile({id, file}: RPCMessage): Promise<Record<string, any>> {
+    // console.log(`[debug] ${file}`)
     const sendProgressCb = (sentBytes: number, totalBytes: number): void => {
         rpc!.rpc(SEND_FILE_PROGRESS, {
             id,
@@ -45,12 +46,13 @@ async function handleSendFile({id, name, buffer}: RPCMessage): Promise<Record<st
         });
     };
 
-    const _file = {
-        name,
-        arrayBuffer(): Promise<ArrayBuffer> {
-            return Promise.resolve(buffer);
-        }
-    };
+    // const _file = {
+    //     name,
+    //     arrayBuffer(): Promise<ArrayBuffer> {
+    //         return Promise.resolve(buffer);
+    //     }
+    // };
+    const _file = file;
 
     // TODO: change signature to expect array buffer or Uint8Array?
     return new Promise((resolve, reject) => {
