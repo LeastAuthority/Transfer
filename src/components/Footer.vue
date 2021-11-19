@@ -90,10 +90,6 @@ export default {
     text-align: center;
 }
 
-.footer {
-    padding-right: 0;
-}
-
 .made-with-love-container {
     padding-left: 0;
 }
@@ -105,7 +101,7 @@ export default {
     margin-right: 4vw;
 }
 
-.la-logo, .mobile-la-logo {
+.la-logo {
     margin-right: calc(var(--main-margin) / 3);
 }
 
@@ -124,6 +120,7 @@ export default {
 
     .links {
         margin-right: 6vw;
+        margin-left: calc(var(--main-margin) / 2);
     }
 
     .made-with-love-container {
@@ -150,6 +147,10 @@ export default {
         flex: 0 0 100%;
         width: 100%;
         max-width: 100%;
+    }
+
+    .la-logo {
+        margin-right: 0;
     }
 
     .mobile-la-logo {
