@@ -1,14 +1,11 @@
 <template>
-    <!--    <transition name="step-fade" mode="out-in">-->
-    <div v-show="active">
-        <ion-card-header>
-            <ion-card-title>
-                <ion-text color="dark-grey" class="bold">
-                    Ready to download
-                </ion-text>
-            </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
+    <Card :active="active">
+        <template #title>
+            <ion-text color="dark-grey" class="bold">
+                Ready to download
+            </ion-text>
+        </template>
+        <template #content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-margin-top">
                     <FileCard :name="fileMeta.name"
@@ -54,9 +51,8 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-        </ion-card-content>
-    </div>
-    <!--    </transition>-->
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
@@ -68,7 +64,7 @@ import {
     IonButton,
     IonIcon,
     IonProgressBar,
-    IonCardContent, IonCardHeader, IonCardTitle, IonLabel,
+    IonLabel,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
 import {mapState, mapActions, mapMutations} from 'vuex';
@@ -78,12 +74,12 @@ import router from '@/router/index.ts'
 import {
     ACCEPT_FILE,
     ALERT_MATCHED_ERROR,
-    NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
     SET_PROGRESS
 } from "@/store/actions";
 import {TransferProgress} from "@/go/wormhole/types";
+import Card from "@/components/Card.vue";
 import FileCard from "@/components/FileCard.vue";
 
 declare interface ReceiveConsentData {
@@ -123,9 +119,6 @@ export default defineComponent({
         },
     },
     components: {
-        IonCardHeader,
-        IonCardTitle,
-        IonCardContent,
         IonGrid,
         IonRow,
         IonCol,
@@ -134,6 +127,7 @@ export default defineComponent({
         IonIcon,
         IonLabel,
         IonProgressBar,
+        Card,
         FileCard,
     },
     setup() {
