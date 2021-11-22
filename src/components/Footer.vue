@@ -2,7 +2,7 @@
     <ion-footer class="ion-no-border">
         <ion-grid>
             <ion-row class="ion-align-items-center">
-                <ion-col class="footer flex">
+                <ion-col class="footer flex ion-align-items-center">
                     <div class="links flex ion-justify-content-between">
                         <div>
                             <a href="" target="_blank">
