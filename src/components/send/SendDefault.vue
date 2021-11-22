@@ -1,25 +1,26 @@
 <template>
-    <!--    <transition name="step-fade">-->
-    <div v-show="active">
-        <ion-card-header>
-            <ion-card-title class="ion-padding-top ion-padding-horizontal">
-                <ion-text class="bold" color="dark-grey">
-                    Send files in real-time
-                </ion-text>
-            </ion-card-title>
-            <ion-card-subtitle class="flex-col ion-align-items-start ion-padding-horizontal">
+    <Card :active="active">
+        <template #title>
+            <ion-text class="bold" color="dark-grey">
+                Send files in real-time
+            </ion-text>
+        </template>
+        <template #subtitle>
+            <p>
                 <ion-text color="dark-grey">
                     We don’t store – <span class="italic">and can’t read</span> – your files.  We simply transfer them.
                 </ion-text>
+            </p>
+            <p>
                 <ion-text color="dark-grey">
                     No sign-ups. No snooping. No nonsense.
                 </ion-text>
-            </ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content class="ion-text-center">
+            </p>
+        </template>
+        <template #content>
             <DropZone class="ion-hide-sm-down"
                       :select="select">
-                <div>
+                <div class="ion-text-center">
                     <div class="flex-col ion-margin-vertical">
                         <ion-text color="dark-grey" class="bold">
                             Drag & drop any file
@@ -45,47 +46,32 @@
                         @click="() => select()">
                 <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>
             </ion-button>
-        </ion-card-content>
-    </div>
-    <!--    </transition>-->
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
-import {add} from 'ionicons/icons';
-import {defineComponent, Transition} from "vue";
-
+import {defineComponent} from "vue";
 import {
     IonButton,
-    IonCardContent,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
     IonIcon,
     IonText
 } from "@ionic/vue";
 
+import Card from "@/components/Card.vue";
 import DropZone from "@/components/send/DropZone.vue";
 
 export default defineComponent({
     name: "SendDefault",
     props: ['select', 'active'],
     components: {
-        IonCardHeader,
-        IonCardTitle,
-        IonCardSubtitle,
-        IonCardContent,
         IonButton,
         IonIcon,
         IonText,
-        // Transition,
+        Card,
         DropZone,
     },
     methods: {},
-    setup() {
-        return {
-            add,
-        };
-    },
 });
 </script>
 

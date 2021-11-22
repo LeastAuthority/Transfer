@@ -58,9 +58,8 @@
 
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
-import {add} from 'ionicons/icons';
 
-import {ReceiveStep, SendStep} from "@/types";
+import {SendStep} from "@/types";
 import {RESET_PROGRESS, SEND_FILE, SET_FILE_META} from "@/store/actions";
 import {mapActions, mapMutations} from "vuex";
 
@@ -69,7 +68,6 @@ import SendDefault from '@/components/send/SendDefault.vue';
 import SendInstructions from '@/components/send/SendInstructions.vue';
 import SendProgress from "@/components/send/SendProgress.vue";
 import SendComplete from "@/components/send/SendComplete.vue";
-import DropZone from "@/components/send/DragElements.vue";
 
 declare interface SendData {
     step: SendStep;
@@ -124,7 +122,9 @@ export default defineComponent({
                 const {done} = await p
                 await done;
                 this.step = SendStep.Complete;
-            } catch {
+            } catch (err) {
+                // TODO: error handling / message
+                console.error(err);
                 // NB: error during transfer.
                 this.step = SendStep.Default;
             }
@@ -173,7 +173,6 @@ export default defineComponent({
         },
     },
     components: {
-        // Transition,
         Version,
         SendDefault,
         SendInstructions,
@@ -182,7 +181,6 @@ export default defineComponent({
     },
     setup() {
         return {
-            add,
             SendStep,
         };
     }

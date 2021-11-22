@@ -42,40 +42,6 @@
 </template>
 
 <style lang="css">
-ion-card-title {
-    margin: var(--md-margin);
-
-    font-size: 40px;
-}
-
-ion-card-subtitle {
-    margin-left: var(--md-margin);
-    margin-right: var(--md-margin);
-
-    font-size: 14px;
-    font-weight: 500;
-}
-
-ion-card-subtitle > * {
-    margin-bottom: var(--md-margin);
-}
-
-ion-card-header {
-    padding: var(--card-padding) !important;
-}
-
-ion-card-content {
-    padding: var(--card-padding) !important;
-}
-
-ion-card-content p ion-text {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-ion-card {
-    margin: var(--card-margin) !important;
-}
 
 .router-view-col {
     padding-top: 0;

@@ -1,19 +1,16 @@
 <template>
-    <!--    <transition name="step-fade" mode="out-in">-->
-    <div v-show="active">
-        <ion-card-header>
-            <ion-card-title>
-                <ion-text color="dark-grey" class="bold">
-                    Receive files in real-time
-                </ion-text>
-            </ion-card-title>
-            <ion-card-subtitle>
-                <ion-text color="dark-grey">
-                    Always end-to-end encrypted.
-                </ion-text>
-            </ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
+    <Card :active="active">
+        <template #title>
+            <ion-text color="dark-grey" class="bold">
+                Receive files in real-time
+            </ion-text>
+        </template>
+        <template #subtitle>
+            <ion-text color="dark-grey">
+                Always end-to-end encrypted.
+            </ion-text>
+        </template>
+        <template #content>
             <ion-grid>
                 <ion-row class="ion-text-center ion-justify-content-center ion-align-items-center">
                     <ion-col class="input-col"
@@ -67,9 +64,8 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-        </ion-card-content>
-    </div>
-    <!--    </transition>-->
+        </template>
+    </Card>
 </template>
 
 <style lang="css" scoped>
@@ -106,10 +102,6 @@
 
 <script lang="ts">
 import {
-    IonCardContent,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
     IonCol,
     IonGrid,
     IonInput,
@@ -125,6 +117,7 @@ import AutoComplete from "@/components/AutoComplete.vue"
 import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
 import {ErrInvalidCode} from "@/errors";
 import {CODE_REGEX} from "@/util";
+import Card from "@/components/Card.vue";
 
 const errorColor = 'warning-red';
 const exampleColor = 'dark-grey';
@@ -202,13 +195,10 @@ export default defineComponent({
         IonCol,
         IonText,
         IonInput,
-        IonCardHeader,
-        IonCardTitle,
-        IonCardSubtitle,
-        IonCardContent,
         IonSpinner,
         WaitButton,
         AutoComplete,
+        Card,
     }
 })
 </script>
