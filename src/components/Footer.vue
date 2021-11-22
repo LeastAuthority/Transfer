@@ -99,6 +99,7 @@ export default {
     max-width: 380px;
     margin-left: var(--main-left-margin);
     margin-right: 4vw;
+    font-size: .8rem;
 }
 
 .la-logo, .mobile-la-logo {

@@ -49,14 +49,20 @@ ion-card-title {
     font-size: 2.5rem;
 }
 
-@media screen and (max-width: 575px) {
+@media screen and (min-width: 500px) and (max-width: 599px) {
+    ion-card-title {
+        font-size: 2rem;
+    }
+}
+
+@media screen and (max-width: 499px) {
     ion-card-title {
         font-size: 1.35rem;
     }
 }
 
 ion-card-subtitle {
-    font-size: 14px;
+    font-size: .95rem;
     font-weight: 500;
 }
 
