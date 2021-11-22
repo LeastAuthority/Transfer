@@ -174,6 +174,11 @@ ion-icon.nav {
     }
 }
 
+@media screen and (max-width: 399px) {
+    .transfer-text {
+        font-size: 1.7rem;
+    }
+}
 </style>
 
 <script lang="ts">
