@@ -1,5 +1,5 @@
 <template>
-    <ion-card>
+    <div>
         <ReceiveDefault
                 :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
@@ -23,7 +23,7 @@
                 :next="nextFrom(ReceiveStep.Complete)"
         ></ReceiveComplete>
         <Version></Version>
-    </ion-card>
+    </div>
 </template>
 
 <style lang="css" scoped>

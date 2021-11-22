@@ -1,6 +1,5 @@
 <template>
-    <!--    <transition name="slide-left">-->
-    <ion-card>
+    <div>
         <SendDefault
                 :active="onStep(SendStep.Default)"
                 :select="select"
@@ -24,8 +23,7 @@
                @change="fileChanged"
         />
         <Version></Version>
-    </ion-card>
-    <!--    </transition>-->
+    </div>
 </template>
 
 <style scoped>

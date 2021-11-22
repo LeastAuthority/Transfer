@@ -1,7 +1,7 @@
 <template>
     <!--    <transition name="step-fade">-->
     <!--    <transition name="step-fade" mode="out-in">-->
-    <div v-show="active">
+    <ion-card v-show="active">
         <ion-card-header>
             <ion-card-title class="ion-padding-top">
                 <slot name="title"></slot>
@@ -13,12 +13,13 @@
         <ion-card-content class="flex ion-justify-content-center">
             <slot name="content"></slot>
         </ion-card-content>
-    </div>
+    </ion-card>
     <!--    </transition>-->
 </template>
 
 <script>
 import {
+    IonCard,
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
@@ -29,6 +30,7 @@ export default {
     name: "Card.vue",
     props: ['active'],
     components: {
+        IonCard,
         IonCardHeader,
         IonCardTitle,
         IonCardSubtitle,
