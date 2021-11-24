@@ -3,7 +3,7 @@
     <!--    <transition name="step-fade" mode="out-in">-->
     <ion-card v-show="active">
         <ion-card-header>
-            <ion-card-title class="ion-padding-top">
+            <ion-card-title>
                 <slot name="title"></slot>
             </ion-card-title>
             <ion-card-subtitle>
@@ -40,9 +40,13 @@ export default {
 </script>
 
 <style scoped>
-ion-card-header {
-    margin-left: calc(var(--main-left-margin) - 16px);
+:root {
+}
 
+ion-card-header {
+    margin-top: calc(2.4rem - var(--left-offset-diff));
+    margin-left: calc(var(--main-left-margin) - var(--left-offset-diff));
+    margin-right: calc(2.5rem - var(--left-offset-diff));
 }
 
 ion-card-title {

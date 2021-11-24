@@ -76,6 +76,11 @@
 
     --header-margin-left: calc(var(--card-margin) + var(--card-padding) + 16px);
     --header-margin-right: calc(var(--card-margin) + var(--card-padding) + 4px);
+    /* NB: this is the difference between the left content border
+     *  of the root grid (i.e. css selector `#app>ion-page>ion-grid`)
+     *  and the left content border of the current view's root `ion-card`.
+     */
+    --left-offset-diff: 16px;
 }
 
 h1.party-popper {
