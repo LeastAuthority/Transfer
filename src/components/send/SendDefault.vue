@@ -7,8 +7,14 @@
         </template>
         <template #subtitle>
             <p>
+                <ion-text color="dark-grey" class="ion-text-nowrap">
+                  We don’t store
+                </ion-text>
                 <ion-text color="dark-grey">
-                    We don’t store – <span class="italic">and can’t read</span> – your files.  We simply transfer them.
+                  – <span class="italic">and can’t read</span> – your files.
+                </ion-text>
+                <ion-text color="dark-grey" class="ion-text-nowrap">
+                    We simply transfer them.
                 </ion-text>
             </p>
             <p>
