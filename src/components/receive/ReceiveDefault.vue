@@ -69,10 +69,6 @@
 </template>
 
 <style lang="css" scoped>
-.relative {
-    position: relative;
-}
-
 .invalid {
     border: 1px solid var(--ion-color-warning-red);
 }

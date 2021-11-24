@@ -42,6 +42,10 @@
 </template>
 
 <style lang="css">
+.relative {
+    position: relative;
+}
+
 
 .router-view-col {
     padding-top: 0;

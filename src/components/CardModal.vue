@@ -37,8 +37,8 @@ ion-card > .version {
     position: absolute;
     bottom: 0;
     right: 0;
-    margin-right: var(--ion-margin);
-    margin-bottom: var(--ion-margin);
+    margin-right: var(--md-margin);
+    margin-bottom: var(--sm-margin);
     padding: var(--ion-padding);
     background: rgba(255, 255, 255, 0.6);
     z-index: 2000;

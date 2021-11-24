@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="relative">
         <ReceiveDefault
                 :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="relative">
         <SendDefault
                 :active="onStep(SendStep.Default)"
                 :select="select"
