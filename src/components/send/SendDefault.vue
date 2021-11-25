@@ -13,7 +13,7 @@
                 <ion-text color="dark-grey">
                   – <span class="italic">and can’t read</span> – your files.
                 </ion-text>
-                <ion-text color="dark-grey" class="ion-text-nowrap">
+                <ion-text color="dark-grey" class="conditional-wrap">
                     We simply transfer them.
                 </ion-text>
             </p>
@@ -89,5 +89,15 @@ export default defineComponent({
     flex-direction: column;
     flex-grow: 1;
 //justify-content: space-around; align-items: center;
+}
+
+.conditional-wrap {
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 435px) {
+    .conditional-wrap {
+        white-space: initial;
+    }
 }
 </style>
