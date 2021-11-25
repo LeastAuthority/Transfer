@@ -18,7 +18,11 @@
     "compose:logs:0": "bash scripts/docker-compose.sh logs -f --tail 0",
     "compose:up": "bash scripts/docker-compose.sh up",
     "compose:down": "bash scripts/docker-compose.sh down",
-    "compose:restart": "bash scripts/docker-compose.sh restart"
+    "compose:restart": "bash scripts/docker-compose.sh restart",
+    "deploy:production": "./scripts/deploy.js production && yarn uncache:production",
+    "uncache:production": "./scripts/uncache.js production",
+    "deploy:playground": "./scripts/deploy.js playground && yarn uncache:playground",
+    "uncache:playground": "./scripts/uncache.js playground"
   },
   "dependencies": {
     "@capacitor/android": "^2.4.5",
@@ -59,6 +63,7 @@
     "cypress-file-upload": "^5.0.2",
     "cypress-wait-until": "^1.7.1",
     "cypress-waitfor": "^1.1.0",
+    "dotenv": "^10.0.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "glob": "^7.1.6",
