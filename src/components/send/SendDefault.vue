@@ -24,7 +24,7 @@
             </p>
         </template>
         <template #content>
-            <DropZone class="ion-hide-sm-down"
+            <DropZone class="show-desktop"
                       :select="select">
                 <div class="ion-text-center">
                     <div class="flex-col ion-margin-vertical">
@@ -47,7 +47,7 @@
                     </ion-button>
                 </div>
             </DropZone>
-            <ion-button class="large-button ion-margin-bottom ion-hide-sm-up"
+            <ion-button class="large-button ion-margin-bottom hide-desktop"
                         color="medium-grey"
                         @click="() => select()">
                 <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>
@@ -83,6 +83,30 @@ export default defineComponent({
 
 
 <style lang="css" scoped>
+.hide-desktop {
+    display: none;
+}
+
+@media screen and (max-height: 500px) {
+    .show-desktop {
+        display: none !important;
+    }
+
+    .hide-desktop {
+        display: initial;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .show-desktop {
+        display: none !important;
+    }
+
+    .hide-desktop {
+        display: initial;
+    }
+}
+
 /* TODO: use ion- classes instead where possible */
 .flex-col {
     display: flex;

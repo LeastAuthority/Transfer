@@ -70,7 +70,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 
 .la-logo {
     background-image: url("/assets/logos/la-logo.svg");
