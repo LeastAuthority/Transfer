@@ -35,9 +35,9 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-            <Footer class="ion-hide-sm-up"></Footer>
+            <Footer class="non-sticky-footer"></Footer>
         </ion-content>
-        <Footer class="ion-hide-sm-down"></Footer>
+        <Footer class="sticky-footer"></Footer>
     </ion-page>
 </template>
 
@@ -160,7 +160,29 @@ ion-icon.nav {
     }
 }
 
+.non-sticky-footer {
+    display: none;
+}
+
+@media screen and (max-height: 635px) {
+    .sticky-footer {
+        display: none;
+    }
+
+    .non-sticky-footer {
+        display: initial;
+    }
+}
+
 @media screen and (max-width: 575px) {
+    .sticky-footer {
+        display: none;
+    }
+
+    .non-sticky-footer {
+        display: initial;
+    }
+
     .bg-circle {
         clip-path: circle(85vw);
         left: -50vw;
