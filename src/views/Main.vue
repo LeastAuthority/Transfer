@@ -35,49 +35,9 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
+            <Footer class="ion-hide-sm-up"></Footer>
         </ion-content>
-        <ion-footer class="ion-no-border">
-            <ion-grid class=" ion-margin-horizontal ion-padding-horizontal">
-                <ion-row>
-                    <ion-col class="footer" sizeXs="12" sizeMd="6">
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                            <a href="" target="_blank">
-                                <ion-text color="black">
-                                    Security
-                                </ion-text>
-                            </a>
-                        </ion-col>
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                            <a href="" target="_blank">
-                                <ion-text color="black">
-                                    Privacy
-                                </ion-text>
-                            </a>
-                        </ion-col>
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                            <a href="" target="_blank">
-                                <ion-text color="black">
-                                    About Us
-                                </ion-text>
-                            </a>
-                        </ion-col>
-                        <ion-col sizeLg="1" sizeMd="2" sizeSm="2" sizeXs="3">
-                            <a href="" target="_blank">
-                                <ion-text color="black">
-                                    GitHub
-                                </ion-text>
-                            </a>
-                        </ion-col>
-                    </ion-col>
-                    <ion-col sizeXs="12" sizeMd="6" class="made-with-love flex ion-justify-content-end">
-                        <ion-text color="dark-grey">
-                            made with love for privacy by
-                        </ion-text>
-                        <div class="la-logo"></div>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
-        </ion-footer>
+        <Footer class="ion-hide-sm-down"></Footer>
     </ion-page>
 </template>
 
@@ -119,6 +79,7 @@ ion-card {
 
 .router-view-col {
     padding-top: 0;
+    position: initial;
 }
 
 .transfer-text {
@@ -134,10 +95,12 @@ ion-card {
 
 .transfer-text {
     font-size: 36px;
-    margin: 0 0 0 var(--header-margin-left);
+    margin: 0 0 0 var(--main-left-margin);
 }
 
 :root {
+    --main-left-margin: 2.5rem;
+    --main-right-margin: 1rem;
     --max-width: 1100px;
     --sm-margin: 8px;
     --md-margin: calc(2 * var(--sm-margin));
@@ -183,7 +146,7 @@ ion-icon.nav {
 } */
 
 .nav-button {
-    margin-right: var(--header-margin-right);
+    margin-right: var(--main-right-margin);
 }
 
 .nav-button ion-icon[rotate=true] {
@@ -192,14 +155,6 @@ ion-icon.nav {
 
 .pointer {
     cursor: pointer;
-}
-
-.la-logo {
-    background-image: url("/assets/logos/la-logo.svg");
-    width: 143px;
-    height: 28px;
-    background-repeat: no-repeat;
-    background-size: 140px;
 }
 
 .bg {
@@ -230,17 +185,6 @@ ion-icon.nav {
     }
 }
 
-@media screen and (max-width: 767px) {
-    .footer {
-        order: 1;
-        text-align: center;
-    }
-
-    .made-with-love.ion-justify-content-end {
-        justify-content: center !important;
-    }
-}
-
 @media screen and (max-width: 575px) {
     .bg-circle {
         clip-path: circle(85vw);
@@ -268,6 +212,7 @@ import {
 import {sendOutline, sendSharp} from 'ionicons/icons';
 import Send from "@/views/Send.vue";
 import Receive from "@/views/Receive.vue";
+import Footer from "@/components/Footer.vue";
 import {RouterView} from "vue-router";
 import {SendStep} from "@/types";
 
@@ -318,6 +263,7 @@ export default defineComponent({
         // IonRouterOutlet,
         // IonNavLink,
         RouterView,
+        Footer,
     },
     setup() {
         return {

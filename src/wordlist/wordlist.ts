@@ -80,22 +80,22 @@ export class CodeCompleter {
         // NB: this splice drops the element containing mailbox number.
         const inputWords = partialCode.split(CODE_DELIMITER).splice(1);
         const previousWord = inputWords[inputWords.length - 2];
-        const partialWord = inputWords[inputWords.length - 1];
+        const partialWord = inputWords[inputWords.length - 1].toLowerCase();
         if (typeof (partialWord) === 'undefined') {
             return '';
         }
 
         const nextWordTree = this._wordList.nextWordTree(previousWord);
-        const iter = nextWordTree.lowerBound(partialWord.toLowerCase())
+        const iter = nextWordTree.lowerBound(partialWord)
         const word = iter.data();
 
         iter.next();
         const nextWord = iter.data();
-        if (typeof(nextWord) === 'string' && nextWord.startsWith(partialWord)) {
+        if (typeof(nextWord) === 'string' && nextWord?.startsWith(partialWord)) {
             return '';
         }
 
-        if (word === partialWord) {
+        if (word === partialWord || !word?.startsWith(partialWord)) {
             return ''
         }
         return word || '';

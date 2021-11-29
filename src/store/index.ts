@@ -8,8 +8,9 @@ import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
     ACCEPT_FILE,
     ALERT,
-    COMPLETE_CODE_WORD,
     ALERT_MATCHED_ERROR,
+    COMPLETE_CODE_WORD,
+    HIDE_DRAG_ELEMENTS,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -18,6 +19,7 @@ import {
     SET_CODE,
     SET_FILE_META,
     SET_PROGRESS,
+    SHOW_DRAG_ELEMENTS,
     UPDATE_PROGRESS_ETA
 } from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
@@ -285,6 +287,14 @@ async function alertMatchedErrorAction(this: Store<any>, {
 
 /* --- MUTATIONS --- */
 
+function showDragElementsMutation(state: any): void {
+    state.showDragElements = true;
+}
+
+function hideDragElementsMutation(state: any): void {
+    state.showDragElements = false;
+}
+
 function completeCodeWordMutation(state: any): void {
     const codeParts = state.code.split(CODE_DELIMITER);
     const partialWordIndex = codeParts.length-1;
@@ -297,7 +307,6 @@ function completeCodeWordMutation(state: any): void {
             state.code += CODE_DELIMITER;
         }
     }
-
 }
 
 // TODO: more specific types
@@ -363,6 +372,7 @@ export interface AppState {
     progressETASeconds: number;
     progressTimeoutCancel: () => void | undefined;
     progressHung: boolean;
+    showDragElements: boolean;
 }
 
 export default createStore({
@@ -386,6 +396,7 @@ export default createStore({
             progressETASeconds: 0,
             progressTimeoutCancel: undefined,
             progressHung: false,
+            showDragElements: false,
         }
     },
     mutations: {
@@ -398,6 +409,8 @@ export default createStore({
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,
         [RESET_PROGRESS]: resetProgressMutation,
+        [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
+        [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
         [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {

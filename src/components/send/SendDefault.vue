@@ -17,14 +17,12 @@
             </ion-card-subtitle>
         </ion-card-header>
         <ion-card-content class="ion-text-center">
-            <div class="flex-col drag-n-drop ion-justify-content-center"
-                 @dragover="dragOver"
-                 @drop="drop"
-            >
+            <DropZone class="ion-hide-sm-down"
+                      :select="select">
                 <div>
                     <div class="flex-col ion-margin-vertical">
                         <ion-text color="dark-grey" class="bold">
-                            drop any file
+                            Drag & drop any file
                         </ion-text>
                         <ion-text color="dark-grey" style="font-weight: 400;">
                             up to 4GB
@@ -41,7 +39,12 @@
                         <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
                     </ion-button>
                 </div>
-            </div>
+            </DropZone>
+            <ion-button class="large-button ion-margin-bottom ion-hide-sm-up"
+                        color="medium-grey"
+                        @click="() => select()">
+                <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>
+            </ion-button>
         </ion-card-content>
     </div>
     <!--    </transition>-->
@@ -61,6 +64,8 @@ import {
     IonText
 } from "@ionic/vue";
 
+import DropZone from "@/components/send/DropZone.vue";
+
 export default defineComponent({
     name: "SendDefault",
     props: ['select', 'active'],
@@ -73,22 +78,9 @@ export default defineComponent({
         IonIcon,
         IonText,
         // Transition,
+        DropZone,
     },
-    methods: {
-        drop(event: DragEvent) {
-            event.preventDefault();
-            const files = event.dataTransfer!.files;
-            if (files.length > 0) {
-                // NB: only dropping first file in list.
-                this.select(files[0]);
-            } else {
-                console.error("no files listed in drop event")
-            }
-        },
-        dragOver(event: DragEvent) {
-            event.preventDefault();
-        }
-    },
+    methods: {},
     setup() {
         return {
             add,
@@ -105,25 +97,5 @@ export default defineComponent({
     flex-direction: column;
     flex-grow: 1;
 //justify-content: space-around; align-items: center;
-}
-
-.drag-n-drop {
-    /* TODO: use css variable! */
-    min-height: 60vh;
-
-}
-
-@media screen and (max-height: 850px) {
-    .drag-n-drop {
-        /* TODO: use css variable! */
-        min-height: 50vh;
-    }
-}
-
-.drag-n-drop {
-    align-items: center;
-    border: 4px dashed #858789;
-    border-radius: 4px;
-    background-color: rgba(0, 0, 0, 0.05);
 }
 </style>
