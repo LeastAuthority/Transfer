@@ -36,7 +36,7 @@ let client: Client;
 const receiving: Record<number, any> = {};
 
 // TODO: be more specific about types!
-async function handleSendFile({id, name, file}: RPCMessage): Promise<Record<string, any>> {
+async function handleSendFile({id, file}: RPCMessage): Promise<Record<string, any>> {
     const sendProgressCb = (sentBytes: number, totalBytes: number): void => {
         rpc!.rpc(SEND_FILE_PROGRESS, {
             id,

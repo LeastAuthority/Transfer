@@ -49,7 +49,7 @@ export interface WindowClient {
 
     sendText(goClient: number, message: string): Promise<string>;
 
-    sendFile(goClient: number, fileName: string, file: File, opts?: TransferOptions): Promise<TransferProgress>;
+    sendFile(goClient: number, fileName: string, fileData: Uint8Array, opts?: TransferOptions): Promise<TransferProgress>;
 
     recvText(goClient: number, code: string): Promise<string>;
 
