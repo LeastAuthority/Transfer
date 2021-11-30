@@ -241,7 +241,6 @@ export default class ClientWorker implements ClientInterface {
             this.rpc!.rpc<RPCMessage, any>(SEND_FILE, {
                 id,
                 file,
-                name: file.name,
             })
                 .then(({code}) => {
                     resolve({code, done: doneProxy});
