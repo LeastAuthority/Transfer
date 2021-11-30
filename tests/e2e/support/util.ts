@@ -124,7 +124,7 @@ export async function mockClientReceive(code: string): Promise<Uint8Array> {
     });
 }
 
-export function NewTestFile(name: string, fileSizeBytes: number): TestFile {
+export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
     const data = new DataView(new ArrayBuffer(fileSizeBytes));
     data.buffer
     for (let i = 0; i < data.byteLength; i++) {
@@ -138,6 +138,33 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestFile {
         arrayBuffer(): ArrayBuffer {
             return data.buffer;
         },
+        slice(start: number, end: number): TestBlob {
+            var size = 0;
+            console.log(`slice(): ${start}, ${end}`);
+            if (end >= fileSizeBytes) {
+                end = fileSizeBytes;
+            }
+            size = end - start;
+            if (start >= fileSizeBytes) {
+                size = 0;
+            }
+            // const sliceData = new DataView(new ArrayBuffer(size));
+
+            // for (let i = 0; i < sliceData.byteLength; i++) {
+            //     //sliceData.setUint8(i, i + start);
+            //     //sliceData.setUint8(i, data.getUint8(i + start));
+            // }
+
+            var sliceData = new Uint8Array(data.buffer).subarray(start, end);
+            return {
+                size: size;
+                data: sliceData;
+                // data: new Uint8Array(data.buffer).subarray(start, end);
+                arrayBuffer(): Promise<ArrayBuffer> {
+                    return Promise.resolve(sliceData.buffer);
+                }
+            }
+        }
     }
 }
 
@@ -146,6 +173,12 @@ export interface TestFile {
     size: number;
     data: DataView;
 
+    arrayBuffer(): ArrayBuffer;
+}
+
+export interface TestBlob {
+    size: number;
+    data: DataView;
     arrayBuffer(): ArrayBuffer;
 }
 
