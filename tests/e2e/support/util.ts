@@ -8,7 +8,6 @@ export const TEST_DOWNLOAD_DIR = 'cypress/downloads'
 
 // TODO: move / automate
 export const TEST_HOST = 'http://localhost:8080'
-const TEST_BUFFER_SIZE = 1024 * 4 // 4 KiB
 
 export function mobileViewport() {
     cy.viewport('samsung-note9', 'portrait')
@@ -135,8 +134,8 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
         name,
         size: fileSizeBytes,
         data,
-        arrayBuffer(): ArrayBuffer {
-            return data.buffer;
+        arrayBuffer(): Promise<ArrayBuffer> {
+            return Promise.resolve(data.buffer);
         },
         slice(start: number, end: number): TestBlob {
             var size = 0;
@@ -148,20 +147,16 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
             if (start >= fileSizeBytes) {
                 size = 0;
             }
-            // const sliceData = new DataView(new ArrayBuffer(size));
 
-            // for (let i = 0; i < sliceData.byteLength; i++) {
-            //     //sliceData.setUint8(i, i + start);
-            //     //sliceData.setUint8(i, data.getUint8(i + start));
-            // }
-
-            var sliceData = new Uint8Array(data.buffer).subarray(start, end);
+            var sliceData = new Uint8Array(data.buffer).subarray(start, start+size);
+            console.log(`start: ${start}, end: ${end}`);
+            // console.log(`sliceData: ${sliceData}`, `length of sliceData: ${sliceData.byteLength}`)
             return {
                 size: size;
                 data: sliceData;
-                // data: new Uint8Array(data.buffer).subarray(start, end);
                 arrayBuffer(): Promise<ArrayBuffer> {
-                    return Promise.resolve(sliceData.buffer);
+                    var buf = new Uint8Array(sliceData.buffer).subarray(start, start+size);
+                    return Promise.resolve(buf);
                 }
             }
         }
@@ -184,10 +179,11 @@ export interface TestBlob {
 
 export function mockReadFn (file: TestFile, bufSizeBytes: number) {
     let counter = 0;
+    console.log("********************************************");
     return jest.fn().mockImplementation((buf) => {
         const dataView = new DataView(buf);
         for (let i = 0; i <  bufSizeBytes; i++) {
-            dataView.setUint8(i, file.data.getUint8(( bufSizeBytes * counter) + i));
+            //dataView.setUint8(i, file.data.getUint8(( bufSizeBytes * counter) + i));
             if (( bufSizeBytes * counter) + i === file.data.byteLength - 1) {
                 return Promise.resolve([i + 1, true]);
             }
