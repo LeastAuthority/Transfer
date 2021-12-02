@@ -93,7 +93,7 @@ AWS_PROFILE=my-profile yarn deploy:staging
 ```
 
 Alternatively, a [dotenv](https://github.com/motdotla/dotenv#readme) file will be loaded, if present, and used to populate environment variables accordingly.
-The deploy and cache invalidation scripts apply a stage-specific dotenv file follow the convention `.<stage name>.env`, e.g.: `.staging.env`.
+The deploy and cache invalidation scripts apply a stage-specific dotenv file following the convention `.<stage name>.env`, e.g.: `.staging.env`.
 
 | Name               | Description                                                                                                                                                           |
 |--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
