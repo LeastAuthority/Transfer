@@ -1,5 +1,5 @@
 const {accessSync} = require('fs');
-// NB: loads .env file into respective env vars
+// NB: loads environment variables from a file
 // (see: https://github.com/motdotla/dotenv#readme)
 const dotenv = require('dotenv');
 const {exit} = require('process');

@@ -1,8 +1,4 @@
 #!/usr/bin/env node
-// NB: loads .env file into respective env vars
-// (see: https://github.com/motdotla/dotenv#readme)
-const dotenv = require('dotenv')
-
 const {argv, env, exit} = require('process');
 const {execSync} = require('child_process');
 
