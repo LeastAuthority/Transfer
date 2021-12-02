@@ -54,7 +54,7 @@ jobs:
 
       - name: run transit relay
         run: |
-          cd 80e02d4a77be5abfbca966d609408f6927cb3843
+          cd  magic-wormhole/magic-wormhole-transit-relay
           virtualenv venv
           source venv/bin/activate
           pip install -e .[dev]
