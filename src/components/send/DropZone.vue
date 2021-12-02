@@ -90,7 +90,7 @@ h1 {
 
 .drag-n-drop {
     overflow: hidden;
-    min-height: calc(70vh - 7.8rem);
+    min-height: calc(93vh - 19.8rem);
     position: relative;
     align-items: center;
     border: 4px dashed #858789;
