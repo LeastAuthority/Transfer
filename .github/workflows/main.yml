@@ -13,8 +13,8 @@ jobs:
     steps:
       - name: Checkout repository and submodules
         uses: actions/checkout@v2
-        with:
-          submodules: recursive
+        run: git submodule update --init --recursive --remote
+
       - name: setup npm, yarn etc.
         uses: actions/setup-node@v2
         with:
