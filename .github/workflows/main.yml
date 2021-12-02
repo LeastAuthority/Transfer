@@ -11,14 +11,17 @@ jobs:
         go-version: [1.16.2]
         os: [ubuntu-latest]
     steps:
-      - name: Checkout repository and submodules
+      - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: checkout and update submodules
         run: git submodule update --init --recursive --remote
 
       - name: setup npm, yarn etc.
         uses: actions/setup-node@v2
         with:
           node-version: '16'
+
       - name: Install yarn
         run: npm install yarn@1.22.10
         id: node
