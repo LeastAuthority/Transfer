@@ -34,8 +34,10 @@ jobs:
       - name: build wasm code
         run: yarn build:wasm
 
-      - name: install mailbox server
+      - name: setup python
         uses: actions/setup-python@v2
+
+      - name: install mailbox server
         run: pip install magic-wormhole-mailbox-server
 
       - name: run mailbox server
