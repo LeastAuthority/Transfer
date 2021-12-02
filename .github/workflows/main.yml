@@ -58,7 +58,7 @@ jobs:
           virtualenv venv
           source venv/bin/activate
           pip install -e .[dev]
-          twist transitrelay --port tcp:4001 --websocket tcp:4002
+          twist transitrelay --port tcp:4001 --websocket tcp:4002 &
 
       - name: run tests
         run: yarn test:unit
