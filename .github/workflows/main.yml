@@ -51,6 +51,7 @@ jobs:
           cd magic-wormhole-transit-relay
           virtualenv venv
           source venv/bin/activate
+          pip install autobahn
           pip install -e .[dev]
           twist transitrelay --port tcp:4001 --websocket tcp:4002 &
 
