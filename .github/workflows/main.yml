@@ -5,32 +5,31 @@ jobs:
   build:
     name: Build/Test
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 4
     strategy:
       matrix:
         go-version: [1.16.2]
         os: [ubuntu-latest]
-
     steps:
-    - name: setup npm, yarn etc.
-      uses: actions/checkout@v2
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+      - name: setup npm, yarn etc.
+        uses: actions/checkout@v2
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
       - name: Install yarn
         run: npm install yarn@1.22.10
-      id: node
+        id: node
 
+      - name: install yarn dependencies
+        run: yarn install
 
-    - name: install yarn dependencies
-      run: yarn install
+      - name: setup Go toolchain
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
 
-    - name: setup Go toolchain
-      uses: actions/setup-go@v1
-      with:
-        go-version: ${{ matrix.go-version }}
+      - name: build wasm code
+        run: yarn build:wasm
 
-    - name: build wasm code
-      run: yarn build:wasm
-
-    - name: run tests
-      run: yarn test:unit
+      - name: run tests
+        run: yarn test:unit
