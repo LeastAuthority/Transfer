@@ -44,9 +44,9 @@ jobs:
         run: pip install virtualenv
 
       - name: install relay server
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
-          name: magic-wormhole/magic-wormhole-transit-relay
+          repository: magic-wormhole/magic-wormhole-transit-relay
           ref: 80e02d4a77be5abfbca966d609408f6927cb3843
 
       - name: run mailbox server
