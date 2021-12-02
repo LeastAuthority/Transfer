@@ -81,3 +81,22 @@ Deployments can be done via `yarn deploy:<stage name>`.
 This will sync the ./dist (build output) directory with the stage's S3 bucket.
 Executing this script via `yarn` will also cause the "uncache" script to run which invalidates specific objects in the stage's cloudfront cache.
 This invalidation can be performed directly with `yarn uncache:<stage name>`
+
+#### Dotenv
+
+Deployment and cache invalidation scripts rely on environment variables specified below.
+When invoking these scripts, either directly or via yarn, environment variables may be provided as such, i.e.:
+```bash
+AWS_PROFILE=my-profile node ./scripts/deploy.js
+# OR
+AWS_PROFILE=my-profile yarn deploy:staging
+```
+
+Alternatively, a [dotenv](https://github.com/motdotla/dotenv#readme) file will be loaded, if present, and used to populate environment variables accordingly.
+The deploy and cache invalidation scripts apply a stage-specific dotenv file follow the convention `.<stage name>.env`, e.g.: `.staging.env`.
+
+| Name               | Description                                                                                                                                                           |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AWS_PROFILE`      | AWS credentials profile to use when authenticating with AWS.<br/>See [named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).  |
+| `S3_BUCKET`        | AWS S3 bucket associated with this stage to upload build output directory to. For public buckets, this will likely be the fully-qualified domain name for this stage. |
+| `CDF_DISTRIBUTION` | AWS Cloudfront distribution ID associated with this stage for which the cache should be invalidated.                                                                  |
