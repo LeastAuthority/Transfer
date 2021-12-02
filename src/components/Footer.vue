@@ -124,7 +124,7 @@ ion-footer > ion-grid {
 
     .links {
         margin-right: 6vw;
-        margin-left: calc(var(--main-margin) / 2);
+        margin-left: 16px;
     }
 
     .made-with-love-container {
