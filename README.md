@@ -75,3 +75,9 @@ yarn run serve
 
 After this, open a browser and point it to `https://localhost:8080`.
 
+### Deployments / Cache Invalidation
+
+Deployments can be done via `yarn deploy:<stage name>`.
+This will sync the ./dist (build output) directory with the stage's S3 bucket.
+Executing this script via `yarn` will also cause the "uncache" script to run which invalidates specific objects in the stage's cloudfront cache.
+This invalidation can be performed directly with `yarn uncache:<stage name>`
