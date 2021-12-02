@@ -111,7 +111,7 @@ ion-footer {
     font-weight: 600;
 }
 
-ion-content, ion-footer {
+ion-content > ion-grid {
     max-width: var(--max-width);
 }
 

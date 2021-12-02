@@ -72,6 +72,10 @@ export default {
 
 <style lang="css" scoped>
 
+ion-footer > ion-grid {
+    max-width: var(--max-width);
+}
+
 .la-logo {
     background-image: url("/assets/logos/la-logo.svg");
     width: 143px;
