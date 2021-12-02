@@ -88,15 +88,9 @@ h1 {
     font-size: 40px;
 }
 
-@media screen and (max-height: 850px) {
-    .drag-n-drop {
-        min-height: 50vh;
-    }
-}
-
 .drag-n-drop {
     overflow: hidden;
-    min-height: 60vh;
+    min-height: calc(70vh - 7.8rem);
     position: relative;
     align-items: center;
     border: 4px dashed #858789;

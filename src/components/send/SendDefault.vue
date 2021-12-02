@@ -87,7 +87,7 @@ export default defineComponent({
     display: none;
 }
 
-@media screen and (max-height: 500px) {
+@media screen and (max-height: 520px) {
     .show-desktop {
         display: none !important;
     }
