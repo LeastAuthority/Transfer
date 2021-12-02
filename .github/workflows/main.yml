@@ -41,7 +41,7 @@ jobs:
         run: pip install magic-wormhole-mailbox-server
 
       - name: run mailbox server
-        run: twist wormhole-mailbox --usage-db=usage.sqlite
+        run: twist wormhole-mailbox --usage-db=usage.sqlite &
 
       - name: run tests
         run: yarn test:unit
