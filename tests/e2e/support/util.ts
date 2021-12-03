@@ -139,7 +139,6 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
         },
         slice(start: number, end: number): TestBlob {
             var size = 0;
-            console.log(`slice(): ${start}, ${end}`);
             if (end >= fileSizeBytes) {
                 end = fileSizeBytes;
             }
@@ -149,8 +148,7 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
             }
 
             var sliceData = new Uint8Array(data.buffer).subarray(start, start+size);
-            console.log(`start: ${start}, end: ${end}`);
-            // console.log(`sliceData: ${sliceData}`, `length of sliceData: ${sliceData.byteLength}`)
+
             return {
                 size: size;
                 data: sliceData;
@@ -179,7 +177,6 @@ export interface TestBlob {
 
 export function mockReadFn (file: TestFile, bufSizeBytes: number) {
     let counter = 0;
-    console.log("********************************************");
     return jest.fn().mockImplementation((buf) => {
         const dataView = new DataView(buf);
         for (let i = 0; i <  bufSizeBytes; i++) {
