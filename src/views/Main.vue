@@ -174,21 +174,6 @@ ion-icon.nav {
     }
 }
 
-@media screen and (max-width: 575px) {
-    .sticky-footer {
-        display: none;
-    }
-
-    .non-sticky-footer {
-        display: initial;
-    }
-
-    .bg-circle {
-        clip-path: circle(85vw);
-        left: -50vw;
-        width: 150vw;
-    }
-}
 </style>
 
 <script lang="ts">
