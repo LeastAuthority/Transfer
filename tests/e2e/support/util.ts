@@ -137,7 +137,7 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
             return Promise.resolve(data.buffer);
         },
         slice(start: number, end: number): TestBlob {
-            var size = 0;
+            let size = 0;
             if (end >= fileSizeBytes) {
                 end = fileSizeBytes;
             }
@@ -146,13 +146,13 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
                 size = 0;
             }
 
-            var sliceData = new Uint8Array(data.buffer).subarray(start, start+size);
+            const sliceData = new Uint8Array(data.buffer).subarray(start, start+size);
 
             return {
-                size: size;
-                data: sliceData;
+                size: size,
+                data: sliceData,
                 arrayBuffer(): Promise<ArrayBuffer> {
-                    var buf = new Uint8Array(sliceData.buffer).subarray(start, start+size);
+                    const buf = new Uint8Array(sliceData.buffer).subarray(start, start+size);
                     return Promise.resolve(buf);
                 }
             }
