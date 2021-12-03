@@ -164,7 +164,7 @@ ion-icon.nav {
     display: none;
 }
 
-@media screen and (max-height: 750px) {
+@media screen and (max-height: 640px) {
     .sticky-footer {
         display: none;
     }
