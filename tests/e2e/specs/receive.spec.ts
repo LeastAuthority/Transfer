@@ -4,15 +4,23 @@ import {SET_CONFIG} from "../support/const";
 import {ErrMailbox} from "@/errors";
 
 
-before(initGo)
-after(() => cy.task('clearDownloads'))
-
 async function initGo() {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch(`${TEST_HOST}/assets/wormhole.wasm`), go.importObject).then((result) => {
         go.run(result.instance);
     });
 }
+
+async function UIEnterCode(code: string) {
+    cy.get('input[type="text"]')
+        .type(code)
+
+    cy.get('.receive-next')
+        .click()
+}
+
+before(initGo)
+after(() => cy.task('clearDownloads'))
 
 describe('Receive', () => {
     const filename = 'large-file.txt';
@@ -80,11 +88,3 @@ describe('Receive', () => {
         });
     });
 });
-
-async function UIEnterCode(code: string) {
-    cy.get('input[type="text"]')
-        .type(code)
-
-    cy.get('.receive-next')
-        .click()
-}

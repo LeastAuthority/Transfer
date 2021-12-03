@@ -37,4 +37,4 @@ docker/letsencrypt/*
 docker/docker-compose.override.yml
 
 # .env
-.env*
+*.env*
