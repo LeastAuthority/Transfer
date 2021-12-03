@@ -19,11 +19,11 @@ describe('Client', () => {
             const receiver = new Client();
             const reader = await receiver.recvFile(code);
 
-            let buf = new Uint8Array(new ArrayBuffer(testBufferSize));
+            const buf = new Uint8Array(new ArrayBuffer(testBufferSize));
             let readBytes = 0;
             for (let n = 0, done = false; !done;) {
                 [n, done] = await reader.read(buf)
-                let _buf = buf.subarray(0, n);
+                const _buf = buf.subarray(0, n);
 
                 // NB: expect buffer matches respective input subarray.
                 const expected = (new Uint8Array(file.data.buffer)).subarray(readBytes, readBytes + n)
