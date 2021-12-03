@@ -114,9 +114,8 @@ export async function mockClientReceive(code: string): Promise<Uint8Array> {
     const reader = await receiver.recvFile(code);
 
     // TODO: fix
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         setTimeout(async () => {
-            // @ts-ignore
             const result = new Uint8Array(size)
             await reader.readAll(result);
             resolve(result);

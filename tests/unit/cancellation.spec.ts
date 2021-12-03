@@ -46,13 +46,13 @@ describe.skip('Cancellation', () => {
                 }
             }
 
-            await new Promise(async (resolve, reject) => {
+            await new Promise((resolve, reject) => {
                 expect(readByteCount).toEqual(readLimit);
 
                 try {
                 const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
-                await expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
-                await expect(done).rejects.toThrow('context cancelled');
+                expect(reader.read(buffer)).rejects.toThrow('unexpected EOF');
+                expect(done).rejects.toThrow('context cancelled');
                 } catch (error) {
                     reject(error);
                 }
