@@ -1,0 +1,64 @@
+name: transfer-repo-CI
+on: [push, pull_request]
+jobs:
+
+  build:
+    name: Build/Test
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: [1.16.2]
+        os: [ubuntu-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: checkout and update submodules
+        run: git submodule update --init --recursive
+
+      - name: setup npm, yarn etc.
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install yarn
+        run: npm install yarn@1.22.10
+        id: node
+
+      - name: install yarn dependencies
+        run: yarn install
+
+      - name: setup Go toolchain
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: build wasm code
+        run: yarn build:wasm
+
+      - name: setup python
+        uses: actions/setup-python@v2
+
+      - name: install mailbox server
+        run: pip install magic-wormhole-mailbox-server
+
+      - name: install virtualenv
+        run: pip install virtualenv
+
+      - name: run mailbox server
+        run: twist wormhole-mailbox --usage-db=usage.sqlite &
+
+      - name: run transit relay
+        run: |
+          cd magic-wormhole-transit-relay
+          virtualenv venv
+          source venv/bin/activate
+          pip install -e .[dev]
+          twist transitrelay --port=tcp:4001 --websocket=tcp:4002 &
+
+      - name: run tests
+        run: yarn test:unit
+
+      - name: lint the code
+        run: yarn lint

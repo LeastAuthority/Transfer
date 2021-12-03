@@ -59,7 +59,7 @@
     "@vue/eslint-config-typescript": "^5.0.2",
     "@vue/test-utils": "^2.0.0-0",
     "clipboardy": "^2.3.0",
-    "cypress": "6.4.0",
+    "cypress": "6.5.0",
     "cypress-file-upload": "^5.0.2",
     "cypress-wait-until": "^1.7.1",
     "cypress-waitfor": "^1.1.0",
