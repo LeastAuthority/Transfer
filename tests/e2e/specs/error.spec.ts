@@ -14,8 +14,6 @@ import Client from "@/go/wormhole/client";
 import {FileStreamReader} from "@/go/wormhole/streaming";
 import {ErrMailbox, ErrRelay} from "@/errors";
 
-before(initGo)
-after(() => cy.task('clearDownloads'))
 
 async function initGo() {
     const go = new Go();
@@ -24,7 +22,29 @@ async function initGo() {
     });
 }
 
+async function UISend(filename: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        try {
+            cy.fixture(filename).then(fileContent => {
+                cy.get('ion-button.select-button')
+                    .get('input[type="file"]')
+                    .attachFile({
+                        fileName: 'large-file.txt',
+                        fileContent,
+                    }).then(() => {
+                    resolve()
+                })
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
 const filename = 'large-file.txt';
+
+before(initGo)
+after(() => cy.task('clearDownloads'))
 
 describe('Error messaging', () => {
     describe('Sending', () => {
@@ -130,8 +150,8 @@ describe('Error messaging', () => {
                 const {code, done} = await mockClientSend(filename, file)
 
                 // NB: ignore send-side relay error
-                done.catch(() => {
-                })
+                // done.catch(() => {
+                // })
 
                 cy.visit(`/#/r`)
                 cy.window().then(window => {
@@ -214,21 +234,3 @@ describe('Error messaging', () => {
     })
 })
 
-async function UISend(filename: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        try {
-            cy.fixture(filename).then(fileContent => {
-                cy.get('ion-button.select-button')
-                    .get('input[type="file"]')
-                    .attachFile({
-                        fileName: 'large-file.txt',
-                        fileContent,
-                    }).then(() => {
-                    resolve()
-                })
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
