@@ -76,6 +76,10 @@ ion-footer > ion-grid {
     max-width: var(--max-width);
 }
 
+ion-footer {
+    margin-bottom: 8px;
+}
+
 .la-logo {
     background-image: url("/assets/logos/la-logo.svg");
     width: 143px;
