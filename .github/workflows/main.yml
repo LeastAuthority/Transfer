@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: checkout and update submodules
-        run: git submodule update --init --recursive --remote
+        run: git submodule update --init --recursive
 
       - name: setup npm, yarn etc.
         uses: actions/setup-node@v2
