@@ -179,7 +179,7 @@ export function mockReadFn (file: TestFile, bufSizeBytes: number) {
     return jest.fn().mockImplementation((buf) => {
         const dataView = new DataView(buf);
         for (let i = 0; i <  bufSizeBytes; i++) {
-            //dataView.setUint8(i, file.data.getUint8(( bufSizeBytes * counter) + i));
+            dataView.setUint8(i, file.data.getUint8(( bufSizeBytes * counter) + i));
             if (( bufSizeBytes * counter) + i === file.data.byteLength - 1) {
                 return Promise.resolve([i + 1, true]);
             }

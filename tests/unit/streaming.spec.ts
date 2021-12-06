@@ -5,7 +5,7 @@ import {mockReadFn, NewTestFile} from "../e2e/support/util";
 
 // TODO: test weird file sizes!
 const testFileSize = 1024 * 256 // 256KiB
-const testBufferSize = 16368 // 1024 * 16 // 4KiB
+const testBufferSize = 1024 * 16 // 4KiB
 
 describe('Client', () => {
     beforeAll(initGo)
@@ -68,7 +68,7 @@ describe('Client', () => {
     })
 });
 
-describe.skip('Reader', () => {
+describe('Reader', () => {
     describe('#read', () => {
         it('should call the read function passed to the constructor', async () => {
             const testFileName = 'testfile'
@@ -85,9 +85,10 @@ describe.skip('Reader', () => {
             let readBytes = 0;
             for (let n = 0, done = false; !done;) {
                 [n, done] = await reader.read(buf)
+                const fileBuffer = await file.arrayBuffer();
 
                 // NB: expect buffer matches respective `file` subarray.
-                const expected = (new Uint8Array(file.arrayBuffer())).subarray(readBytes, readBytes + n)
+                const expected = (new Uint8Array(fileBuffer)).subarray(readBytes, readBytes + n)
                 expect(new Uint8Array(buf)).toEqual(expected)
                 n < testBufferSize || readBytes + n === testFileSize ?
                     expect(done).toEqual(true) :
