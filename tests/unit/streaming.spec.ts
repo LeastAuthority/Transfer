@@ -5,7 +5,7 @@ import {mockReadFn, NewTestFile} from "../e2e/support/util";
 
 // TODO: test weird file sizes!
 const testFileSize = 1024 * 256 // 256KiB
-const testBufferSize = 1024 * 16 // 4KiB
+const testBufferSize = 16368 // 16KiB
 
 describe('Client', () => {
     beforeAll(initGo)
