@@ -1,8 +1,16 @@
-import {Action, ActionContext, createStore, Module, Store} from 'vuex'
+import {ActionContext, createStore, Store} from 'vuex'
+import {alertController, modalController} from "@ionic/vue";
+import {AlertOptions} from "@ionic/core";
+import Bowser from "bowser";
+
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
 import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
-    ACCEPT_FILE, ALERT,
+    ACCEPT_FILE,
+    ALERT,
+    ALERT_MATCHED_ERROR,
+    COMPLETE_CODE_WORD,
+    HIDE_DRAG_ELEMENTS,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -11,14 +19,17 @@ import {
     SET_CODE,
     SET_FILE_META,
     SET_PROGRESS,
+    SHOW_DRAG_ELEMENTS,
     UPDATE_PROGRESS_ETA
 } from "@/store/actions";
 import ClientWorker from "@/go/wormhole/client_worker";
-import {alertController} from "@ionic/vue";
-import {AlertOptions} from "@ionic/core";
 import {ErrRelay, ErrMailbox, ErrInterrupt, ErrBadCode, MatchableErrors} from "@/errors";
 import {durationToClosesUnit, sizeToClosestUnit} from "@/util";
+import {CODE_DELIMITER, CodeCompleter} from "@/wordlist/wordlist";
 
+const MAX_FILE_SIZE_MB = 200;
+const MB = 1000 ** 2;
+const MAX_FILE_SIZE_BYTES = MB * MAX_FILE_SIZE_MB;
 const updateProgressETAFrequency = 10;
 const defaultAlertOpts: AlertOptions = {
     buttons: ['OK'],
@@ -39,7 +50,34 @@ if (process.env['NODE_ENV'] === 'production') {
     host = 'https://wormhole.bryanchriswhite.com';
 }
 
-let client = new ClientWorker(defaultConfig);
+let client: ClientWorker;
+
+const safariNotSupportedError = Error("We plan to support Safari in future releases. Please try with a different browser.")
+const browser = Bowser.getParser(self.navigator.userAgent)
+const noop = () => {
+    console.error(safariNotSupportedError);
+};
+
+function alertIfInSafari(): boolean {
+    const browserIsProbablySafari = browser.satisfies({
+        safari: '>0'
+    });
+    if (browserIsProbablySafari) {
+        const modal = alertController.create({
+            header: 'Safari not supported :\'(',
+            message: safariNotSupportedError.message,
+            backdropDismiss: true,
+            buttons: ['OK'],
+        });
+        modal.then(m => m.present());
+    }
+    return browserIsProbablySafari || false;
+}
+
+if (!alertIfInSafari()) {
+    client = new ClientWorker(defaultConfig);
+}
+const completer = new CodeCompleter();
 
 /* --- ACTIONS --- */
 
@@ -48,6 +86,10 @@ async function newClientAction(this: Store<any>, {
     state,
     commit
 }: ActionContext<any, any>, config?: ClientConfig): Promise<void> {
+    if (alertIfInSafari()) {
+        return;
+    }
+
     // TODO: something better.
     let _config = config;
     if (typeof (config) === 'undefined') {
@@ -67,8 +109,24 @@ async function sendFileAction(this: Store<any>, {
     commit,
     dispatch
 }: ActionContext<any, any>, {file, opts}: SendFilePayload): Promise<TransferProgress> {
+    if (alertIfInSafari()) {
+        return Promise.reject(safariNotSupportedError);
+    }
+
     // NB: reset code
     commit(SET_CODE, '');
+
+    if (opts?.size && opts?.size > MAX_FILE_SIZE_BYTES) {
+        const alertOpts: AlertOptions = {
+            subHeader: 'Large file sizes: coming soon',
+            message: `In this development state, this product only supports file sizes of up to ${MAX_FILE_SIZE_MB} MB.
+Please select a smaller file.`,
+            buttons: [{
+                text: 'OK'
+            }],
+        };
+        return dispatch(ALERT, alertOpts);
+    }
 
     const progressFunc = (sentBytes: number, totalBytes: number) => {
         commit(SET_PROGRESS, sentBytes / totalBytes);
@@ -97,12 +155,12 @@ async function sendFileAction(this: Store<any>, {
             // TODO: remove!
             // dispatch(NEW_CLIENT);
         }).catch(error => {
-            dispatch(ALERT, {error})
+            dispatch(ALERT_MATCHED_ERROR, {error})
             return Promise.reject(error);
         });
         // return done;
     }).catch((error) => {
-        dispatch(ALERT, {error})
+        dispatch(ALERT_MATCHED_ERROR, {error})
         return Promise.reject(error);
     });
     return p;
@@ -112,6 +170,10 @@ async function sendFileAction(this: Store<any>, {
 async function saveFileAction(this: Store<any>, {
     state, commit, dispatch
 }: ActionContext<any, any>, code: string): Promise<TransferProgress> {
+    if (alertIfInSafari()) {
+        return Promise.reject(safariNotSupportedError);
+    }
+
     const opts = {
         progressFunc: (sentBytes: number, totalBytes: number) => {
             // TODO: refactor
@@ -143,12 +205,12 @@ async function saveFileAction(this: Store<any>, {
                 commit(RESET_CODE);
                 commit(RESET_PROGRESS);
             }).catch((error: string) => {
-                dispatch(ALERT, {error});
+                dispatch(ALERT_MATCHED_ERROR, {error});
                 return Promise.reject(error);
             });
         })
         .catch((error: string) => {
-            dispatch(ALERT, {error});
+            dispatch(ALERT_MATCHED_ERROR, {error});
             return Promise.reject(error);
         });
     return p;
@@ -176,7 +238,7 @@ function updateProgressETAAction(this: Store<any>, {state, commit}: ActionContex
 async function acceptFileAction(this: Store<any>, {state, dispatch}: ActionContext<any, any>): Promise<void> {
     const p = state.fileMeta.accept()
     p.catch((error: string) => {
-        dispatch(ALERT, {error});
+        dispatch(ALERT_MATCHED_ERROR, {error});
     });
     return p;
 }
@@ -187,7 +249,16 @@ declare interface AlertPayload {
     opts?: AlertOptions;
 }
 
-async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
+async function alertAction(this: Store<any>, ctx: ActionContext<any, any>, alertOpts: AlertOptions): Promise<void> {
+    const alert = await alertController.create(alertOpts);
+    await alert.present();
+    await alert.onWillDismiss();
+}
+
+async function alertMatchedErrorAction(this: Store<any>, {
+    state,
+    dispatch
+}: ActionContext<any, any>, payload: AlertPayload): Promise<void> {
     // TODO: types!
     // NB: error is a string
     const {error} = payload;
@@ -211,12 +282,32 @@ async function alertAction(this: Store<any>, {state}: ActionContext<any, any>, p
         opts.message = (error);
     }
 
-    const alert = await alertController.create(opts);
-    await alert.present();
-    await alert.onWillDismiss();
+    return dispatch(ALERT, opts);
 }
 
 /* --- MUTATIONS --- */
+
+function showDragElementsMutation(state: any): void {
+    state.showDragElements = true;
+}
+
+function hideDragElementsMutation(state: any): void {
+    state.showDragElements = false;
+}
+
+function completeCodeWordMutation(state: any): void {
+    const codeParts = state.code.split(CODE_DELIMITER);
+    const partialWordIndex = codeParts.length-1;
+    if (state.suggestedWord.startsWith(codeParts[partialWordIndex])) {
+        // Replace last (incomplete) word `codeWord`
+        codeParts.splice(partialWordIndex, 1, state.suggestedWord);
+        state.code = codeParts.join(CODE_DELIMITER);
+        // NB: codeParts.length includes the mailbox number
+        if (codeParts.length - 1 < DEFAULT_PROD_CLIENT_CONFIG.passPhraseComponentLength) {
+            state.code += CODE_DELIMITER;
+        }
+    }
+}
 
 // TODO: more specific types
 function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
@@ -242,6 +333,12 @@ function sendFileMutation(state: any, {code, cancel}: any): void {
 // TODO: be more specific with types.
 function setCodeMutation(state: any, code: string): void {
     state.code = code;
+
+    if (code[code.length - 1] === CODE_DELIMITER) {
+        state.suggestedWord = '';
+    } else {
+        state.suggestedWord = completer.nearestNextWord(code);
+    }
 }
 
 // TODO: be more specific with types.
@@ -275,6 +372,7 @@ export interface AppState {
     progressETASeconds: number;
     progressTimeoutCancel: () => void | undefined;
     progressHung: boolean;
+    showDragElements: boolean;
 }
 
 export default createStore({
@@ -298,6 +396,7 @@ export default createStore({
             progressETASeconds: 0,
             progressTimeoutCancel: undefined,
             progressHung: false,
+            showDragElements: false,
         }
     },
     mutations: {
@@ -310,6 +409,9 @@ export default createStore({
         [SET_CODE]: setCodeMutation,
         [RESET_CODE]: resetCodeMutation,
         [RESET_PROGRESS]: resetProgressMutation,
+        [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
+        [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
+        [COMPLETE_CODE_WORD]: completeCodeWordMutation,
         // TODO: refactor
         progressTimeoutCancel: (state: any, cancel: () => void) => {
             state.progressTimeoutCancel = cancel;
@@ -329,6 +431,7 @@ export default createStore({
         [ACCEPT_FILE]: acceptFileAction,
         [UPDATE_PROGRESS_ETA]: updateProgressETAAction,
         [ALERT]: alertAction,
+        [ALERT_MATCHED_ERROR]: alertMatchedErrorAction,
     },
     getters: {
         progressETA: ({progress, progressETASeconds}) => {

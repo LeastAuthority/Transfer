@@ -77,7 +77,7 @@ import {enterOutline, exitOutline, exit, cloudDownloadOutline, close} from 'ioni
 import router from '@/router/index.ts'
 import {
     ACCEPT_FILE,
-    ALERT,
+    ALERT_MATCHED_ERROR,
     NEW_CLIENT,
     RESET_CODE,
     RESET_PROGRESS,
@@ -102,7 +102,7 @@ export default defineComponent({
         ...mapState(['config', 'code', 'fileMeta', 'progress']),
     },
     methods: {
-        ...mapActions([ACCEPT_FILE, ALERT]),
+        ...mapActions([ACCEPT_FILE, ALERT_MATCHED_ERROR]),
         ...mapMutations([SET_PROGRESS, RESET_CODE, RESET_PROGRESS]),
         async download() {
             this.next();

@@ -30,7 +30,7 @@ export default defineComponent({
 
 <style lang="css" scoped>
 ion-card {
-    position: relative;
+    overflow: initial;
 }
 
 ion-card > .version {
@@ -41,5 +41,6 @@ ion-card > .version {
     margin-bottom: var(--ion-margin);
     padding: var(--ion-padding);
     background: rgba(255, 255, 255, 0.6);
+    z-index: 2000;
 }
 </style>

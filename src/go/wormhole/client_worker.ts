@@ -181,17 +181,6 @@ export default class ClientWorker implements ClientInterface {
         console.log("in client worker sendFile");
         await this.ready;
         const id = Date.now()
-        const buffer = await file.arrayBuffer();
-        // const done = new Promise<void>((resolve, reject) => {
-        //     this.pending[id] = {
-        //         ...this.pending[id],
-        //         opts,
-        //         result: {
-        //             resolve,
-        //             reject,
-        //         }
-        //     };
-        // })
 
         const done: Promise<void> = new Promise((resolve, reject) => {
             this.pending[id].done = {resolve, reject};
@@ -201,9 +190,8 @@ export default class ClientWorker implements ClientInterface {
             // TODO: be more specific with types!
             this.rpc!.rpc<RPCMessage, any>(SEND_FILE, {
                 id,
-                buffer,
-                name: file.name,
-            }, [buffer])
+                file,
+            })
                 .then(({code}) => {
                     resolve({code, cancel, done});
                 })

@@ -4,7 +4,7 @@
         <ion-card-header>
             <ion-card-title>
                 <ion-text color="dark-grey" class="bold">
-                    Receive files with ease, speed, and security
+                    Receive files in real-time
                 </ion-text>
             </ion-card-title>
             <ion-card-subtitle>
@@ -22,16 +22,22 @@
                              sizeSm="9"
                              sizeXs="9"
                     >
-                        <ion-input color="black"
-                                   :class="{invalid: blurInvalid, 'ion-margin-bottom': true}"
-                                   autofocus
-                                   :clearInput="code !== ''"
-                                   type="text"
-                                   placeholder="Enter code here"
-                                   v-model="_code"
-                                   @change="validate"
-                                   @keyup.enter="_next"
-                        ></ion-input>
+                        <div class="relative">
+                            <ion-input color="black"
+                                       :class="{invalid: blurInvalid, 'ion-margin-bottom': true}"
+                                       autofocus
+                                       :clearInput="code !== ''"
+                                       type="text"
+                                       placeholder="Enter code here"
+                                       v-model="_code"
+                                       @change="validate"
+                                       @ionInput="onInput"
+                                       @keyup.enter="_next"
+                                       @keypress.space="completeCodeWord"
+                                       ref="code_input"
+                            ></ion-input>
+                            <AutoComplete></AutoComplete>
+                        </div>
                         <div class="flex-col">
                             <ion-text :color="exampleErrorColor"
                                       v-show="blurInvalid">
@@ -67,6 +73,10 @@
 </template>
 
 <style lang="css" scoped>
+.relative {
+    position: relative;
+}
+
 .invalid {
     border: 1px solid var(--ion-color-warning-red);
 }
@@ -96,21 +106,24 @@
 
 <script lang="ts">
 import {
-    IonButton,
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
     IonCardTitle,
     IonCol,
-    IonGrid, IonInput,
-    IonRow, IonSpinner,
-    IonText
+    IonGrid,
+    IonInput,
+    IonRow,
+    IonSpinner,
+    IonText,
 } from "@ionic/vue";
 import {mapActions, mapMutations, mapState} from "vuex";
-import {ALERT, SAVE_FILE, SET_CODE} from "@/store/actions";
+import {ALERT_MATCHED_ERROR, COMPLETE_CODE_WORD, SAVE_FILE, SET_CODE} from "@/store/actions";
 import {defineComponent} from "vue";
+
+import AutoComplete from "@/components/AutoComplete.vue"
 import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
-import {ErrBadCode, ErrInvalidCode} from "@/errors";
+import {ErrInvalidCode} from "@/errors";
 import {CODE_REGEX} from "@/util";
 
 const errorColor = 'warning-red';
@@ -126,7 +139,7 @@ export default defineComponent({
             exampleErrorColor: exampleColor,
             exampleErrorText: exampleText,
             waiting: false,
-        }
+        };
     },
     computed: {
         ...mapState(['code']),
@@ -147,11 +160,8 @@ export default defineComponent({
         }
     },
     methods: {
-        ...mapActions([SAVE_FILE, ALERT]),
-        ...mapMutations([SET_CODE]),
-        _setCode(code: string): void {
-            this[SET_CODE](code);
-        },
+        ...mapActions([SAVE_FILE, ALERT_MATCHED_ERROR]),
+        ...mapMutations([SET_CODE, COMPLETE_CODE_WORD]),
         async _next(): Promise<void> {
             // TODO: remove
             window.setTimeout(() => {
@@ -167,6 +177,11 @@ export default defineComponent({
                 this.reset();
             }
         },
+        async onInput(event: Event): Promise<void> {
+            if (this._code === '') {
+                return;
+            }
+        },
         validate(): void {
             if (this._code === '' || CODE_REGEX.test(this._code)) {
                 this.exampleErrorText = exampleText;
@@ -175,7 +190,11 @@ export default defineComponent({
                 this.exampleErrorText = errorText;
                 this.exampleErrorColor = errorColor;
             }
-        }
+        },
+        completeCodeWord(event: KeyboardEvent): void {
+            event.preventDefault();
+            this[COMPLETE_CODE_WORD]();
+        },
     },
     components: {
         IonGrid,
@@ -189,6 +208,7 @@ export default defineComponent({
         IonCardContent,
         IonSpinner,
         WaitButton,
+        AutoComplete,
     }
 })
 </script>
