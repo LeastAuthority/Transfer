@@ -35,47 +35,17 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-            <Footer class="ion-hide-sm-up"></Footer>
+            <Footer class="non-sticky-footer"></Footer>
         </ion-content>
-        <Footer class="ion-hide-sm-down"></Footer>
+        <Footer class="sticky-footer"></Footer>
     </ion-page>
 </template>
 
 <style lang="css">
-ion-card-title {
-    margin: var(--md-margin);
-
-    font-size: 40px;
+.relative {
+    position: relative;
 }
 
-ion-card-subtitle {
-    margin-left: var(--md-margin);
-    margin-right: var(--md-margin);
-
-    font-size: 14px;
-    font-weight: 500;
-}
-
-ion-card-subtitle > * {
-    margin-bottom: var(--md-margin);
-}
-
-ion-card-header {
-    padding: var(--card-padding) !important;
-}
-
-ion-card-content {
-    padding: var(--card-padding) !important;
-}
-
-ion-card-content p ion-text {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-ion-card {
-    margin: var(--card-margin) !important;
-}
 
 .router-view-col {
     padding-top: 0;
@@ -110,6 +80,11 @@ ion-card {
 
     --header-margin-left: calc(var(--card-margin) + var(--card-padding) + 16px);
     --header-margin-right: calc(var(--card-margin) + var(--card-padding) + 4px);
+    /* NB: this is the difference between the left content border
+     *  of the root grid (i.e. css selector `#app>ion-page>ion-grid`)
+     *  and the left content border of the current view's root `ion-card`.
+     */
+    --left-offset-diff: 16px;
 }
 
 h1.party-popper {
@@ -136,7 +111,7 @@ ion-footer {
     font-weight: 600;
 }
 
-ion-content, ion-footer {
+ion-content > ion-grid {
     max-width: var(--max-width);
 }
 
@@ -185,13 +160,20 @@ ion-icon.nav {
     }
 }
 
-@media screen and (max-width: 575px) {
-    .bg-circle {
-        clip-path: circle(85vw);
-        left: -50vw;
-        width: 150vw;
+.non-sticky-footer {
+    display: none;
+}
+
+@media screen and (max-height: 640px) {
+    .sticky-footer {
+        display: none;
+    }
+
+    .non-sticky-footer {
+        display: initial;
     }
 }
+
 </style>
 
 <script lang="ts">
