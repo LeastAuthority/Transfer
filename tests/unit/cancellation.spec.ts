@@ -60,7 +60,7 @@ describe('Cancellation', () => {
             const buffer = new Uint8Array(new ArrayBuffer(testBufferSize));
             expect(readByteCount).toEqual(readLimit);
 
-            await expect(senderObj.done).rejects.toBe('EOF');
+            await expect(senderObj.done).rejects.toBe('context canceled');
             // console.log(senderObj.done);
             // TODO: get reader to reject with context cancellation error
             // expect(reader.read(buffer)).rejects.toThrow('context cancelled');
