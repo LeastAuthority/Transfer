@@ -36,7 +36,6 @@ describe('Cancellation', () => {
             for (let n = 0, rxDone = false; !rxDone;) {
                 const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
                 try {
-                    console.log(`SUCCESS | n: ${n} | rxdone: ${rxDone}`);
                     [n, rxDone] = await reader.read(buffer);
                     result.set(buffer.slice(0, n), readByteCount);
                     readByteCount += n;
@@ -99,7 +98,6 @@ describe('Cancellation', () => {
 
             expect(readByteCount).toEqual(readLimit);
             reader.cancel!();
-            console.log('[test] cancelled reader')
 
             const buffer = new Uint8Array(new ArrayBuffer(1024 * 20));
             await expect(reader.read(buffer)).rejects.toBe("context canceled")
