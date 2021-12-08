@@ -5,14 +5,14 @@ import Go from "../../../src/go";
 import fs from "fs";
 import path from "path";
 
-before(initGo)
-
 async function initGo() {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch(`${TEST_HOST}/assets/wormhole.wasm`), go.importObject).then((result) => {
         go.run(result.instance);
     });
 }
+
+before(initGo)
 
 describe('Cancellation', () => {
     describe('Send-side cancellation', () => {
@@ -21,7 +21,7 @@ describe('Cancellation', () => {
         const testBufferSize = 1024 * 4
 
         describe('Send-side cancellation', () => {
-            it('should do things', async () => {
+            it('should do things', async (...args) => {
                 const readLimit = 1024 * 8; // 16 KiB
                 const sender = new ClientWorker();
                 const file = NewTestFile(filename, testFileSize);
@@ -53,10 +53,10 @@ describe('Cancellation', () => {
                     }
                 }
 
-                await new Promise(async (resolve, reject) => {
+                await new Promise((resolve, reject) => {
                     expect(readByteCount).to.equal(readLimit);
                     const shouldReject = function() {
-                        console.log(Array.prototype.slice.apply(arguments))
+                        console.log(Array.prototype.slice.apply(args))
                         assert(false, 'promise should be rejected');
                 };
 

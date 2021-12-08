@@ -80,7 +80,7 @@ describe('Cancellation', () => {
             // const readByteCount = await reader.readAll(result)
 
             let readByteCount = 0;
-            let rxDone = false;
+            const rxDone = false;
             for (let n = 0, rxDone = false; !rxDone;) {
                 const buffer = new Uint8Array(new ArrayBuffer(1024 * 4));
                 try {
