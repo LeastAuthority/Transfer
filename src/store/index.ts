@@ -42,12 +42,8 @@ if (process.env['NODE_ENV'] === 'production') {
     defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
     host = 'https://w.leastauthority.com';
 } else if (process.env['NODE_ENV'] === 'playground') {
-    defaultConfig = {
-        rendezvousURL: "wss://mailbox.wormhole.bryanchriswhite.com/v1",
-        transitRelayURL: "wss://relay.wormhole.bryanchriswhite.com:443",
-        passPhraseComponentLength: 2,
-    }
-    host = 'https://wormhole.bryanchriswhite.com';
+    defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
+    host = 'https://w3.leastauthority.com';
 }
 
 let client: ClientWorker;
