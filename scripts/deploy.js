@@ -6,7 +6,7 @@ const {loadEnv} = require('./common');
 
 const stage = argv[2];
 if (!stage) {
-    console.error("Usage: deloy.js <stage name>")
+    console.error("Usage: deploy.js <stage name>")
     exit(1);
 }
 
