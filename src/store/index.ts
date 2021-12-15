@@ -4,7 +4,6 @@ import {AlertOptions} from "@ionic/core";
 import Bowser from "bowser";
 
 import {ClientConfig, TransferOptions, TransferProgress} from "@/go/wormhole/types";
-import {DEFAULT_PROD_CLIENT_CONFIG} from "@/go/wormhole/client";
 import {
     ACCEPT_FILE,
     ALERT,
@@ -35,15 +34,15 @@ const defaultAlertOpts: AlertOptions = {
     buttons: ['OK'],
 };
 
-let host = 'http://localhost:8080';
+let host = process.env['STAGE_HOSTNAME'];
+if (typeof(host) === 'undefined') {
+    host = 'http://localhost:8080';
+}
 
-let defaultConfig: ClientConfig | undefined;
-if (process.env['NODE_ENV'] === 'production') {
-    defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-    host = 'https://w.leastauthority.com';
-} else if (process.env['NODE_ENV'] === 'playground') {
-    defaultConfig = DEFAULT_PROD_CLIENT_CONFIG;
-    host = 'https://w3.leastauthority.com';
+const defaultConfig = {
+    rendezvousURL: process.env['STAGE_MAILBOX_URL'],
+    transitRelayURL: process.env['STAGE_RELAY_URL'],
+    passPhraseComponentLength: 2,
 }
 
 let client: ClientWorker;

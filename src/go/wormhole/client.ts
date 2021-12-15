@@ -1,12 +1,6 @@
 import {ClientConfig, ClientInterface, TransferProgress, TransferOptions, wormhole} from "@/go/wormhole/types";
 import {FileStreamReader} from '@/go/wormhole/streaming';
 
-export const DEFAULT_PROD_CLIENT_CONFIG: ClientConfig = {
-    rendezvousURL: "wss://mailbox.w.leastauthority.com/v1",
-    transitRelayURL: "wss://relay.w.leastauthority.com:443",
-    passPhraseComponentLength: 2,
-}
-
 // TODO: move to own client wrapper lib
 
 
