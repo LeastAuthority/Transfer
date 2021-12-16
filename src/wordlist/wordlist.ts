@@ -80,8 +80,10 @@ export class CodeCompleter {
         // NB: this splice drops the element containing mailbox number.
         const inputWords = partialCode.split(CODE_DELIMITER).splice(1);
         const previousWord = inputWords[inputWords.length - 2];
-        const partialWord = inputWords[inputWords.length - 1].toLowerCase();
-        if (typeof (partialWord) === 'undefined') {
+        let partialWord = inputWords[inputWords.length - 1];
+        if (typeof(partialWord) !== 'undefined') {
+            partialWord = partialWord.toLowerCase();
+        } else {
             return '';
         }
 

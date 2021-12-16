@@ -1,6 +1,5 @@
 <template>
-    <!--        <transition name="slide-right">-->
-    <CardModal>
+    <div class="relative">
         <ReceiveDefault
                 :active="onStep(ReceiveStep.Default)"
                 :next="nextFrom(ReceiveStep.Default)"
@@ -23,24 +22,22 @@
                 :active="onStep(ReceiveStep.Complete)"
                 :next="nextFrom(ReceiveStep.Complete)"
         ></ReceiveComplete>
-    </CardModal>
-    <!--        </transition>-->
+        <Version></Version>
+    </div>
 </template>
 
 <style lang="css" scoped>
 </style>
 
 <script lang="ts">
-import {clipboardOutline} from 'ionicons/icons'
-import {defineComponent, Transition} from 'vue';
+import {defineComponent} from 'vue';
 
-import router from '@/router/index.ts'
-import CardModal from "@/components/CardModal.vue";
+import Version from "@/components/Version.vue";
 import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
 import ReceiveConsent from "@/components/receive/ReceiveConsent.vue";
 import ReceiveComplete from "@/components/receive/ReceiveComplete.vue";
 import {ReceiveStep} from "@/types";
-import {ALERT_MATCHED_ERROR, RESET_PROGRESS, SAVE_FILE, SET_CODE, SET_FILE_META, SET_PROGRESS} from "@/store/actions";
+import {ALERT_MATCHED_ERROR, RESET_PROGRESS, SAVE_FILE, SET_FILE_META} from "@/store/actions";
 import {mapActions, mapMutations, mapState} from "vuex";
 import ReceiveProgress from "@/components/receive/ReceiveProgress.vue";
 
@@ -60,7 +57,7 @@ export default defineComponent({
     },
     data() {
         return {
-            step: 0,
+            step: ReceiveStep.Default,
         }
     },
     computed: {
@@ -107,7 +104,7 @@ export default defineComponent({
         },
     },
     components: {
-        CardModal,
+        Version,
         ReceiveDefault,
         ReceiveConsent,
         ReceiveProgress,
@@ -115,8 +112,6 @@ export default defineComponent({
     },
     setup() {
         return {
-            clipboardOutline,
-            router,
             ReceiveStep,
         }
     }

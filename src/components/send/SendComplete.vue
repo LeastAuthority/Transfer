@@ -1,13 +1,11 @@
 <template>
-    <div v-show="active">
-        <ion-card-header>
-            <ion-card-title>
-                <ion-text color="dark-grey" class="bold">
-                    Sent!
-                </ion-text>
-            </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
+    <Card :active="active">
+        <template #title>
+            <ion-text color="dark-grey" class="bold">
+                Sent!
+            </ion-text>
+        </template>
+        <template #content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-margin-bottom">
                     <FileCard :name="fileMeta.name"
@@ -33,17 +31,14 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-        </ion-card-content>
-    </div>
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
 import {defineComponent} from "vue";
 import {
     IonButton,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
     IonCol,
     IonGrid,
     IonIcon,
@@ -52,6 +47,8 @@ import {
 } from "@ionic/vue";
 import {mapState} from "vuex";
 import {sendSharp} from "ionicons/icons";
+
+import Card from "@/components/Card.vue";
 import FileCard from "@/components/FileCard.vue";
 
 export default defineComponent({
@@ -67,9 +64,7 @@ export default defineComponent({
         IonButton,
         IonIcon,
         IonText,
-        IonCardHeader,
-        IonCardTitle,
-        IonCardContent,
+        Card,
         FileCard,
     },
     setup() {
