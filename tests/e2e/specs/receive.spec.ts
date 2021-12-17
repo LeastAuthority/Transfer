@@ -27,14 +27,15 @@ describe('Receive', () => {
     // const filename = 'small-file.txt';
     beforeEach(() => cy.task('clearDownloads'))
 
-    it('via typed code', (done) => {
+    it.only('via typed code', (done) => {
         mobileViewport();
 
         cy.visit('/#/r')
         cy.fixture(filename).then(async (file: string) => {
             const {code} = await mockClientSend(filename, file)
-            UIEnterCode(code).then(() => {
-                expectReceiveConsent(code).then(() => {
+            expect(code).not.to.be.undefined;
+            UIEnterCode(code as string).then(() => {
+                expectReceiveConsent(code as string).then(() => {
                     expectFileDownloaded(filename, file).then(() => {
                         done();
                     });
@@ -48,8 +49,9 @@ describe('Receive', () => {
 
         cy.fixture(filename).then(async (file: string) => {
             const {code} = await mockClientSend(filename, file);
+            expect(code).not.to.be.undefined;
             cy.visit(`/#/${code}`)
-            expectReceiveConsent(code).then(() => {
+            expectReceiveConsent(code as string).then(() => {
                 expectFileDownloaded(filename, file).then(() => {
                     done();
                 });
@@ -57,7 +59,7 @@ describe('Receive', () => {
         });
     });
 
-    it.only('should show bad code error when the code format is invalid', () => {
+    it('should show bad code error when the code format is invalid', () => {
         cy.viewport('samsung-note9', 'portrait')
         cy.fixture(filename).then(async (file: string) => {
             cy.visit('/#/r');

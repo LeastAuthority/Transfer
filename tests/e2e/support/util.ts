@@ -15,16 +15,19 @@ export function mobileViewport() {
 }
 
 export function expectFileDownloaded(filename: string, expected: string): Chainable<undefined> {
-    cy.get('ion-text.filename').should('have.text', filename);
-    cy.get('ion-text.size').should('have.text', '(1022.6 kB)');
+    const [basename, extension] = filename.split('.');
+    cy.get('ion-card.receive-consent').should('be.visible')
+            .get('ion-text.basename').first().should('have.text', basename)
+            .get('ion-text.extension').first().should('contain.text', extension)
+            .get('ion-text.size').first().should('contain.text', '(1022.6 kB)');
 
     // TODO: get rid of wait.
     return cy.get('.download-button').wait(500).click().then(() => {
         const path = `${TEST_DOWNLOAD_DIR}/${filename}`
         return cy.readFile(path, 'utf-8', {timeout: 3000})
-            .should((actual) => {
-                expect(actual).to.eq(expected, 'file contents are not equal')
-            });
+                .should((actual) => {
+                    expect(actual).to.eq(expected, 'file contents are not equal')
+                });
     });
 }
 
@@ -64,26 +67,36 @@ export function largeUint8ArrToString(uint8arr: Uint8Array) {
 }
 
 // TODO: refactor (application actions / page objects?)
-export async function UIGetCode(filename: string): Promise<string> {
+export async function UIGetRecvURL(filename: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         cy.fixture(filename).then(fileContent => {
             cy.get('ion-button.select-button')
-                // TODO: doesn't test button triggers file dialog
-                // TODO: can't set / test file size?
-                .get('input[type="file"]')
-                .attachFile({
-                    fileName: 'large-file.txt',
-                    fileContent,
-                })
-                .get('.send-code-input>input')
-                .wait(1000)
-                .then(el => {
-                    const value = (el[0] as HTMLInputElement).value;
-                    expect(value).not.match(RegExp(`^(|${TEST_HOST}/#/)$`));
-                    resolve(value);
-                })
+                    // TODO: test that button click triggers file dialog
+                    // TODO: test drag-n-drop
+                    // TODO: can't set / test file size?
+                    .get('input[type="file"]')
+                    .attachFile({
+                        fileName: 'large-file.txt',
+                        fileContent,
+                    })
+                    .get('.send-code-input>input')
+                    .wait(1000)
+                    .then(el => {
+                        const value = (el[0] as HTMLInputElement).value;
+                        expect(value).not.match(RegExp(`^(|${TEST_HOST}/#/)$`));
+                        resolve(value);
+                    })
         })
     });
+}
+
+export async function UIGetRecvCode(filename: string): Promise<string> {
+    const url = await UIGetRecvURL(filename);
+    return codeFromRecvURL(url);
+}
+
+export function codeFromRecvURL(url: string): string {
+    return url.substring(url.lastIndexOf('/') + 1);
 }
 
 export function codeFromURL(url: string): string {
@@ -102,7 +115,7 @@ export async function mockGetReceiveReader(code: string): Promise<FileStreamRead
     return receiver.recvFile(code);
 }
 
-export async function mockClientReceive(code: string): Promise<Uint8Array> {
+export async function mockClientReceive(code: string, size: number): Promise<Uint8Array> {
     const go = new Go();
     await WebAssembly.instantiateStreaming(fetch("http://localhost:8080/assets/wormhole.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
@@ -110,7 +123,6 @@ export async function mockClientReceive(code: string): Promise<Uint8Array> {
 
     const receiver = new Client();
     // TODO: cleanup
-    let size: number;
     const reader = await receiver.recvFile(code);
 
     // TODO: fix
@@ -148,17 +160,17 @@ export interface TestFile {
     arrayBuffer(): ArrayBuffer;
 }
 
-export function mockReadFn (file: TestFile, bufSizeBytes: number) {
+export function mockReadFn(file: TestFile, bufSizeBytes: number) {
     let counter = 0;
     return jest.fn().mockImplementation((buf) => {
         const dataView = new DataView(buf);
-        for (let i = 0; i <  bufSizeBytes; i++) {
-            dataView.setUint8(i, file.data.getUint8(( bufSizeBytes * counter) + i));
-            if (( bufSizeBytes * counter) + i === file.data.byteLength - 1) {
+        for (let i = 0; i < bufSizeBytes; i++) {
+            dataView.setUint8(i, file.data.getUint8((bufSizeBytes * counter) + i));
+            if ((bufSizeBytes * counter) + i === file.data.byteLength - 1) {
                 return Promise.resolve([i + 1, true]);
             }
         }
         counter++;
-        return Promise.resolve([ bufSizeBytes, false]);
+        return Promise.resolve([bufSizeBytes, false]);
     })
 }

@@ -40,14 +40,14 @@
                             or
                         </ion-text>
                     </div>
-                    <ion-button class="large-button ion-margin-vertical"
+                    <ion-button class="large-button ion-margin-vertical select-button"
                                 color="medium-grey"
                                 @click="() => select()">
                         <ion-icon slot="icon-only" src="/assets/icon/select.svg"></ion-icon>
                     </ion-button>
                 </div>
             </DropZone>
-            <ion-button class="large-button ion-margin-bottom hide-desktop"
+            <ion-button class="large-button ion-margin-bottom hide-desktop select-button"
                         color="medium-grey"
                         @click="() => select()">
                 <ion-icon slot="icon-only" src="/assets/icon/select_mobile.svg"></ion-icon>

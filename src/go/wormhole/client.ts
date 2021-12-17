@@ -41,7 +41,7 @@ export default class Client implements ClientInterface {
 
     public free() {
         const err = wormhole.Client.free(this.goClient)
-        if (!err) {
+        if (err) {
             throw err;
         }
     }
