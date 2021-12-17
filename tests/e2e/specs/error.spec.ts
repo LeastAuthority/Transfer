@@ -7,7 +7,7 @@ import {
     mockGetReceiveReader,
     TEST_HOST,
     codeFromURL,
-    UIGetCode, NewTestFile, largeUint8ArrToString
+    UIGetRecvURL, NewTestFile, largeUint8ArrToString
 } from "../support/util";
 import {SET_CONFIG} from "../support/const";
 import Client from "@/go/wormhole/client";
@@ -90,7 +90,7 @@ describe('Error messaging', () => {
                     }
                 }, '*')
                 cy.wait(100)
-                UIGetCode(filename)
+                UIGetRecvURL(filename)
                     .then((url) => {
 
                         const code = codeFromURL(url);

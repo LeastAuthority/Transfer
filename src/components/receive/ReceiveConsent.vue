@@ -1,5 +1,5 @@
 <template>
-    <Card :active="active">
+    <Card :active="active" class="receive-consent">
         <template #title>
             <ion-text color="dark-grey" class="bold">
                 Ready to download
