@@ -8,7 +8,6 @@ export const TEST_DOWNLOAD_DIR = 'cypress/downloads'
 
 // TODO: move / automate
 export const TEST_HOST = 'http://localhost:8080'
-const TEST_BUFFER_SIZE = 1024 * 4 // 4 KiB
 
 export function mobileViewport() {
     cy.viewport('samsung-note9', 'portrait')
@@ -123,7 +122,7 @@ export async function mockClientReceive(code: string): Promise<Uint8Array> {
     });
 }
 
-export function NewTestFile(name: string, fileSizeBytes: number): TestFile {
+export function NewTestFile(name: string, fileSizeBytes: number): TestBlob {
     const data = new DataView(new ArrayBuffer(fileSizeBytes));
     data.buffer
     for (let i = 0; i < data.byteLength; i++) {
@@ -134,9 +133,30 @@ export function NewTestFile(name: string, fileSizeBytes: number): TestFile {
         name,
         size: fileSizeBytes,
         data,
-        arrayBuffer(): ArrayBuffer {
-            return data.buffer;
+        arrayBuffer(): Promise<ArrayBuffer> {
+            return Promise.resolve(data.buffer);
         },
+        slice(start: number, end: number): TestBlob {
+            let size = 0;
+            if (end >= fileSizeBytes) {
+                end = fileSizeBytes;
+            }
+            size = end - start;
+            if (start >= fileSizeBytes) {
+                size = 0;
+            }
+
+            const sliceData = new Uint8Array(data.buffer).subarray(start, start+size);
+
+            return {
+                size: size,
+                data: sliceData,
+                arrayBuffer(): Promise<ArrayBuffer> {
+                    const buf = new Uint8Array(sliceData.buffer).subarray(start, start+size);
+                    return Promise.resolve(buf);
+                }
+            }
+        }
     }
 }
 
@@ -145,6 +165,12 @@ export interface TestFile {
     size: number;
     data: DataView;
 
+    arrayBuffer(): ArrayBuffer;
+}
+
+export interface TestBlob {
+    size: number;
+    data: DataView;
     arrayBuffer(): ArrayBuffer;
 }
 

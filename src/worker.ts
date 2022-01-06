@@ -47,7 +47,7 @@ async function handleSendFile({id, file}: RPCMessage): Promise<Record<string, an
 
     // TODO: change signature to expect array buffer or Uint8Array?
     return new Promise((resolve, reject) => {
-        client.sendFile(file, {progressFunc: sendProgressCb})
+        client.sendFile(file as File, {progressFunc: sendProgressCb})
             .then(({code, done}: TransferProgress) => {
                 done.then(() => {
                     rpc!.signal(SEND_FILE_RESULT_OK, {id});

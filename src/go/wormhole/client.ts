@@ -22,8 +22,8 @@ export default class Client implements ClientInterface {
     }
 
     public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
-        const data = new Uint8Array(await file.arrayBuffer());
-        return wormhole.Client.sendFile(this.goClient, file.name, data, opts);
+        // XXX get rid of file.name param to sendFile()?
+        return wormhole.Client.sendFile(this.goClient, file.name, file, opts);
     }
 
     public async recvText(code: string): Promise<string> {
