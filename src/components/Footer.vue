@@ -70,7 +70,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
+
+ion-footer > ion-grid {
+    max-width: var(--max-width);
+}
+
+ion-footer {
+    margin-bottom: 8px;
+}
 
 .la-logo {
     background-image: url("/assets/logos/la-logo.svg");
@@ -99,6 +107,7 @@ export default {
     max-width: 380px;
     margin-left: var(--main-left-margin);
     margin-right: 4vw;
+    font-size: .8rem;
 }
 
 .la-logo {
@@ -120,7 +129,7 @@ export default {
 
     .links {
         margin-right: 6vw;
-        margin-left: calc(var(--main-margin) / 2);
+        margin-left: 16px;
     }
 
     .made-with-love-container {

@@ -1,14 +1,11 @@
 <template>
-    <!--    <transition name="step-fade" mode="out-in">-->
-    <div v-show="active">
-        <ion-card-header>
-            <ion-card-title>
-                <ion-text color="dark-grey" class="bold">
-                    Received!
-                </ion-text>
-            </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
+    <Card :active="active">
+        <template #title>
+            <ion-text color="dark-grey" class="bold">
+                Received!
+            </ion-text>
+        </template>
+        <template #content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-margin-bottom">
                     <FileCard :name="fileMeta.name"
@@ -34,9 +31,8 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-        </ion-card-content>
-    </div>
-    <!--    </transition>-->
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
@@ -47,15 +43,12 @@ import {
     IonText,
     IonButton,
     IonIcon,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
 import {mapState} from "vuex";
 import {downloadOutline, sendSharp} from 'ionicons/icons'
-import {FileMeta} from "@/store";
-import {sizeToClosestUnit} from "@/util";
+
+import Card from "@/components/Card.vue";
 import FileCard from "@/components/FileCard.vue";
 
 export default defineComponent({
@@ -65,15 +58,13 @@ export default defineComponent({
         ...mapState(['fileMeta']),
     },
     components: {
-        IonCardContent,
-        IonCardHeader,
-        IonCardTitle,
         IonGrid,
         IonRow,
         IonCol,
         IonText,
         IonIcon,
         IonButton,
+        Card,
         FileCard,
     },
     setup() {

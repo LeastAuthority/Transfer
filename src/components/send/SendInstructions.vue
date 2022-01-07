@@ -1,14 +1,11 @@
 <template>
-    <!--    <transition name="step-fade">-->
-    <div v-show="active">
-        <ion-card-header>
-            <ion-card-title>
-                <ion-text class="bold" color="dark-grey">
-                    Ready to send!
-                </ion-text>
-            </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
+    <Card :active="active">
+        <template #title>
+            <ion-text class="bold" color="dark-grey">
+                Ready to send!
+            </ion-text>
+        </template>
+        <template #content>
             <ion-grid>
                 <ion-row class="ion-justify-content-center ion-margin-top">
                     <FileCard :name="file && file.name"
@@ -78,9 +75,8 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-        </ion-card-content>
-    </div>
-    <!--    </transition>-->
+        </template>
+    </Card>
 </template>
 
 <style lang="css" scoped>
@@ -94,17 +90,6 @@
     }
 }
 
-.step-fade-enter-active, .step-fade-leave-active {
-    transition: opacity .3s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-}
-
-.step-fade-enter-from, .step-fade-leave-to {
-    opacity: 0;
-}
 </style>
 
 <script lang="ts">
@@ -116,16 +101,14 @@ import {
     IonInput,
     IonRow,
     IonText,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     IonLabel,
 } from '@ionic/vue';
 import {copy, close} from 'ionicons/icons';
-import {defineComponent, Transition} from 'vue';
+import {defineComponent} from 'vue';
 import {mapState, mapActions, mapMutations} from 'vuex';
 
 import {NEW_CLIENT, RESET_PROGRESS} from "@/store/actions";
+import Card from "@/components/Card.vue";
 import CopyButton from "@/components/CopyButton.vue";
 import FileCard from "@/components/FileCard.vue";
 
@@ -165,7 +148,6 @@ export default defineComponent({
         },
     },
     components: {
-        // Transition,
         IonGrid,
         IonRow,
         IonCol,
@@ -174,9 +156,7 @@ export default defineComponent({
         IonButton,
         IonIcon,
         IonInput,
-        IonCardHeader,
-        IonCardTitle,
-        IonCardContent,
+        Card,
         CopyButton,
         FileCard,
     },
