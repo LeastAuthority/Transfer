@@ -1,5 +1,5 @@
 // NB: wormhole-william relay timeout is 5s.
-export const SENDER_TIMEOUT = 3000;
+export const SENDER_TIMEOUT = 10000;
 
 export const CODE_REGEX = /^\d+-\w+-\w+$/;
 
