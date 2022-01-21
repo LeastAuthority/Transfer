@@ -45,6 +45,13 @@ export const ErrBadCode = new AlertError({
     pattern: '',
 })
 
+export const ErrRecvConnectionTimeout = new AlertError({
+    name: 'Connection time-out',
+    message: '<p>It looks like the connection between you and the sender was briefly lost.</p>' +
+             '<p>Please ask the sender for a new code.</p>',
+    pattern: '',
+})
+
 export const ErrMailbox = new AlertError({
     message: ServerErrorMsg,
     pattern: '.*$rendezvousURL.*',
