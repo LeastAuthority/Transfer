@@ -48,7 +48,7 @@ export const ErrBadCode = new AlertError({
 
 export const ErrRecvConnectionTimeout = new AlertError({
     name: 'Connection time-out',
-    message: `<p>Failed to connect to the sender in ${SENDER_TIMEOUT/1000} milliseconds.</p>` +
+    message: `<p>Failed to connect to the sender in ${SENDER_TIMEOUT/1000} seconds.</p>` +
              `<p>Please ask the sender for a new code.</p>`,
     pattern: '',
 })
@@ -73,7 +73,7 @@ export const ErrInterrupt = new AlertError({
 export const ErrInvalidCode = new Error('Please use a code with the number-word-word format.')
 
 export const MatchableErrors = [
-    ErrBadCode,
+    ErrRecvConnectionTimeout,
     ErrMailbox,
     ErrRelay,
     ErrInterrupt,
