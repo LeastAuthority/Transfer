@@ -7,7 +7,7 @@ export interface TransferProgress {
     code?: string;
     done: Promise<void>;
     accept?: () => Promise<void>;
-    // cancel: () => void;
+    cancel: () => void;
 }
 
 export type ProgressFunc = (sentBytes: number, totalBytes: number) => void

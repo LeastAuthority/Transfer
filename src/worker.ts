@@ -48,10 +48,13 @@ async function handleSendFile({id, file}: RPCMessage): Promise<Record<string, an
     // TODO: change signature to expect array buffer or Uint8Array?
     return new Promise((resolve, reject) => {
         client.sendFile(file as File, {progressFunc: sendProgressCb})
-            .then(({code, done}: TransferProgress) => {
+            .then(({code, cancel, done}: TransferProgress) => {
+                receiving[id] = {cancel};
                 done.then(() => {
+                    console.log("DONE.THEN")
                     rpc!.signal(SEND_FILE_RESULT_OK, {id});
                 }).catch(error => {
+                    console.log("CATCH ERROR")
                     rpc!.signal(SEND_FILE_RESULT_ERROR, {id, error});
                 });
                 resolve({code});
@@ -63,8 +66,10 @@ async function handleSendFile({id, file}: RPCMessage): Promise<Record<string, an
 }
 
 function handleSendFileCancel({id}: RPCMessage): void {
-    const {reader} = receiving[id];
-    reader.close()
+    console.log('SEND_FILE_CANCEL rpc called');
+    const {cancel} = receiving[id];
+    console.log(typeof(cancel));
+    cancel();
 }
 
 // TODO: be more specific with types!
