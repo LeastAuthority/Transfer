@@ -3,7 +3,6 @@
 
 import {AlertOptions} from "@ionic/core";
 import {ClientConfig} from "@/go/wormhole/types";
-import {SENDER_TIMEOUT} from "@/util";
 
 const ServerErrorMsg = 'Unfortunately, the site cannot connect to the [Product name] server. Please try again or let us know at support@domainname if the problem remains.';
 
@@ -48,8 +47,8 @@ export const ErrBadCode = new AlertError({
 
 export const ErrRecvConnectionTimeout = new AlertError({
     name: 'Connection time-out',
-    message: `<p>Failed to connect to the sender in ${SENDER_TIMEOUT/1000} seconds.</p>` +
-             `<p>Please ask the sender for a new code.</p>`,
+    message: '<p>It looks like the connection between you and the sender was briefly lost.</p>' +
+             '<p>Please ask the sender for a new code.</p>',
     pattern: '',
 })
 
