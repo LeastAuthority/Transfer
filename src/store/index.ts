@@ -40,8 +40,8 @@ if (typeof(host) === 'undefined') {
 }
 
 const defaultConfig = {
-    rendezvousURL: process.env['STAGE_MAILBOX_URL'],
-    transitRelayURL: process.env['STAGE_RELAY_URL'],
+    rendezvousURL: process.env['STAGE_MAILBOX_URL'] || 'ws://localhost:4000/v1',
+    transitRelayURL: process.env['STAGE_RELAY_URL'] || 'ws://localhost:4002',
     passPhraseComponentLength: 2,
 }
 
