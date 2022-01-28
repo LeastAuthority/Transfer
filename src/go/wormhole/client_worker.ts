@@ -42,7 +42,6 @@ export default class ClientWorker implements ClientInterface {
     }
 
     private initialize() {
-        console.log("INITIALIZEING CLIENT WORKER")
         this.worker = new Worker(`${window.location.origin}/worker/index.umd.js`);
 
         const channel = new MessageChannel();
@@ -86,7 +85,6 @@ export default class ClientWorker implements ClientInterface {
     }
 
     private _reset() {
-        console.log("RESET CALLED!");
         this.initialize();
     }
 
@@ -178,7 +176,6 @@ export default class ClientWorker implements ClientInterface {
     }
 
     public async sendFile(file: File, opts?: TransferOptions): Promise<TransferProgress> {
-        console.log("in client worker sendFile");
         await this.ready;
         const id = Date.now()
 
