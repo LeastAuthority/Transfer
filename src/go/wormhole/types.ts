@@ -59,8 +59,8 @@ export interface WindowClient {
 }
 
 export interface ClientConfig {
-    rendezvousURL: string;
-    transitRelayURL: string;
+    rendezvousURL: string | undefined;
+    transitRelayURL: string | undefined ;
     // TODO: int
     passPhraseComponentLength: number;
 }

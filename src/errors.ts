@@ -33,8 +33,8 @@ export class AlertError extends Error {
 
     public matches(errorMsg: string, config: ClientConfig): boolean {
         const pattern = this.opts.pattern
-            .replace('$rendezvousURL', config.rendezvousURL)
-            .replace('$transitRelayURL', config.transitRelayURL);
+            .replace('$rendezvousURL', config.rendezvousURL!)
+            .replace('$transitRelayURL', config.transitRelayURL!);
         return (new RegExp(pattern)).test(errorMsg);
     }
 }
