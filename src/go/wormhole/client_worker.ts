@@ -180,6 +180,10 @@ export default class ClientWorker implements ClientInterface {
         const id = Date.now()
 
         const done: Promise<void> = new Promise((resolve, reject) => {
+            this.pending[id] = {
+                ...this.pending[id],
+                opts
+            };
             this.pending[id].done = {resolve, reject};
         });
 	const cancel = () => this.rpc!.rpc(SEND_FILE_CANCEL);
