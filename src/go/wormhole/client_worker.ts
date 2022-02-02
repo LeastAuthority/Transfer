@@ -124,7 +124,7 @@ export default class ClientWorker implements ClientInterface {
 
     private _handleSendFileResultOK({id}: RPCMessage): void {
         console.log('client_worker.ts:127 | _handleSendFileResultOK');
-        const {result: {resolve}} = this.pending[id];
+        const {done: {resolve}} = this.pending[id];
         resolve();
     }
 
