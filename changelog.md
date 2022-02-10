@@ -1,6 +1,10 @@
 Changelog
 ========
 
+# Changes between v0.0.4-alpha.plus.rc4 and v0.0.4-alpha.plus.rc3:
+- increase the sender timeout on the frontend to 10 minutes [PR: 80](https://github.com/LeastAuthority/Transfer/pull/80)
+- get rid of connection timeouts of 5 seconds in wormhole-william for direct and relay connections [PR: 46](https://github.com/LeastAuthority/wormhole-william/pull/46)
+
 # Changes between v0.0.4-alpha.plus.rc3 and v0.0.4-alpha.plus.rc2:
 - create build script [PR: #91](https://github.com/LeastAuthority/Transfer/pull/91)
 - The PR also reverts to using backend configurations in the code rather than
