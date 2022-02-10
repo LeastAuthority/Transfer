@@ -1,4 +1,4 @@
-export const SENDER_TIMEOUT = 60 * 10 * 1000; // 10 minutes in milliseconds
+export const SENDER_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export const CODE_REGEX = /^\d+-\w+-\w+$/;
 
