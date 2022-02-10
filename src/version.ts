@@ -1,2 +1,2 @@
 // TODO: something more sophisticated.
-export default 'v0.0.4-alpha.plus.rc2';
+export default 'v0.0.4-alpha.plus.rc3';
