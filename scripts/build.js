@@ -21,8 +21,7 @@ console.log(`host: ${host}`)
 console.log(`relayURL: ${relayURL}`)
 console.log(`mailboxURL: ${mailboxURL}`)
 
-// "build:playground": "NODE_ENV=playground yarn build:worker && NODE_ENV=playground vue-cli-service build",
-const command = `yarn build:worker && vue-cli-service build`;
+const command = `NODE_ENV=playground yarn build:worker && NODE_ENV=playground vue-cli-service build`;
 
 try {
     execSync(command);
