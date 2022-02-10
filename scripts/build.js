@@ -17,11 +17,7 @@ const host = env['STAGE_HOSTNAME'];
 const relayURL = env['STAGE_RELAY_URL'];
 const mailboxURL = env['STAGE_MAILBOX_URL'];
 
-console.log(`host: ${host}`)
-console.log(`relayURL: ${relayURL}`)
-console.log(`mailboxURL: ${mailboxURL}`)
-
-const command = `NODE_ENV=playground yarn build:worker && NODE_ENV=playground vue-cli-service build`;
+const command = `NODE_ENV=${stage} yarn build:worker && NODE_ENV=${stage} vue-cli-service build`;
 
 try {
     execSync(command);
