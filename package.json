@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "serve:worker": "vue-cli-service build --dest ./public/worker/ --target lib --formats umd --name worker --filename index --mode developement --watch ./src/worker.ts",
-    "build": "NODE_ENV=production yarn build:worker && NODE_ENV=production vue-cli-service build",
+    "build": "node ./scripts/build.js production",
+    "build:production": "node ./scripts/build.js production",
     "build:playground": "node ./scripts/build.js playground",
     "build:worker": "vue-cli-service build --dest ./dest/worker/ --target lib --formats umd --name worker --filename index --mode production ./src/worker.ts",
     "build:wasm": "node scripts/build-wasm.js",
