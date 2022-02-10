@@ -34,15 +34,31 @@ const defaultAlertOpts: AlertOptions = {
     buttons: ['OK'],
 };
 
-let host = process.env['STAGE_HOSTNAME'];
-if (typeof(host) === 'undefined') {
-    host = 'http://localhost:8080';
+let host = 'http://localhost:8080';
+let defaultConfig: ClientConfig = {
+    rendezvousURL: 'wss://localhost:4000/v1',
+    transitRelayURL: 'wss://localhost:4002',
+    passPhraseComponentLength: 2,
+};
+
+const playgroundConfig: ClientConfig = {
+    rendezvousURL: 'wss://mailbox.w3.leastauthority.com/v1',
+    transitRelayURL: 'wss://relay.w3.leastauthority.com:443',
+    passPhraseComponentLength: 2,
+};
+
+const prodConfig: ClientConfig = {
+    rendezvousURL: 'wss://mailbox.w.leastauthority.com/v1',
+    transitRelayURL: 'wss://relay.w.leastauthority.com:443',
+    passPhraseComponentLength: 2,
 }
 
-const defaultConfig = {
-    rendezvousURL: process.env['STAGE_MAILBOX_URL'] || 'ws://localhost:4000/v1',
-    transitRelayURL: process.env['STAGE_RELAY_URL'] || 'ws://localhost:4002',
-    passPhraseComponentLength: 2,
+if (process.env['NODE_ENV'] === 'playground') {
+    defaultConfig = playgroundConfig;
+    host = 'https://w3.leastauthority.com';
+} else if (process.env['NODE_ENV'] === 'production') {
+    defaultConfig = prodConfig;
+    host = 'https://w.leastauthority.com';
 }
 
 let client: ClientWorker;
