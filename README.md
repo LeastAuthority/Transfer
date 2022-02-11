@@ -75,6 +75,39 @@ yarn run serve
 
 After this, open a browser and point it to `https://localhost:8080`.
 
+### Building the site
+
+To build the website for a particular stage (playground vs
+production), we should create a file in the root of the filesystem
+called `.production.build.env` or `.playground.build.env` (according
+to the stage for which we are building) and define three variables there:
+```
+VUE_APP_STAGE_HOSTNAME="https://foo.bar.org"
+VUE_APP_STAGE_MAILBOX_URL="wss://mailbox.foo.bar.org/v1"
+VUE_APP_STAGE_RELAY_URL="wss://relay.foo.bar.org:433"
+```
+
+Now, the site files can be generated with:
+
+```
+yarn build:playground
+```
+
+or
+
+```
+yarn build:production
+```
+
+A directory called `dist` would be created and it can be run with:
+
+```
+npx serve ./dist
+```
+
+to test whether the URLs are correct or whether the functionality or a
+fix that was added is working fine.
+
 ### Deployments / Cache Invalidation
 
 Deployments can be done via `yarn deploy:<stage name>`.
