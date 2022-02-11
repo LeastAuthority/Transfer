@@ -62,3 +62,11 @@ jobs:
 
       - name: lint the code
         run: yarn lint
+
+      - name: build the playground site
+        run: yarn build:playground
+
+      - name: build the production site
+        run: |
+          rm -rf ./dist
+          yarn build:production
