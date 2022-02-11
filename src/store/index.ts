@@ -34,32 +34,12 @@ const defaultAlertOpts: AlertOptions = {
     buttons: ['OK'],
 };
 
-let host = 'http://localhost:8080';
-let defaultConfig: ClientConfig = {
-    rendezvousURL: 'wss://localhost:4000/v1',
-    transitRelayURL: 'wss://localhost:4002',
+let host = process.env['VUE_APP_STAGE_HOSTNAME'] || 'http://localhost:8080';
+const defaultConfig: ClientConfig = {
+    rendezvousURL: process.env['VUE_APP_STAGE_MAILBOX_URL'] || 'wss://localhost:4000/v1',
+    transitRelayURL: process.env['VUE_APP_STAGE_RELAY_URL'] || 'wss://localhost:4002',
     passPhraseComponentLength: 2,
 };
-
-const playgroundConfig: ClientConfig = {
-    rendezvousURL: 'wss://mailbox.w3.leastauthority.com/v1',
-    transitRelayURL: 'wss://relay.w3.leastauthority.com:443',
-    passPhraseComponentLength: 2,
-};
-
-const prodConfig: ClientConfig = {
-    rendezvousURL: 'wss://mailbox.w.leastauthority.com/v1',
-    transitRelayURL: 'wss://relay.w.leastauthority.com:443',
-    passPhraseComponentLength: 2,
-}
-
-if (process.env['NODE_ENV'] === 'playground') {
-    defaultConfig = playgroundConfig;
-    host = 'https://w3.leastauthority.com';
-} else if (process.env['NODE_ENV'] === 'production') {
-    defaultConfig = prodConfig;
-    host = 'https://w.leastauthority.com';
-}
 
 let client: ClientWorker;
 
