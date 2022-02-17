@@ -62,3 +62,22 @@ jobs:
 
       - name: lint the code
         run: yarn lint
+
+      - name: build the playground site
+        run: |
+          cat <<EOF >> .playground.build.env
+          STAGE_HOSTNAME="https://localhost:8080"
+          STAGE_MAILBOX_URL="wss://localhost:4000/v1"
+          STAGE_RELAY_URL="wss://localhost:4002"
+          EOF
+          yarn build:playground
+
+      - name: build the production site
+        run: |
+          rm -rf ./dist
+          cat <<EOF >> .production.build.env
+          STAGE_HOSTNAME="https://localhost:8080"
+          STAGE_MAILBOX_URL="wss://localhost:4000/v1"
+          STAGE_RELAY_URL="wss://localhost:4002"
+          EOF
+          yarn build:production
