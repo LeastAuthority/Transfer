@@ -43,19 +43,14 @@ jobs:
       - name: install mailbox server
         run: pip install magic-wormhole-mailbox-server
 
-      - name: install virtualenv
-        run: pip install virtualenv
+      - name: install relay server
+        run: pip install git+https://github.com/magic-wormhole/magic-wormhole-transit-relay.git
 
       - name: run mailbox server
         run: twist wormhole-mailbox --usage-db=usage.sqlite &
 
       - name: run transit relay
-        run: |
-          cd magic-wormhole-transit-relay
-          virtualenv venv
-          source venv/bin/activate
-          pip install -e .[dev]
-          twist transitrelay --port=tcp:4001 --websocket=tcp:4002 &
+        run: twist transitrelay --port=tcp:4001 --websocket=tcp:4002 &
 
       - name: run tests
         run: yarn test:unit
