@@ -1,6 +1,3 @@
 [submodule "wormhole-william"]
 	path = wormhole-william
 	url = https://github.com/leastauthority/wormhole-william
-[submodule "magic-wormhole-transit-relay"]
-	path = magic-wormhole-transit-relay
-	url = https://github.com/magic-wormhole/magic-wormhole-transit-relay
