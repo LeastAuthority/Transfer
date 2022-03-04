@@ -1,0 +1,43 @@
+[tool.towncrier]
+    package = ""
+    package_dir = "src"
+    directory = "newsfragments"
+    filename = "NEWS.md"
+    title_format = "\nRelease `{version}` ( `{project_date}` )\n================================\n"
+    start_string = "[comment]: <> (towncrier release notes start)"
+    issue_format = "#{issue} <https://github.com/LeastAuthority/Transfer/issues/{issue}>"
+
+    [[tool.towncrier.type]]
+        directory = "security"
+        name = "Security fixes"
+        showcontent = false
+
+    [[tool.towncrier.type]]
+        directory = "feature"
+        name = "Features"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "bugfix"
+        name = "Bug fixes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "installation"
+        name = "Dependency/Installation Changes"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "doc"
+        name = "Improved Documentation"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "removal"
+        name = "Deprecations and Removals"
+        showcontent = true
+
+    [[tool.towncrier.type]]
+        directory = "minor"
+        name = "Miscellaneous"
+        showcontent = false
