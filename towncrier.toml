@@ -3,9 +3,14 @@
     package_dir = "src"
     directory = "newsfragments"
     filename = "NEWS.md"
-    title_format = "\nRelease {version} ({project_date})\n======================================\n"
-    start_string = "[comment]: <> (towncrier release notes start)"
+    start_string = ".. towncrier start line"
+    title_format = "\nRelease {version} ({project_date})"
     issue_format = "#{issue} <https://github.com/LeastAuthority/Transfer/issues/{issue}>"
+    underlines = [
+        "'",
+        "-",
+        "~",
+    ]
 
     [[tool.towncrier.type]]
         directory = "security"
