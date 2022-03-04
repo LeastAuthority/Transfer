@@ -115,6 +115,23 @@ This will sync the ./dist (build output) directory with the stage's S3 bucket.
 Executing this script via `yarn` will also cause the "uncache" script to run which invalidates specific objects in the stage's cloudfront cache.
 This invalidation can also be performed directly with `yarn uncache:<stage name>`.
 
+### Making releases
+
+We use [towncrier](https://pypi.org/project/towncrier/) to gather
+release notes automatically based on fragments written during the
+development. It is important to write these fragments in such a way
+that a reader of a finished release notes would be able to read and
+make sense of them.
+
+For example: For an issue number 42, which may be a feature, we could
+write, `Transfer now supports so and so...`
+
+For a bug fix, one could write `There was a issue with so and so which
+has been fixed`.
+
+Once a release is ready, run `yarn release <version number> to
+automatically create release notes.
+
 #### Dotenv
 
 Deployment and cache invalidation scripts rely on environment variables specified below.
