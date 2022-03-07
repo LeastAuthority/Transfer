@@ -11,6 +11,8 @@ if (!version) {
     exit(1);
 }
 
+// this command would do a 'git rm' of the newsfragments and do 'git
+// add' of the newly created NEWS file.
 const command = `towncrier build --yes --version=${version}`;
 
 try {
