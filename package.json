@@ -23,7 +23,8 @@
     "deploy:production": "node ./scripts/deploy.js production && yarn uncache:production",
     "uncache:production": "node ./scripts/uncache.js production",
     "deploy:playground": "node ./scripts/deploy.js playground && yarn uncache:playground",
-    "uncache:playground": "node ./scripts/uncache.js playground"
+    "uncache:playground": "node ./scripts/uncache.js playground",
+    "release":  "node ./scripts/release.js"
   },
   "dependencies": {
     "@capacitor/android": "^2.4.5",
