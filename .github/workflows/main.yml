@@ -81,3 +81,10 @@ jobs:
           STAGE_RELAY_URL="wss://localhost:4002"
           EOF
           yarn build:production
+
+      - name: install towncrier
+        run: pip install towncrier
+
+      - name: check if the PR contains a newsfile
+        run: towncrier check --compare-with origin/main
+
