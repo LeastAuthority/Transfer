@@ -15,14 +15,14 @@ Follow these steps to get the whole setup running on a local computer for easy d
 ### Cloning
 
 ```
-git clone git@github.com:LeastAuthority/MyFileTransfer.git
-cd MyFileTransfer
+git clone git@github.com:LeastAuthority/Transfer.git
+cd Transfer
 git submodule init
 git submodule update --recursive
 
 or you can do it in one step:
 
-git clone --recurse-submodules git@github.com:LeastAuthority/MyFileTransfer.git
+git clone --recurse-submodules git@github.com:LeastAuthority/Transfer.git
 
 ```
 
