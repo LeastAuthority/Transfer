@@ -1,6 +1,10 @@
 Changelog
 ========
 
+# Changes between v0.0.4-alpha.plus.rc5 and v0.0.4-alpha.plus.rc4:
+- move config out of source code [PR: #97](https://github.com/LeastAuthority/Transfer/pull/97)
+- get rid of the relay server submodule [PR: #99](https://github.com/LeastAuthority/Transfer/pull/99)
+
 # Changes between v0.0.4-alpha.plus.rc4 and v0.0.4-alpha.plus.rc3:
 - increase the sender timeout on the frontend to 10 minutes [PR: 80](https://github.com/LeastAuthority/Transfer/pull/80)
 - get rid of connection timeouts of 5 seconds in wormhole-william for direct and relay connections [PR: 46](https://github.com/LeastAuthority/wormhole-william/pull/46)
