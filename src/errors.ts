@@ -42,7 +42,7 @@ export class AlertError extends Error {
 export const ErrBadCode = new AlertError({
     message: '<p>If you’re sure this is the right code: Either the sender is no longer connected, or the code was already used.</p>' +
     '<p>Please ask the sender for a new code and for them to stay connected until you get the file.</p>',
-    pattern: '',
+    pattern: '^decrypt message failed$',
 })
 
 export const ErrRecvConnectionTimeout = new AlertError({
@@ -73,6 +73,7 @@ export const ErrInvalidCode = new Error('Please use a code with the number-word-
 
 export const MatchableErrors = [
     ErrRecvConnectionTimeout,
+    ErrBadCode,
     ErrMailbox,
     ErrRelay,
     ErrInterrupt,
