@@ -23,7 +23,9 @@
     "deploy:production": "node ./scripts/deploy.js production && yarn uncache:production",
     "uncache:production": "node ./scripts/uncache.js production",
     "deploy:playground": "node ./scripts/deploy.js playground && yarn uncache:playground",
-    "uncache:playground": "node ./scripts/uncache.js playground"
+    "uncache:playground": "node ./scripts/uncache.js playground",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@capacitor/android": "^2.4.5",
@@ -43,7 +45,12 @@
     "worker-rpc": "^0.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.8",
     "@capacitor/cli": "2.4.5",
+    "@storybook/addon-actions": "^6.4.19",
+    "@storybook/addon-essentials": "^6.4.19",
+    "@storybook/addon-links": "^6.4.19",
+    "@storybook/vue3": "^6.4.19",
     "@types/jest": "^24.0.19",
     "@types/node": "^14.14.25",
     "@types/streamsaver": "^2.0.0",
@@ -59,6 +66,7 @@
     "@vue/compiler-sfc": "^3.0.0-0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "@vue/test-utils": "^2.0.0-0",
+    "babel-loader": "^8.2.3",
     "clipboardy": "^2.3.0",
     "cypress": "6.5.0",
     "cypress-file-upload": "^5.0.2",
@@ -70,6 +78,7 @@
     "glob": "^7.1.6",
     "tmp-promise": "^3.0.2",
     "typescript": "~3.9.3",
-    "vue-jest": "^5.0.0-0"
+    "vue-jest": "^5.0.0-0",
+    "vue-loader": "^16.8.3"
   }
 }
