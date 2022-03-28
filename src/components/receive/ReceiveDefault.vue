@@ -1,71 +1,163 @@
+<script setup lang="ts">
+import CardVue from '@/components/Card.vue';
+import { ErrInvalidCode } from '@/errors';
+import { COMPLETE_CODE_WORD, SAVE_FILE, SET_CODE } from '@/store/actions';
+import { CODE_REGEX } from '@/util';
+import {
+    IonCol,
+    IonGrid,
+    IonInput,
+    IonRow,
+    IonSpinner,
+    IonText
+} from "@ionic/vue";
+import { computed, defineProps, ref, watch } from 'vue';
+import { useStore } from 'vuex';
+import AutoCompleteContainer from '../AutoCompleteContainer.vue';
+import PopoverVue from '../Popover.vue';
+import WaitButtonVue, { DefaultDuration } from '../WaitButton.vue';
+
+const errorColor = 'warning-red';
+const exampleColor = 'dark-grey';
+const errorText = ErrInvalidCode.message;
+const exampleText = 'E.g.: 7-guitarist-revenge';
+
+const props = defineProps(['active', 'next', 'reset'])
+
+const store = useStore();
+
+const exampleErrorColor = ref(exampleColor)
+const exampleErrorText = ref(exampleText)
+const waiting = ref(false);
+const codeInput = ref(null);
+const codeInputInner = ref(null);
+const active = ref(false);
+const modelCode = ref("");
+
+watch(codeInput, async (r: any) => {
+    const ionInputEl = r.$el;
+    codeInputInner.value = await ionInputEl.getInputElement();
+})
+
+watch(
+    () => store.state.suggestedWord,
+    (v) => {
+        active.value = !!v;
+    }
+)
+
+watch(
+    modelCode,
+    (v) => {
+        console.log(v)
+        store.commit(SET_CODE, v);
+    }
+)
+
+const blurInvalid = computed(() => store.state.code !== '' && exampleErrorColor.value === errorColor)
+const codeIsValid = computed(() => CODE_REGEX.test(store.state.code))
+
+function validate() {
+    if (store.state.code === '' || CODE_REGEX.test(store.state.code)) {
+        exampleErrorText.value = exampleText;
+        exampleErrorColor.value = exampleColor;
+    } else {
+        exampleErrorText.value = errorText;
+        exampleErrorColor.value = errorColor;
+    }
+}
+
+async function handleNext() {
+    // TODO: remove
+    window.setTimeout(() => {
+        waiting.value = false;
+    }, DefaultDuration);
+    waiting.value = true;
+
+    try {
+        await store.dispatch(SAVE_FILE, store.state.code);
+        props.next();
+    } catch (error) {
+        console.error(error);
+        props.reset();
+    }
+}
+
+function completeCodeWord(event: KeyboardEvent): void {
+    event.preventDefault();
+    store.commit(COMPLETE_CODE_WORD);
+    (event.target as HTMLInputElement).value = store.state.code;
+}
+
+function handleDismiss() {
+    active.value = false
+}
+
+function handleFocus() {
+    active.value = !!store.state.suggestedWord;
+}
+</script>
+
 <template>
-    <Card :active="active">
+    <CardVue :active="props.active">
         <template #title>
-            <ion-text color="dark-grey" class="bold">
-                Receive files in real-time
-            </ion-text>
+            <ion-text color="dark-grey" class="bold">Receive files in real-time</ion-text>
         </template>
         <template #subtitle>
-            <ion-text color="dark-grey">
-                Always end-to-end encrypted.
-            </ion-text>
+            <ion-text color="dark-grey">Always end-to-end encrypted.</ion-text>
         </template>
         <template #content>
             <ion-grid>
                 <ion-row class="ion-text-center ion-justify-content-center ion-align-items-center">
-                    <ion-col class="input-col"
-                             sizeLg="6"
-                             sizeMd="7"
-                             sizeSm="9"
-                             sizeXs="9"
-                    >
-                        <div class="relative">
-                            <ion-input color="black"
-                                       :class="{invalid: blurInvalid, 'ion-margin-bottom': true}"
-                                       autofocus
-                                       :clearInput="code !== ''"
-                                       type="text"
-                                       placeholder="Enter code here"
-                                       v-model="_code"
-                                       @change="validate"
-                                       @ionInput="onInput"
-                                       @keyup.enter="_next"
-                                       @keypress.space="completeCodeWord"
-                                       ref="code_input"
-                            ></ion-input>
-                            <AutoComplete></AutoComplete>
-                        </div>
+                    <ion-col class="input-col" sizeLg="6" sizeMd="7" sizeSm="9" sizeXs="9">
+                        <ion-input
+                            color="black"
+                            :class="{ invalid: blurInvalid, 'ion-margin-bottom': true }"
+                            autofocus
+                            :clearInput="store.state.code !== ''"
+                            type="text"
+                            placeholder="Enter code here"
+                            @change="validate"
+                            v-model="modelCode"
+                            @keyup.enter="handleNext"
+                            @keypress.space="completeCodeWord"
+                            ref="codeInput"
+                            @ionFocus="handleFocus"
+                        ></ion-input>
+                        <PopoverVue
+                            :active="active"
+                            :elementRef="codeInputInner"
+                            :onDismiss="handleDismiss"
+                        >
+                            <AutoCompleteContainer />
+                        </PopoverVue>
                         <div class="flex-col">
-                            <ion-text :color="exampleErrorColor"
-                                      v-show="blurInvalid">
-                                {{ exampleErrorText }}
-                            </ion-text>
-                            <ion-text :color="exampleErrorColor">
-                                E.g.: 7-guitarist-revenge
-                            </ion-text>
+                            <ion-text
+                                :color="exampleErrorColor"
+                                v-show="blurInvalid"
+                            >{{ exampleErrorText }}</ion-text>
+                            <ion-text :color="exampleErrorColor">E.g.: 7-guitarist-revenge</ion-text>
                         </div>
                     </ion-col>
-                    <ion-col class="next-col ion-align-self-start ion-text-start"
-                             sizeXs="3"
-                    >
-                        <WaitButton class="ion-no-margin receive-next"
-                                    :disabled="!codeIsValid"
-                                    :force="waiting"
-                                    :click="_next">
+                    <ion-col class="next-col ion-align-self-start ion-text-start" sizeXs="3">
+                        <WaitButtonVue
+                            class="ion-no-margin receive-next"
+                            :disabled="!codeIsValid"
+                            :force="waiting"
+                            :click="handleNext"
+                        >
                             <template v-slot:text>
                                 <ion-text>Next</ion-text>
                             </template>
                             <template v-slot:waiting-text>
-                                <ion-spinner name="crescent"
-                                             color="dark"
-                                ></ion-spinner>
+                                <ion-spinner name="crescent" color="dark"></ion-spinner>
                             </template>
-                        </WaitButton>
+                        </WaitButtonVue>
                     </ion-col>
                 </ion-row>
             </ion-grid>
         </template>
-    </Card>
+    </CardVue>
 </template>
 
 <style lang="css" scoped>
@@ -95,106 +187,3 @@
     }
 }
 </style>
-
-<script lang="ts">
-import {
-    IonCol,
-    IonGrid,
-    IonInput,
-    IonRow,
-    IonSpinner,
-    IonText,
-} from "@ionic/vue";
-import {mapActions, mapMutations, mapState} from "vuex";
-import {ALERT_MATCHED_ERROR, COMPLETE_CODE_WORD, SAVE_FILE, SET_CODE} from "@/store/actions";
-import {defineComponent} from "vue";
-
-import AutoComplete from "@/components/AutoComplete.vue"
-import WaitButton, {DefaultDuration} from "@/components/WaitButton.vue";
-import {ErrInvalidCode} from "@/errors";
-import {CODE_REGEX} from "@/util";
-import Card from "@/components/Card.vue";
-
-const errorColor = 'warning-red';
-const exampleColor = 'dark-grey';
-const errorText = ErrInvalidCode.message;
-const exampleText = 'E.g.: 7-guitarist-revenge';
-
-export default defineComponent({
-    name: "ReceiveDefault",
-    props: ['active', 'next', 'reset'],
-    data() {
-        return {
-            exampleErrorColor: exampleColor,
-            exampleErrorText: exampleText,
-            waiting: false,
-        };
-    },
-    computed: {
-        ...mapState(['code']),
-        // TODO: vuex getter?
-        codeIsValid(): boolean {
-            return CODE_REGEX.test(this.code as unknown as string);
-        },
-        blurInvalid(): boolean {
-            return this.code !== '' && this.exampleErrorColor === errorColor;
-        },
-        _code: {
-            get: function (): string {
-                return this.code;
-            },
-            set: function (code: string) {
-                this[SET_CODE](code);
-            }
-        }
-    },
-    methods: {
-        ...mapActions([SAVE_FILE, ALERT_MATCHED_ERROR]),
-        ...mapMutations([SET_CODE, COMPLETE_CODE_WORD]),
-        async _next(): Promise<void> {
-            // TODO: remove
-            window.setTimeout(() => {
-                this.waiting = false;
-            }, DefaultDuration);
-            this.waiting = true;
-
-            try {
-                await this[SAVE_FILE](this.code);
-                this.next();
-            } catch (error) {
-                console.error(error);
-                this.reset();
-            }
-        },
-        async onInput(event: Event): Promise<void> {
-            if (this._code === '') {
-                return;
-            }
-        },
-        validate(): void {
-            if (this._code === '' || CODE_REGEX.test(this._code)) {
-                this.exampleErrorText = exampleText;
-                this.exampleErrorColor = exampleColor;
-            } else {
-                this.exampleErrorText = errorText;
-                this.exampleErrorColor = errorColor;
-            }
-        },
-        completeCodeWord(event: KeyboardEvent): void {
-            event.preventDefault();
-            this[COMPLETE_CODE_WORD]();
-        },
-    },
-    components: {
-        IonGrid,
-        IonRow,
-        IonCol,
-        IonText,
-        IonInput,
-        IonSpinner,
-        WaitButton,
-        AutoComplete,
-        Card,
-    }
-})
-</script>

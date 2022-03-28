@@ -1,46 +1,12 @@
-<template>
-    <ion-card
-            class="container no-pointer-events"
-            :style="{opacity}"
-    >
-        <ion-card-content class="ion-padding flex ion-justify-content-center ion-align-items-center">
-            <ion-text color="black">
-                {{ suggestedWord }}
-            </ion-text>
-            <ion-card color="light-grey" class="tab">
-                <ion-card-content>
-                    <ion-text color="darker-grey" class="ion-text-nowrap">
-                        Press space to complete
-                    </ion-text>
-                </ion-card-content>
-            </ion-card>
-        </ion-card-content>
-    </ion-card>
-</template>
-
-<script lang="ts">
+<script setup lang="ts">
 import {
     IonCard,
     IonCardContent,
-    IonText,
+    IonText
 } from '@ionic/vue';
-import {defineComponent} from "vue";
-import {mapState} from "vuex";
+import { defineProps } from 'vue';
 
-export default defineComponent({
-    name: "AutoComplete",
-    computed: {
-        ...mapState(['code', 'suggestedWord']),
-        opacity(): number {
-            return this.suggestedWord ? 1 : 0;
-        }
-    },
-    components: {
-        IonCard,
-        IonCardContent,
-        IonText,
-    }
-});
+const props = defineProps(['suggestedWord']);
 </script>
 
 <style scoped>
@@ -58,3 +24,18 @@ export default defineComponent({
     margin: 0 0 0 10px !important;
 }
 </style>
+
+<template>
+    <ion-card class="container no-pointer-events">
+        <ion-card-content
+            class="ion-padding flex ion-justify-content-center ion-align-items-center"
+        >
+            <ion-text color="black">{{ props.suggestedWord }}</ion-text>
+            <ion-card color="light-grey" class="tab">
+                <ion-card-content>
+                    <ion-text color="darker-grey" class="ion-text-nowrap">Press space to complete</ion-text>
+                </ion-card-content>
+            </ion-card>
+        </ion-card-content>
+    </ion-card>
+</template>
