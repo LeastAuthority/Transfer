@@ -298,6 +298,7 @@ function completeCodeWordMutation(state: any): void {
             state.code += CODE_DELIMITER;
         }
     }
+    state.suggestedWord = '';
 }
 
 // TODO: more specific types
