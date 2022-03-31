@@ -36,8 +36,8 @@ const defaultAlertOpts: AlertOptions = {
 
 const host = process.env['VUE_APP_STAGE_HOSTNAME'] || 'http://localhost:8080';
 const defaultConfig: ClientConfig = {
-    rendezvousURL: process.env['VUE_APP_STAGE_MAILBOX_URL'] || 'wss://localhost:4000/v1',
-    transitRelayURL: process.env['VUE_APP_STAGE_RELAY_URL'] || 'wss://localhost:4002',
+    rendezvousURL: process.env['VUE_APP_STAGE_MAILBOX_URL'] || 'ws://localhost:4000/v1',
+    transitRelayURL: process.env['VUE_APP_STAGE_RELAY_URL'] || 'ws://localhost:4002',
     passPhraseComponentLength: 2,
 };
 
