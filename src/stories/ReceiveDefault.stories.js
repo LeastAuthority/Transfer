@@ -1,14 +1,14 @@
-import ReceiveDefault from "@/components/receive/ReceiveDefault.vue";
-import store from "@/store/index";
-import { app } from "@storybook/vue3";
+import ReceiveDefault from '@/components/receive/ReceiveDefault.vue';
+import store from '@/store/index';
+import { app } from '@storybook/vue3';
 
 app.use(store);
 
 export default {
-  title: "Example/ReceiveDefault",
+  title: 'Example/ReceiveDefault',
   component: ReceiveDefault,
   argTypes: {
-    active: { type: "boolean" },
+    active: { type: 'boolean' },
   },
 };
 

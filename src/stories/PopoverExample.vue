@@ -5,17 +5,21 @@ const button = ref<null | HTMLElement>(null);
 const active = ref(false);
 
 function handleClick() {
-  active.value = true
+  active.value = true;
 }
 
 function handleDismiss() {
-  active.value = false
+  active.value = false;
 }
 </script>
 
 <template>
   <div>
-    <PopoverVue :active="active" :elementRef="button" :onDismiss="handleDismiss">
+    <PopoverVue
+      :active="active"
+      :elementRef="button"
+      :onDismiss="handleDismiss"
+    >
       <h1>Popover content goes here</h1>
     </PopoverVue>
     <button ref="button" @click="handleClick">Trigger popover</button>

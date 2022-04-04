@@ -29,6 +29,7 @@ git clone --recurse-submodules git@github.com:LeastAuthority/Transfer.git
 ### Building / Running (Web)
 
 #### System Dependencies
+
 - `docker`
 - `docker-compose`
 
@@ -41,12 +42,12 @@ npm install -g yarn
 ```
 
 #### App dependencies
+
 Install using `yarn`:
 
 ```
 yarn install
 ```
-
 
 The code uses wormhole-william built as a Web Assembly (wasm) module. If you want
 to rebuild the wasm code do:
@@ -81,6 +82,7 @@ To build the website for a particular stage (playground vs
 production), we should create a file in the root of the filesystem
 called `.production.build.env` or `.playground.build.env` (according
 to the stage for which we are building) and define three variables there:
+
 ```
 VUE_APP_STAGE_HOSTNAME="https://foo.bar.org"
 VUE_APP_STAGE_MAILBOX_URL="wss://mailbox.foo.bar.org/v1"
@@ -119,6 +121,7 @@ This invalidation can also be performed directly with `yarn uncache:<stage name>
 
 Deployment and cache invalidation scripts rely on environment variables specified below.
 When invoking these scripts, either directly or via yarn, environment variables may be provided as such, i.e.:
+
 ```bash
 AWS_PROFILE=my-profile node ./scripts/deploy.js
 # OR
@@ -128,8 +131,8 @@ AWS_PROFILE=my-profile yarn deploy:staging
 Alternatively, a [dotenv](https://github.com/motdotla/dotenv#readme) file will be loaded, if present, and used to populate environment variables accordingly.
 The deploy and cache invalidation scripts apply a stage-specific dotenv file following the convention `.<stage name>.env`, e.g.: `.staging.env`.
 
-| Name               | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `AWS_PROFILE`      | AWS credentials profile to use when authenticating with AWS.<br/>See [named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).                                                                                                                                                                                                                                                                                                                                                           |
-| `S3_BUCKET`        | AWS S3 bucket associated with this stage to upload build output directory to. For public buckets, this will likely be the fully-qualified domain name for this stage.                                                                                                                                                                                                                                                                                                                                                          |
+| Name               | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AWS_PROFILE`      | AWS credentials profile to use when authenticating with AWS.<br/>See [named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).                                                                                                                                                                                                                                                                                                                                                                                      |
+| `S3_BUCKET`        | AWS S3 bucket associated with this stage to upload build output directory to. For public buckets, this will likely be the fully-qualified domain name for this stage.                                                                                                                                                                                                                                                                                                                                                                                     |
 | `CDF_DISTRIBUTION` | AWS Cloudfront distribution ID associated with this stage for which the cache should be invalidated.<br/><br/>The cloudfront distribution ID can be obtained given the FQDN. The [AWS CLI](https://aws.amazon.com/cli/) can be used to do list distributions: ` AWS_PROFILE=<profile name> aws cloudfront list-distributions`. Searching the results for the FQDN of the stage in question will yield a distribution ID. Alternatively, the [cloudfront web UI](https://console.aws.amazon.com/cloudfront/v3/home?#/distributions) can be used similarly. |

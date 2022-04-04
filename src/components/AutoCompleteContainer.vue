@@ -2,7 +2,7 @@
 import { useStore } from 'vuex';
 import AutoComplete from './AutoComplete.vue';
 
-const store = useStore()
+const store = useStore();
 </script>
 
 <template>

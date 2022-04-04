@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-const {argv, env, exit} = require('process');
-const {execSync} = require('child_process');
+const { argv, env, exit } = require('process');
+const { execSync } = require('child_process');
 
-const {loadEnv} = require('./common');
+const { loadEnv } = require('./common');
 
 const stage = argv[2];
 if (!stage) {
-    console.error("Usage: deploy.js <stage name>")
-    exit(1);
+  console.error('Usage: deploy.js <stage name>');
+  exit(1);
 }
 
 const envPath = `.${stage}.env`;
@@ -17,8 +17,8 @@ const bucket = env['S3_BUCKET'];
 const command = `aws s3 sync ./dist ${bucket}`;
 
 try {
-    execSync(command, {stdio: 'pipe'});
+  execSync(command, { stdio: 'pipe' });
 } catch (error) {
-    console.error(error);
-    exit(3);
+  console.error(error);
+  exit(3);
 }

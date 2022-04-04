@@ -1,7 +1,6 @@
 name: transfer-repo-CI
 on: [push, pull_request]
 jobs:
-
   build:
     name: Build/Test
     runs-on: ${{ matrix.os }}

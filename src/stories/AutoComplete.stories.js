@@ -1,10 +1,10 @@
-import AutoComplete from "@/components/AutoComplete.vue";
+import AutoComplete from '@/components/AutoComplete.vue';
 
 export default {
-  title: "Example/AutoComplete",
+  title: 'Example/AutoComplete',
   component: AutoComplete,
   argTypes: {
-    suggestedWord: { type: "string" },
+    suggestedWord: { type: 'string' },
   },
 };
 
@@ -18,5 +18,5 @@ const Template = (args) => ({
 
 export const Example = Template.bind({});
 Example.args = {
-  suggestedWord: "guitarist",
+  suggestedWord: 'guitarist',
 };

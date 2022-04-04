@@ -1,7 +1,7 @@
-import PopoverExample from "./PopoverExample.vue";
+import PopoverExample from './PopoverExample.vue';
 
 export default {
-  title: "Example/PopoverExample",
+  title: 'Example/PopoverExample',
   component: PopoverExample,
 };
 
