@@ -75,6 +75,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "glob": "^7.1.6",
+    "prettier": "2.6.2",
     "tmp-promise": "^3.0.2",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0",
