@@ -24,7 +24,11 @@
     "deploy:playground": "node ./scripts/deploy.js playground && yarn uncache:playground",
     "uncache:playground": "node ./scripts/uncache.js playground",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "@capacitor/android": "^2.4.5",
@@ -75,6 +79,8 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
     "glob": "^7.1.6",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.7",
     "prettier": "2.6.2",
     "tmp-promise": "^3.0.2",
     "typescript": "~3.9.3",
