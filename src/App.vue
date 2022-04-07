@@ -1,19 +1,19 @@
 <template>
-    <ion-app>
-        <Main id="content"></Main>
-    </ion-app>
+  <ion-app>
+    <Main id="content"></Main>
+  </ion-app>
 </template>
 
 <script lang="ts">
 import { IonApp, IonRouterOutlet, IonMenu } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import Main from "@/views/Main.vue";
+import Main from '@/views/Main.vue';
 
 export default defineComponent({
-    name: 'App',
-    components: {
-        IonApp,
-        Main,
-    }
+  name: 'App',
+  components: {
+    IonApp,
+    Main,
+  },
 });
 </script>

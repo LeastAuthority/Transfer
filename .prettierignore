@@ -1,0 +1,8 @@
+dist/
+magic-wormhole-transit-relay/
+wormhole-william/
+
+public/test/wasm_exec.js
+src/wordlist/words.json
+
+*.lock

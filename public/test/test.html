@@ -1,62 +1,69 @@
 <html>
-<head>
+  <head>
     <title>test playground</title>
     <script src="/test/wasm_exec.js"></script>
-</head>
-<body>
-<script>
-    document.onreadystatechange = () => {
+  </head>
+  <body>
+    <script>
+      document.onreadystatechange = () => {
         if (document.readyState === 'complete') {
-            start();
+          start();
         }
-    }
+      };
 
-    async function start() {
+      async function start() {
         const go = new Go();
-        const result = await WebAssembly.instantiateStreaming(fetch("/assets/wormhole.wasm"), go.importObject);
+        const result = await WebAssembly.instantiateStreaming(
+          fetch('/assets/wormhole.wasm'),
+          go.importObject
+        );
         go.run(result.instance);
 
-        await findMaxMessageLength(0, 20000, 10)
-    }
+        await findMaxMessageLength(0, 20000, 10);
+      }
 
-    // TODO: stop at some point!
-    // test successive lengths based on results
-    async function findMaxMessageLength(minLength, maxLength, timeoutSeconds) {
+      // TODO: stop at some point!
+      // test successive lengths based on results
+      async function findMaxMessageLength(
+        minLength,
+        maxLength,
+        timeoutSeconds
+      ) {
         console.log(`min: ${minLength}; max: ${maxLength}`);
         // return new Promise((resolve, reject) => {
         // TODO: ensure integer
-        const testLength = ((maxLength - minLength) / 2) + minLength;
+        const testLength = (maxLength - minLength) / 2 + minLength;
         console.log('testLength: ' + testLength);
 
         const good = await runTest(testLength, timeoutSeconds);
         console.log(`good: ${good}`);
         if (good) {
-            // test longer message
-            await findMaxMessageLength(testLength, maxLength, timeoutSeconds)
+          // test longer message
+          await findMaxMessageLength(testLength, maxLength, timeoutSeconds);
         } else {
-            await findMaxMessageLength(minLength, testLength, timeoutSeconds);
+          await findMaxMessageLength(minLength, testLength, timeoutSeconds);
         }
         // });
-    }
+      }
 
-    // determine good vs. bad (lengths match / don't)
-    async function runTest(length, timeoutSeconds) {
-        console.log("getting code");
+      // determine good vs. bad (lengths match / don't)
+      async function runTest(length, timeoutSeconds) {
+        console.log('getting code');
         const code = await new Promise((resolve, reject) => {
-            window.setTimeout(() => {
-                reject('timeout elapsed');
-                console.log('timeout elapsed!')
-            }, timeoutSeconds * 1000);
+          window.setTimeout(() => {
+            reject('timeout elapsed');
+            console.log('timeout elapsed!');
+          }, timeoutSeconds * 1000);
 
-            const promiseObj = {resolve, reject};
-            window.sendText(random(length), promiseObj);
+          const promiseObj = { resolve, reject };
+          window.sendText(random(length), promiseObj);
         });
-        console.log("got code: " + code);
+        console.log('got code: ' + code);
 
         const message = await new Promise((resolve, reject) => {
-            const promiseObj = {resolve, reject};
-            // let timedOut = {timedOut: false};
-            window.recvText(code, promiseObj);
+          const promiseObj = { resolve, reject };
+          // let timedOut = {timedOut: false};
+          window.recvText(code, promiseObj);
         });
 
         console.log(`message length: ${message.length}`);
@@ -64,21 +71,21 @@
 
         // TODO: hash verification
         return message.length === length;
-    }
+      }
 
-    const random = (length = 8) => {
+      const random = (length = 8) => {
         // Declare all characters
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let chars =
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
         // Pick characers randomly
         let str = '';
         for (let i = 0; i < length; i++) {
-            str += chars.charAt(Math.floor(Math.random() * chars.length));
+          str += chars.charAt(Math.floor(Math.random() * chars.length));
         }
 
         return str;
-
-    };
-</script>
-</body>
+      };
+    </script>
+  </body>
 </html>

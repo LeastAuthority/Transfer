@@ -35,12 +35,12 @@ export const SHOW_DRAG_ELEMENTS = 'send_default/show_drag_elements';
 export const HIDE_DRAG_ELEMENTS = 'send_default/hide_drag_elements';
 
 export interface RPCMessage {
-    id: number;
+  id: number;
 
-    // TODO: be more specific (i.e. message types w/ union)
-    [name: string]: any;
+  // TODO: be more specific (i.e. message types w/ union)
+  [name: string]: any;
 }
 
 export function isRPCMessage(data: any): data is RPCMessage {
-    return (data as RPCMessage) !== undefined;
+  return (data as RPCMessage) !== undefined;
 }
