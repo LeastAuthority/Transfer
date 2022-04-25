@@ -69,8 +69,6 @@ export interface WindowClient {
 export interface ClientConfig {
   rendezvousURL: string;
   transitRelayURL: string;
-  // TODO: int
-  passPhraseComponentLength: number;
 }
 
 export const wormhole: WindowWormhole = new Proxy(

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import CardVue from '@/components/Card.vue';
 import { ErrInvalidCode } from '@/errors';
-import { COMPLETE_CODE_WORD, SAVE_FILE, SET_CODE } from '@/store/actions';
+import { SAVE_FILE, SET_CODE } from '@/store/actions';
 import { CODE_REGEX } from '@/util';
+import { CodeCompleter } from '@/wordlist/wordlist';
 import {
   IonCol,
   IonGrid,
@@ -13,9 +14,11 @@ import {
 } from '@ionic/vue';
 import { computed, defineProps, ref, watch } from 'vue';
 import { useStore } from 'vuex';
-import AutoCompleteContainer from '../AutoCompleteContainer.vue';
+import AutoComplete from '../AutoComplete.vue';
 import PopoverVue from '../Popover.vue';
 import WaitButtonVue, { DefaultDuration } from '../WaitButton.vue';
+
+const completer = new CodeCompleter();
 
 const errorColor = 'warning-red';
 const exampleColor = 'dark-grey';
@@ -33,22 +36,43 @@ const codeInput = ref(null);
 const codeInputInner = ref(null);
 const active = ref(false);
 const modelCode = ref('');
+const suggestedWord = ref<string | null>(null);
+
+function autoComplete(inputValue: string, suggestion: string): string {
+  const split = inputValue.split('-');
+  split.pop();
+  const result = [...split, suggestion].join('-');
+  return split.length < 2 ? result + '-' : result;
+}
+
+function getSuggestion(inputValue: string): string | null {
+  return completer.nearestNextWord(inputValue) || null;
+}
+
+watch(suggestedWord, () => {
+  active.value = suggestedWord.value !== null;
+});
 
 watch(codeInput, async (r: any) => {
   const ionInputEl = r.$el;
   codeInputInner.value = await ionInputEl.getInputElement();
 });
 
-watch(
-  () => store.state.suggestedWord,
-  (v) => {
-    active.value = !!v;
+watch(modelCode, (value) => {
+  if (value.includes(' ')) {
+    if (suggestedWord.value) {
+      modelCode.value = autoComplete(value, suggestedWord.value);
+      suggestedWord.value = null;
+    } else {
+      modelCode.value = value
+        .split('')
+        .filter((x) => x !== ' ')
+        .join('');
+    }
   }
-);
+  suggestedWord.value = getSuggestion(value);
 
-watch(modelCode, (v) => {
-  console.log(v);
-  store.commit(SET_CODE, v);
+  store.commit(SET_CODE, value);
 });
 
 const blurInvalid = computed(
@@ -82,18 +106,14 @@ async function handleNext() {
   }
 }
 
-function completeCodeWord(event: KeyboardEvent): void {
-  event.preventDefault();
-  store.commit(COMPLETE_CODE_WORD);
-  (event.target as HTMLInputElement).value = store.state.code;
-}
-
 function handleDismiss() {
-  active.value = false;
+  suggestedWord.value = null;
 }
 
 function handleFocus() {
-  active.value = !!store.state.suggestedWord;
+  if (codeInputInner.value) {
+    suggestedWord.value = getSuggestion(modelCode.value);
+  }
 }
 </script>
 
@@ -129,7 +149,6 @@ function handleFocus() {
               @change="validate"
               v-model="modelCode"
               @keyup.enter="handleNext"
-              @keypress.space="completeCodeWord"
               ref="codeInput"
               @ionFocus="handleFocus"
             ></ion-input>
@@ -138,12 +157,12 @@ function handleFocus() {
               :elementRef="codeInputInner"
               :onDismiss="handleDismiss"
             >
-              <AutoCompleteContainer />
+              <AutoComplete :suggestedWord="suggestedWord" />
             </PopoverVue>
             <div class="flex-col">
-              <ion-text :color="exampleErrorColor" v-show="blurInvalid">{{
-                exampleErrorText
-              }}</ion-text>
+              <ion-text :color="exampleErrorColor" v-show="blurInvalid">
+                {{ exampleErrorText }}
+              </ion-text>
               <ion-text :color="exampleErrorColor"
                 >E.g.: 7-guitarist-revenge</ion-text
               >
