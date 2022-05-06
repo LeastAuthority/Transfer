@@ -39,7 +39,8 @@ export class WordList {
       return this._oddTree;
     }
 
-    throw new Error('previous word not in even or odd word lists');
+    console.error('previous word not in even or odd word lists');
+    return this._oddTree;
   }
 
   public get evenTree(): WordTree {

@@ -12,7 +12,6 @@ import {
   ACCEPT_FILE,
   ALERT,
   ALERT_MATCHED_ERROR,
-  COMPLETE_CODE_WORD,
   HIDE_DRAG_ELEMENTS,
   NEW_CLIENT,
   RESET_CODE,
@@ -50,7 +49,6 @@ const defaultConfig: ClientConfig = {
     process.env['VUE_APP_STAGE_MAILBOX_URL'] || 'ws://localhost:4000/v1',
   transitRelayURL:
     process.env['VUE_APP_STAGE_RELAY_URL'] || 'ws://localhost:4002',
-  passPhraseComponentLength: 2,
 };
 
 let client: ClientWorker;
@@ -315,21 +313,6 @@ function hideDragElementsMutation(state: any): void {
   state.showDragElements = false;
 }
 
-function completeCodeWordMutation(state: any): void {
-  const codeParts = state.code.split(CODE_DELIMITER);
-  const partialWordIndex = codeParts.length - 1;
-  if (state.suggestedWord.startsWith(codeParts[partialWordIndex])) {
-    // Replace last (incomplete) word `codeWord`
-    codeParts.splice(partialWordIndex, 1, state.suggestedWord);
-    state.code = codeParts.join(CODE_DELIMITER);
-    // NB: codeParts.length includes the mailbox number
-    if (codeParts.length - 1 < defaultConfig.passPhraseComponentLength) {
-      state.code += CODE_DELIMITER;
-    }
-  }
-  state.suggestedWord = '';
-}
-
 // TODO: more specific types
 function setFileMetaMutation(state: any, fileMeta: Record<string, any>): void {
   state.fileMeta = fileMeta;
@@ -354,12 +337,6 @@ function sendFileMutation(state: any, { code, cancel }: any): void {
 // TODO: be more specific with types.
 function setCodeMutation(state: any, code: string): void {
   state.code = code;
-
-  if (code[code.length - 1] === CODE_DELIMITER) {
-    state.suggestedWord = '';
-  } else {
-    state.suggestedWord = completer.nearestNextWord(code);
-  }
 }
 
 // TODO: be more specific with types.
@@ -432,7 +409,6 @@ export default createStore({
     [RESET_PROGRESS]: resetProgressMutation,
     [SHOW_DRAG_ELEMENTS]: showDragElementsMutation,
     [HIDE_DRAG_ELEMENTS]: hideDragElementsMutation,
-    [COMPLETE_CODE_WORD]: completeCodeWordMutation,
     // TODO: refactor
     progressTimeoutCancel: (state: any, cancel: () => void) => {
       state.progressTimeoutCancel = cancel;
