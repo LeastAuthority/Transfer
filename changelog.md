@@ -1,5 +1,18 @@
 # Changelog
 
+# Changes between v0.0.4-alpha.plus.rc6 and v0.0.4-alpha.plus.rc5:
+
+- (first release after switching to openproject)
+- Fix autocomplete for chrome on android (#114)
+- Add prettier (#113)
+- docker: transit-relay submodule has been removed, so remove references (#112)
+- use insecure websocket urls for localhost access (#111)
+- Improve word suggestion popover. (#110)
+- Add storybook (#109)
+- Remove version from package.json (#108)
+- Fix handling of ErrBadCode (#107)
+- Fix build script command (#106)
+
 # Changes between v0.0.4-alpha.plus.rc5 and v0.0.4-alpha.plus.rc4:
 
 - move config out of source code [PR: #97](https://github.com/LeastAuthority/Transfer/pull/97)
