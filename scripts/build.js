@@ -11,12 +11,7 @@ if (!stage) {
   exit(1);
 }
 
-const envPath = `.${stage}.build.env`;
-if (Fs.existsSync(envPath)) {
-  loadEnv(envPath);
-}
-const command1 = `NODE_ENV=${stage} yarn build:worker`;
-
+const command1 = `NODE_ENV=${stage} ./node_modules/.bin/vue-cli-service build`;
 try {
   execSync(command1);
 } catch (error) {
@@ -24,7 +19,12 @@ try {
   exit(3);
 }
 
-const command2 = `NODE_ENV=${stage} ./node_modules/.bin/vue-cli-service build`;
+const envPath = `.${stage}.build.env`;
+if (Fs.existsSync(envPath)) {
+  loadEnv(envPath);
+}
+const command2 = `NODE_ENV=${stage} yarn build:worker`;
+
 try {
   execSync(command2);
 } catch (error) {
