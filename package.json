@@ -8,7 +8,7 @@
     "build": "node ./scripts/build.js production",
     "build:production": "node ./scripts/build.js production",
     "build:playground": "node ./scripts/build.js playground",
-    "build:worker": "vue-cli-service build --dest ./dest/worker/ --target lib --formats umd --name worker --filename index --mode production ./src/worker.ts",
+    "build:worker": "vue-cli-service build --dest ./dist/worker/ --target lib --formats umd --name worker --filename index --mode production ./src/worker.ts",
     "build:wasm": "node scripts/build-wasm.js",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
