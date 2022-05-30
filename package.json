@@ -86,8 +86,5 @@
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0",
     "vue-loader": "^16.8.3"
-  },
-  "resolutions": {
-    "eventsource": "^2.0.2"
   }
 }
