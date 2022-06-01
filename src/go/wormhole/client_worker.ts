@@ -30,6 +30,7 @@ import { ErrRecvConnectionTimeout } from '@/errors';
 import { RpcProvider } from 'worker-rpc';
 import { SENDER_TIMEOUT } from '@/util';
 import Client from '@/go/wormhole/client';
+import { alertController } from '@ionic/vue';
 
 export default class ClientWorker implements ClientInterface {
   public goClient = -1;
@@ -157,12 +158,24 @@ export default class ClientWorker implements ClientInterface {
     resolve();
   }
 
-  private _handleSendFileResultError({ id, error }: RPCMessage): void {
+  private async _handleSendFileResultError({
+    id,
+    error,
+  }: RPCMessage): Promise<void> {
     console.log('client_worker.ts:133 | _handleSendFileResultError');
-    const {
-      result: { reject },
-    } = this.pending[id];
-    reject(error);
+
+    const alert = await alertController.create({
+      subHeader: 'Transfer cancelled',
+      message: `The transfer have been cancelled by the receiver.`,
+      buttons: [
+        {
+          text: 'OK',
+        },
+      ],
+    });
+    await alert.present();
+    await alert.onWillDismiss();
+    window.location.reload();
   }
 
   private _handleFileProgress({ id, sentBytes, totalBytes }: RPCMessage): void {

@@ -1,9 +1,10 @@
 <template>
   <Progress
     :active="active"
+    :cancel="cancel"
     progress-msg="Waiting for receiver to complete transfer..."
   >
-    <template #title> Sending... </template>
+    <template #title>Sending...</template>
     <template #grid>
       <ion-row class="ion-justify-content-center">
         <FileCard :name="fileMeta.name" :size="fileMeta.size"></FileCard>
@@ -14,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 import { RESET_PROGRESS } from '@/store/actions';
 import Progress from '@/components/Progress.vue';
@@ -36,8 +37,11 @@ export default defineComponent({
     ...mapMutations([RESET_PROGRESS]),
     // TODO: lift up.
     cancel() {
-      this.back();
-      this[RESET_PROGRESS]();
+      // this.back();
+      // this[RESET_PROGRESS]();
+      // this[NEW_CLIENT]();
+      window.history.pushState({}, '', '/#/s');
+      window.location.reload();
     },
   },
   components: {

@@ -1,7 +1,7 @@
 <template>
   <Card :active="active">
     <template #title>
-      <ion-text color="dark-grey" class="bold"> Ready to download </ion-text>
+      <ion-text color="dark-grey" class="bold">Ready to download</ion-text>
     </template>
     <template #content>
       <ion-grid>
@@ -31,7 +31,7 @@
           <ion-col>
             <!--  TODO: something better.-->
             <!--NB: should never see this but takes up the right amount of space-->
-            <ion-text style="opacity: 0"> waiting for sender... </ion-text>
+            <ion-text style="opacity: 0">waiting for sender...</ion-text>
           </ion-col>
         </ion-row>
         <ion-row class="ion-text-center">
@@ -112,8 +112,11 @@ export default defineComponent({
     cancel() {
       // TODO: move into action.
       // TODO: *use reject here.
-      this.back();
-      this[RESET_PROGRESS]();
+      // this.back();
+      // this[RESET_PROGRESS]();
+      // this[NEW_CLIENT]();
+      window.history.pushState({}, '', '/#/r');
+      window.location.reload();
     },
   },
   components: {

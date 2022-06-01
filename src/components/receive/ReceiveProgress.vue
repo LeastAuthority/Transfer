@@ -1,9 +1,10 @@
 <template>
   <Progress
     :active="active"
+    :cancel="cancel"
     progress-msg="Waiting for receiver to complete transfer..."
   >
-    <template #title> Receiving... </template>
+    <template #title>Receiving...</template>
     <template #grid>
       <ion-row>
         <ion-col class="flex ion-justify-content-center">
@@ -69,9 +70,11 @@ export default defineComponent({
     cancel() {
       // TODO: move into action.
       // TODO: *use reject here.
-      this.back();
-      this[RESET_PROGRESS]();
+      // this.back();
+      // this[RESET_PROGRESS]();
       // this[NEW_CLIENT]();
+      window.history.pushState({}, '', '/#/r');
+      window.location.reload();
     },
   },
   components: {
