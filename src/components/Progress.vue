@@ -18,9 +18,7 @@
         </ion-row>
         <ion-row class="ion-text-center">
           <ion-col>
-            <ion-text color="dark-grey">
-              {{ _progressETA }}
-            </ion-text>
+            <ion-text color="dark-grey">{{ _progressETA }}</ion-text>
           </ion-col>
         </ion-row>
         <ion-row class="ion-text-center">

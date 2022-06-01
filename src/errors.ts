@@ -45,6 +45,12 @@ export const ErrBadCode = new AlertError({
   pattern: '^decrypt message failed$',
 });
 
+export const ErrCancel = new AlertError({
+  name: 'Transfer cancelled',
+  message: '<p>The transfer have been cancelled by the sender.</p>',
+  pattern: 'unexpected EOF',
+});
+
 export const ErrRecvConnectionTimeout = new AlertError({
   name: 'Connection time-out',
   message:
@@ -78,6 +84,7 @@ export const ErrInvalidCode = new Error(
 
 export const MatchableErrors = [
   ErrRecvConnectionTimeout,
+  ErrCancel,
   ErrBadCode,
   ErrMailbox,
   ErrRelay,

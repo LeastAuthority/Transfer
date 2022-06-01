@@ -1,7 +1,7 @@
 <template>
   <Card :active="active">
     <template #title>
-      <ion-text class="bold" color="dark-grey"> Ready to send! </ion-text>
+      <ion-text class="bold" color="dark-grey">Ready to send!</ion-text>
     </template>
     <template #content>
       <ion-grid>
@@ -14,7 +14,7 @@
         <ion-row class="ion-text-center ion-margin-top">
           <ion-col>
             <p>
-              <ion-text class="bold"> 1. Keep this tab open </ion-text>
+              <ion-text class="bold">1. Keep this tab open</ion-text>
             </p>
           </ion-col>
         </ion-row>
@@ -22,8 +22,8 @@
           <ion-col>
             <p>
               <ion-text>
-                Files are sent directly from your device. <br />The link/code
-                expires once you close the tab.
+                Files are sent directly from your device.
+                <br />The link/code expires once you close the tab.
               </ion-text>
             </p>
           </ion-col>
@@ -31,9 +31,9 @@
         <ion-row class="ion-text-center ion-margin-top">
           <ion-col>
             <p>
-              <ion-text color="dark-grey" class="bold">
-                2. Give the receiver the link below
-              </ion-text>
+              <ion-text color="dark-grey" class="bold"
+                >2. Give the receiver the link below</ion-text
+              >
             </p>
           </ion-col>
         </ion-row>
@@ -132,14 +132,11 @@ export default defineComponent({
     ...mapMutations([RESET_PROGRESS]),
     cancel() {
       // TODO: move up to Send.vue
-      this.back();
-      this[RESET_PROGRESS]();
-
-      // this.reset();
-    },
-    reset() {
-      // TODO: remove.
+      // this.back();
+      // this[RESET_PROGRESS]();
       // this[NEW_CLIENT]();
+      window.history.pushState({}, '', '/#/s');
+      window.location.reload();
     },
   },
   components: {
