@@ -1,5 +1,11 @@
 # Changelog
 
+# Changes between v0.0.4-alpha.plus.rc7 and v0.0.4-alpha.plus.rc6:
+
+- resolve eventsource dependency version to a value above 2.0.2 to get
+  a security fix (#117)
+- Cancellation workaround (#118)
+
 # Changes between v0.0.4-alpha.plus.rc6 and v0.0.4-alpha.plus.rc5:
 
 - (first release after switching to openproject)
