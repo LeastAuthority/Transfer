@@ -167,7 +167,7 @@ export default class ClientWorker implements ClientInterface {
     const alert = await alertController.create({
       header: 'Transfer failed',
       message:
-        '<p>The transfer was cancelled or interrupted. Please try again.</p>',
+        '<p>The transfer was cancelled or interrupted.</p><p>Please try again.</p>',
       buttons: [
         {
           text: 'OK',

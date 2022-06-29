@@ -48,7 +48,7 @@ export const ErrBadCode = new AlertError({
 export const ErrCancel = new AlertError({
   name: 'Transfer failed',
   message:
-    '<p>The transfer was cancelled or interrupted. Please try again.</p>',
+    '<p>The transfer was cancelled or interrupted.</p><p>Please try again.</p>',
   pattern: 'unexpected EOF',
 });
 
