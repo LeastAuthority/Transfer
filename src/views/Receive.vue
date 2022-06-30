@@ -22,28 +22,25 @@
       :active="onStep(ReceiveStep.Complete)"
       :next="nextFrom(ReceiveStep.Complete)"
     ></ReceiveComplete>
-    <Version></Version>
   </div>
 </template>
 
 <style lang="css" scoped></style>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-
-import Version from '@/components/Version.vue';
-import ReceiveDefault from '@/components/receive/ReceiveDefault.vue';
-import ReceiveConsent from '@/components/receive/ReceiveConsent.vue';
 import ReceiveComplete from '@/components/receive/ReceiveComplete.vue';
-import { ReceiveStep } from '@/types';
+import ReceiveConsent from '@/components/receive/ReceiveConsent.vue';
+import ReceiveDefault from '@/components/receive/ReceiveDefault.vue';
+import ReceiveProgress from '@/components/receive/ReceiveProgress.vue';
 import {
   ALERT_MATCHED_ERROR,
   RESET_PROGRESS,
   SAVE_FILE,
   SET_FILE_META,
 } from '@/store/actions';
+import { ReceiveStep } from '@/types';
+import { defineComponent } from 'vue';
 import { mapActions, mapMutations, mapState } from 'vuex';
-import ReceiveProgress from '@/components/receive/ReceiveProgress.vue';
 
 export default defineComponent({
   name: 'Receive',
@@ -108,7 +105,6 @@ export default defineComponent({
     },
   },
   components: {
-    Version,
     ReceiveDefault,
     ReceiveConsent,
     ReceiveProgress,
