@@ -29,35 +29,28 @@
 <style lang="css" scoped></style>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-
-import Version from '@/components/Version.vue';
-import ReceiveDefault from '@/components/receive/ReceiveDefault.vue';
-import ReceiveConsent from '@/components/receive/ReceiveConsent.vue';
 import ReceiveComplete from '@/components/receive/ReceiveComplete.vue';
-import { ReceiveStep } from '@/types';
+import ReceiveConsent from '@/components/receive/ReceiveConsent.vue';
+import ReceiveDefault from '@/components/receive/ReceiveDefault.vue';
+import ReceiveProgress from '@/components/receive/ReceiveProgress.vue';
+import Version from '@/components/Version.vue';
 import {
   ALERT_MATCHED_ERROR,
   RESET_PROGRESS,
   SAVE_FILE,
   SET_FILE_META,
 } from '@/store/actions';
+import { ReceiveStep } from '@/types';
+import { defineComponent } from 'vue';
 import { mapActions, mapMutations, mapState } from 'vuex';
-import ReceiveProgress from '@/components/receive/ReceiveProgress.vue';
 
 export default defineComponent({
   name: 'Receive',
+  async mounted() {
+    this.checkCodeUrl();
+  },
   async beforeUpdate() {
-    if (typeof this.$route.query.hasCode !== 'undefined') {
-      await this.$router.replace('/r');
-      this.step = ReceiveStep.Consent;
-      try {
-        await this[SAVE_FILE](this.code);
-      } catch (error) {
-        console.error(error);
-        this.step = ReceiveStep.Default;
-      }
-    }
+    this.checkCodeUrl();
   },
   data() {
     return {
@@ -105,6 +98,18 @@ export default defineComponent({
       return (): void => {
         this.step = step;
       };
+    },
+    async checkCodeUrl() {
+      if (typeof this.$route.query.hasCode !== 'undefined') {
+        await this.$router.replace('/r');
+        this.step = ReceiveStep.Consent;
+        try {
+          await this[SAVE_FILE](this.code);
+        } catch (error) {
+          console.error(error);
+          this.step = ReceiveStep.Default;
+        }
+      }
     },
   },
   components: {
