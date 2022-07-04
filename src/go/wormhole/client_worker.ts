@@ -165,8 +165,9 @@ export default class ClientWorker implements ClientInterface {
     console.log('client_worker.ts:133 | _handleSendFileResultError');
 
     const alert = await alertController.create({
-      subHeader: 'Transfer cancelled',
-      message: `The transfer have been cancelled by the receiver.`,
+      header: 'Transfer failed',
+      message:
+        '<p>The transfer was cancelled or interrupted.</p><p>Please try again.</p>',
       buttons: [
         {
           text: 'OK',
