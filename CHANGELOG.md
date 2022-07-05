@@ -2,6 +2,9 @@
 
 # Changes between v0.0.4-alpha.plus.rc7 and v0.0.4-alpha.plus.rc6:
 
+- version tag moved to page title (#1260)
+- fix opening a received link while on Send/Default fails to load Receive/Consent (#1238)
+- adjusted cancelation message (#1189)
 - resolve eventsource dependency version to a value above 2.0.2 to get
   a security fix (#117)
 - Cancellation workaround (#118)
