@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          # Checkout head of the branch of the PR, or the exact revision
+          # specified for non-PR builds.
+          ref: "${{ github.event.pull_request.head.sha || github.sha }}"
 
       - name: checkout and update submodules
         run: git submodule update --init --recursive

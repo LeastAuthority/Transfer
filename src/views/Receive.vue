@@ -44,17 +44,11 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default defineComponent({
   name: 'Receive',
+  async mounted() {
+    this.checkCodeUrl();
+  },
   async beforeUpdate() {
-    if (typeof this.$route.query.hasCode !== 'undefined') {
-      await this.$router.replace('/r');
-      this.step = ReceiveStep.Consent;
-      try {
-        await this[SAVE_FILE](this.code);
-      } catch (error) {
-        console.error(error);
-        this.step = ReceiveStep.Default;
-      }
-    }
+    this.checkCodeUrl();
   },
   data() {
     return {
@@ -102,6 +96,18 @@ export default defineComponent({
       return (): void => {
         this.step = step;
       };
+    },
+    async checkCodeUrl() {
+      if (typeof this.$route.query.hasCode !== 'undefined') {
+        await this.$router.replace('/r');
+        this.step = ReceiveStep.Consent;
+        try {
+          await this[SAVE_FILE](this.code);
+        } catch (error) {
+          console.error(error);
+          this.step = ReceiveStep.Default;
+        }
+      }
     },
   },
   components: {
