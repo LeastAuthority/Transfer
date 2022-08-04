@@ -23,7 +23,7 @@ describe('Cancellation', () => {
   const testFileSize = 1024 * 256; // 256 KiB
   const testBufferSize = 1024 * 4;
 
-  describe.skip('Send-side cancellation', () => {
+  describe('Send-side cancellation', () => {
     it('should do things', async () => {
       const readLimit = 1024 * 4; // 8 KiB
       const sender = new Client();
@@ -51,11 +51,11 @@ describe('Cancellation', () => {
         }
       }
 
+      await new Promise((f) => setTimeout(f, 1000));
       try {
-        await new Promise((f) => setTimeout(f, 1000));
-        await expect(senderObj.cancel).rejects.toBe(
-          'context canceled'
-        );
+          await expect(senderObj.cancel).rejects.toBe(
+              'context canceled'
+          );
       } catch (error) {
         console.log('ERROR');
         console.error(error);
@@ -67,13 +67,13 @@ describe('Cancellation', () => {
       await expect(senderObj.done).rejects.toBe(
         'failed to read: context canceled'
       );
-      // console.log(senderObj.done);
+      console.log(senderObj.done);
       // TODO: get reader to reject with context cancellation error
       // expect(reader.read(buffer)).rejects.toThrow('context cancelled');
     });
   });
 
-  describe('Send-side cancellation before receiver has connected', () => {
+  describe.skip('Send-side cancellation before receiver has connected', () => {
     it('should do things', async () => {
       const readLimit = 1024 * 4; // 8 KiB
       const sender = new Client();
