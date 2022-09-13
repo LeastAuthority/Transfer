@@ -1,6 +1,6 @@
 # Changelog
 
-# Changes between v0.1 and v0.0.4-alpha.plus.rc7 
+# Changes between v0.1 and v0.0.4-alpha.plus.rc7
 
 - official release Alpha+ milestone
 - version tag moved to page title (#1260)

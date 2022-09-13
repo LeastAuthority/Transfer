@@ -22,7 +22,6 @@
       :active="onStep(ReceiveStep.Complete)"
       :next="nextFrom(ReceiveStep.Complete)"
     ></ReceiveComplete>
-    <Version></Version>
   </div>
 </template>
 
@@ -33,7 +32,6 @@ import ReceiveComplete from '@/components/receive/ReceiveComplete.vue';
 import ReceiveConsent from '@/components/receive/ReceiveConsent.vue';
 import ReceiveDefault from '@/components/receive/ReceiveDefault.vue';
 import ReceiveProgress from '@/components/receive/ReceiveProgress.vue';
-import Version from '@/components/Version.vue';
 import {
   ALERT_MATCHED_ERROR,
   RESET_PROGRESS,
@@ -113,7 +111,6 @@ export default defineComponent({
     },
   },
   components: {
-    Version,
     ReceiveDefault,
     ReceiveConsent,
     ReceiveProgress,
