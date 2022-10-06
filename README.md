@@ -1,4 +1,6 @@
-# Transfer
+## **Note:** This repository is not maintened anymore. Frontend application code was refactored and new version is available at [Winden repository](https://github.com/LeastAuthority/winden). Be aware that packages are outdated and may have security issues.
+
+# Transfer (**depreciated**)
 
 Transfer is a graphical interface, built with the ionic/vue UI framework, for doing file transfer via the Magic Wormhole protocol.
 Transfer is cross-platform, primarily targeting web, but can be built for iOS and Android using [capacitor](https://capacitorjs.com/).
