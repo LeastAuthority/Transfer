@@ -1,4 +1,4 @@
-## **Note:** This repository is not maintained anymore. Be aware that the packages are outdated and may have security issues. The front-end application code was refactored and a new version is available as the [Winden repository](https://github.com/LeastAuthority/winden).
+## **Note:** This repository is not maintained anymore. Be aware that the packages are outdated and may have security issues. The front-end application code was refactored and a new version is available as the [Winden](https://github.com/LeastAuthority/winden) repository.
 
 # Transfer (**depreciated**)
 
