@@ -1,7 +1,5 @@
 ## **Note:** This repository is not maintained anymore. Be aware that the packages are outdated and may have security issues. The front-end application code was refactored and a new version is available as the [Winden repository](https://github.com/LeastAuthority/winden).
 
-This repository is not maintained anymore. Be aware that the packages are outdated and may have security issues. The front-end application code was refactored and a new version is available as the Winden repository.
-
 # Transfer (**depreciated**)
 
 Transfer is a graphical interface, built with the ionic/vue UI framework, for doing file transfer via the Magic Wormhole protocol.
